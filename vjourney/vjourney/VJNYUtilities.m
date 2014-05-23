@@ -38,4 +38,16 @@ static UIAlertView* _progressAlert = NULL;
     [alert show];
 }
 
+#pragma mark - Const Values
+
++(NSString*)channelCellIdentifier {
+    return @"channelCell";
+}
++(NSString*)channelPromoCellIdentifier {
+    return @"promoChannelCell";
+}
++(NSString*)videoCellIdentifier {
+    return @"videoCell";
+}
+
 @end

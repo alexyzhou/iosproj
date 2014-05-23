@@ -30,7 +30,7 @@
 */
 
 #import "TKCoverflowView.h"
-#import "TKCoverflowCoverView.h"
+#import "VJNYChannelCoverFlowCellView.h"
 #import "TKGlobal.h"
 
 #define COVER_SPACING 70.0
@@ -167,7 +167,7 @@
 	
 	if([coverViews objectAtIndex:cnt] == [NSNull null]){
 		
-		TKCoverflowCoverView *cover = [self.dataSource coverflowView:self coverAtIndex:cnt];
+		VJNYChannelCoverFlowCellView *cover = [self.dataSource coverflowView:self coverAtIndex:cnt];
 		[coverViews replaceObjectAtIndex:cnt withObject:cover];
 		
 		CGRect r = cover.frame;
@@ -343,7 +343,7 @@
 
 
 #pragma mark Public Methods
-- (TKCoverflowCoverView *) coverAtIndex:(int)index{
+- (VJNYChannelCoverFlowCellView *) coverAtIndex:(int)index{
 	if([coverViews objectAtIndex:index] != [NSNull null]) return [coverViews objectAtIndex:index];
 	return nil;
 }
@@ -360,11 +360,11 @@
 	[self newrange];
 	[self animateToIndex:index animated:animated];
 }
-- (TKCoverflowCoverView*) dequeueReusableCoverView{
+- (VJNYChannelCoverFlowCellView*) dequeueReusableCoverView{
 	
 	if([yard count] < 1)  return nil;
 	
-	TKCoverflowCoverView *v = [yard lastObject];
+	VJNYChannelCoverFlowCellView *v = [yard lastObject];
 	v.layer.transform = CATransform3DIdentity;
 	[yard removeLastObject];
 

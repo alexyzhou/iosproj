@@ -1,6 +1,6 @@
 //
-//  TKCoverView.h
-//  Created by Devin Ross on 1/3/10.
+//  TKGlobal.m
+//  Created by Devin Ross on 7/25/09.
 //
 /*
  
@@ -28,28 +28,15 @@
  OTHER DEALINGS IN THE SOFTWARE.
  
  */
+#import "TKGlobal.h"
+
+@implementation TKGlobal
 
 
-#import <UIKit/UIKit.h>
-#import <QuartzCore/QuartzCore.h>
-/** 
- `TKCoverflowCoverView` objects are the main views for displaying covers in `TKCoverflowView`. 
- */
-@interface TKCoverflowCoverView : UIView {
-	float baseline;
-	
-	UIImageView *imageView;
-	UIImageView *reflected;
-	CAGradientLayer *gradientLayer;
++ (NSString*) fullBundlePath:(NSString*)bundlePath{
+	return [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:bundlePath];
 }
 
-/** The coverflow image. */
-@property (strong,nonatomic) UIImage *image;
 
-/** The gradient layer the will create the reflection below the coverflow image */
-@property (strong,nonatomic) CAGradientLayer *gradientLayer;
-
-/** The height of the image. This property will help coverflow adjust views to display images with different heights. */
-@property (assign,nonatomic) float baseline; // set this property for displaying images w/ different heights
 
 @end

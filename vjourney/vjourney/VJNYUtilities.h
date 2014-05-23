@@ -13,5 +13,9 @@
 +(UIAlertView*)alertViewWithProgress;
 +(void)showAlert:(NSString*)title andContent:(NSString*)content;
 +(void)showAlertWithNoTitle:(NSString*)content;
+
++(NSString*)channelCellIdentifier;
++(NSString*)channelPromoCellIdentifier;
++(NSString*)videoCellIdentifier;
 @end
 

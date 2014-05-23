@@ -41,7 +41,7 @@
             resultObj.response = [VJNYPOJOUser instance];
             
         }
-    } else if ([resultObj.action isEqualToString:@"channel/Latest"]) {
+    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             

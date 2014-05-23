@@ -9,8 +9,6 @@
 #import "VJNYChannelTableViewController.h"
 #import "VJNYWhatsNewViewController.h"
 
-NSString *const channelCellIdentifier = @"channelCell";
-
 @interface VJNYChannelTableViewController ()
 {
     NSMutableArray *_data;
@@ -82,14 +80,14 @@ NSString *const channelCellIdentifier = @"channelCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:channelCellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[VJNYUtilities channelCellIdentifier]];
     
     // Updated @ 2012-08-07
     // Sample Code without "cell check" message:
     // *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'UITableView dataSource must return a cell from tableView:cellForRowAtIndexPath:'
     //
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:channelCellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[VJNYUtilities channelCellIdentifier]];
         //cell.backgroundColor = [UIColor redColor];
     }
     

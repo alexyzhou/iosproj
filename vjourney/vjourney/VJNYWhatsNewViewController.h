@@ -7,15 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "VJNYBaseViewController.h"
-#import "VJNYChannelTableViewController.h"
 #import "VJNYVideoViewController.h"
+#import "TKCoverflowView.h"
+#import "MJRefresh.h"
+#import "VJNYPOJOChannel.h"
+#import "VJNYHTTPHelper.h"
+#import "VJNYPOJOHttpResult.h"
+#import "VJNYHTTPResultCode.h"
+#import "VJNYChannelTableViewCell.h"
+#import "VJNYPromoChannelTableViewCell.h"
+#import "VJNYChannelCoverFlowCellView.h"
+#import "VJNYDataCache.h"
 
-@interface VJNYWhatsNewViewController : VJNYBaseViewController<UITableViewDelegate> {
-    VJNYChannelTableViewController* _channelController;
-}
-@property (weak, nonatomic) IBOutlet UIView *specialEventView;
-@property (weak, nonatomic) IBOutlet UIView *channelListView;
+@interface VJNYWhatsNewViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,MJRefreshBaseViewDelegate, ASIHTTPRequestDelegate,VJNYDataCacheDelegate,TKCoverflowViewDelegate,TKCoverflowViewDataSource>
+
+@property (weak, nonatomic) IBOutlet UITableView *channelView;
+
 - (IBAction)searchChannelAction:(id)sender;
 
 +(VJNYWhatsNewViewController*)instance;

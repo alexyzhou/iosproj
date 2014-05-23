@@ -33,7 +33,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @protocol TKCoverflowViewDelegate,TKCoverflowViewDataSource;
-@class TKCoverflowCoverView;
+@class VJNYChannelCoverFlowCellView;
 
 /**
 `TKCoverflowView` imitates the coverflow you’d find in the iPod/Music app on the iPhone OS. Coverflow displays `TKCoverflowView` objects. This view functions similar to the `UITableView` where covers that are off screen aren’t loaded until need. Thus, similar to the tableview, you can dequeue a cover view and hand it back to Coverflow View using the data source.
@@ -83,13 +83,13 @@
 
 
 /** Returns an usued coverflow view. If there are no reusable views, it will return nil. */
-- (TKCoverflowCoverView*) dequeueReusableCoverView; // like a tableview
+- (VJNYChannelCoverFlowCellView*) dequeueReusableCoverView; // like a tableview
 
 /** Returns the cover object corresponding to that index.
  @param index Index of the cover object.
  @return The cover object at the index. If the cover is outside the visible range, it will return nil.
  */
-- (TKCoverflowCoverView*) coverAtIndex:(int)index; // returns nil if cover is outside active range
+- (VJNYChannelCoverFlowCellView*) coverAtIndex:(int)index; // returns nil if cover is outside active range
 
 - (int) indexOfFrontCoverView; // deprecated
 
@@ -130,5 +130,5 @@
  @param index The index for the coverflow cover.
  @return A `TKCoverflowCoverView` view that is either newly created or from the coverflow's reusable queue.
  */
-- (TKCoverflowCoverView*) coverflowView:(TKCoverflowView*)coverflowView coverAtIndex:(int)index;
+- (VJNYChannelCoverFlowCellView*) coverflowView:(TKCoverflowView*)coverflowView coverAtIndex:(int)index;
 @end

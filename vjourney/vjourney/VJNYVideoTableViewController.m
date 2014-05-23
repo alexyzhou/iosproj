@@ -9,8 +9,6 @@
 #import "VJNYVideoTableViewController.h"
 #import "VJNYVideoTableViewCell.h"
 
-NSString *const videoCellIdentifier = @"videoCell";
-
 @interface VJNYVideoTableViewController ()
 {
     NSMutableArray *_data;
@@ -84,7 +82,7 @@ NSString *const videoCellIdentifier = @"videoCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    VJNYVideoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:videoCellIdentifier];
+    VJNYVideoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[VJNYUtilities videoCellIdentifier]];
     
     // Updated @ 2012-08-07
     // Sample Code without "cell check" message:
