@@ -12,6 +12,7 @@
 #import "VJNYPOJOChannel.h"
 #import "VJNYPOJOVideo.h"
 #import "VJNYHTTPResultCode.h"
+#import "VJNYHTTPHelper.h"
 
 @interface VJNYPOJOHttpResult : NSObject
 

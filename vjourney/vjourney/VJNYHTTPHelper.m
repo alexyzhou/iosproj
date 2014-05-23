@@ -10,8 +10,13 @@
 
 @implementation VJNYHTTPHelper
 
+static NSString* _remoteIpAddr = @"175.159.9.176:8080";
+
 +(NSURL*)connectionUrlByAppendingRequest:(NSString*)request {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"http://192.168.1.101:8080/vjourney-service-webapp/api/%@",request]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/vjourney-service-webapp/api/%@",_remoteIpAddr,request]];
+}
++(NSString*)pathUrlPrefix {
+    return [NSString stringWithFormat:@"http://%@/vjourney-service-webapp/",_remoteIpAddr];
 }
 
 +(NSString*)mediaPlayCodeWithURL:(NSString*)url andWidth:(NSInteger)width andHeight:(NSInteger)height {

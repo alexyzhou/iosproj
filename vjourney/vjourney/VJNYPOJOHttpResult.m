@@ -35,13 +35,13 @@
             
             [VJNYPOJOUser instance].uid = [(NSNumber*)[userDic objectForKey:@"id"] intValue];
             [VJNYPOJOUser instance].name = [userDic objectForKey:@"name"];
-            [VJNYPOJOUser instance].avatar_url = [userDic objectForKey:@"avatars_url"];
+            [VJNYPOJOUser instance].avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
             [VJNYPOJOUser instance].token = [userDic objectForKey:@"token"];
             
             resultObj.response = [VJNYPOJOUser instance];
             
         }
-    } else if ([resultObj.action isEqualToString:@"channel/Hot"]) {
+    } else if ([resultObj.action isEqualToString:@"channel/Latest"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             
@@ -61,6 +61,8 @@
                 channel.creatorUserId = [(NSNumber*)[objDic objectForKey:@"creatorUserId"] intValue];
                 channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"createTime"] intValue]];
                 channel.videoCount = [(NSNumber*)[objDic objectForKey:@"videoCount"] intValue];
+                channel.promotion = [[objDic objectForKey:@"promotion"] boolValue];
+                channel.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"coverUrl"]];
                 
                 [resultObj.response addObject:channel];
             }
@@ -81,11 +83,12 @@
                 
                 video.vid = [(NSNumber*)[objDic objectForKey:@"id"] intValue];
                 video.description = [objDic objectForKey:@"description"];
-                video.url = [objDic objectForKey:@"url"];
+                video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"url"]];
                 video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"time"] intValue]];
-                video.user_id = [(NSNumber*)[objDic objectForKey:@"user_id"] intValue];
+                video.userId = [(NSNumber*)[objDic objectForKey:@"user_id"] intValue];
                 video.like = [(NSNumber*)[objDic objectForKey:@"like"] intValue];
-                video.channel_id= [(NSNumber*)[objDic objectForKey:@"channel_id"] intValue];
+                video.channelId= [(NSNumber*)[objDic objectForKey:@"channel_id"] intValue];
+                video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"coverUrl"]];
                 
                 [resultObj.response addObject:video];
             }

@@ -15,5 +15,7 @@
 @synthesize creatorUserId=_creatorUserId;
 @synthesize createTime=_createTime;
 @synthesize videoCount=_videoCount;
+@synthesize promotion=_promotion;
+@synthesize coverUrl=_coverUrl;
 
 @end

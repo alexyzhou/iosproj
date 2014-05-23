@@ -15,6 +15,5 @@
 #import "VJNYHTTPResultCode.h"
 
 @interface VJNYChannelTableViewController : UITableViewController<MJRefreshBaseViewDelegate, ASIHTTPRequestDelegate>
-@property(nonatomic) NSInteger fetchMode;
 @property(nonatomic,weak) UIViewController* parent;
 @end

@@ -14,7 +14,8 @@
 @synthesize description=_description;
 @synthesize url=_url;
 @synthesize time=_time;
-@synthesize user_id=_user_id;
+@synthesize userId=_userId;
 @synthesize like=_like;
-@synthesize channel_id=_channel_id;
+@synthesize channelId=_channelId;
+@synthesize coverUrl=_coverUrl;
 @end

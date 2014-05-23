@@ -21,7 +21,6 @@ NSString *const channelCellIdentifier = @"channelCell";
 @end
 
 @implementation VJNYChannelTableViewController
-@synthesize fetchMode=_fetchMode;
 @synthesize parent=_parent;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -168,7 +167,7 @@ NSString *const channelCellIdentifier = @"channelCell";
 {
     if (refreshView == _header) {
         //reload Data
-        [VJNYHTTPHelper getJSONRequest:@"channel/hot" WithParameters:nil AndDelegate:self];
+        [VJNYHTTPHelper getJSONRequest:@"channel/latest" WithParameters:nil AndDelegate:self];
     } else if (refreshView == _footer) {
         [self performSelector:@selector(doneWithView:) withObject:refreshView afterDelay:2.0];
     }
@@ -220,7 +219,7 @@ NSString *const channelCellIdentifier = @"channelCell";
     // 当以文本形式读取返回内容时用这个方法
     NSString *responseString = [request responseString];
     VJNYPOJOHttpResult* result = [VJNYPOJOHttpResult resultFromResponseString:responseString];
-    if ([result.action isEqualToString:@"channel/Hot"]) {
+    if ([result.action isEqualToString:@"channel/Latest"]) {
         if (result.result == Success) {
             _data = result.response;
             [self doneWithView:_header];

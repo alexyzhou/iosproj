@@ -22,7 +22,6 @@
         // Custom initialization
     }
     return self;
-    //test
 }
 
 - (void)viewDidLoad
@@ -136,7 +135,7 @@
     if (videoUrlToUpload == NULL) {
         return;
     } else {
-        ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"upload"]];
+        ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"add/video"]];
         
         NSLog(@"%@",[videoUrlToUpload absoluteString]);
         

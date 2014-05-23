@@ -12,7 +12,7 @@
 
 @property(nonatomic) NSInteger uid;
 @property(nonatomic, strong) NSString* name;
-@property(nonatomic, strong) NSString* avatar_url;
+@property(nonatomic, strong) NSString* avatarUrl;
 @property(nonatomic, strong) NSString* token;
 
 +(VJNYPOJOUser*)instance;

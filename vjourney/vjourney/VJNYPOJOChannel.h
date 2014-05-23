@@ -16,5 +16,7 @@
 @property(nonatomic) NSInteger creatorUserId;
 @property(nonatomic, strong) NSDate* createTime;
 @property(nonatomic) NSInteger videoCount;
+@property(nonatomic) BOOL promotion;
+@property(nonatomic, strong) NSString* coverUrl;
 
 @end

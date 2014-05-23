@@ -14,7 +14,7 @@ static VJNYPOJOUser* _instance;
 
 @synthesize uid=_uid;
 @synthesize name=_name;
-@synthesize avatar_url=_avatar_url;
+@synthesize avatarUrl=_avatarUrl;
 @synthesize token=_token;
 
 +(VJNYPOJOUser*)instance {

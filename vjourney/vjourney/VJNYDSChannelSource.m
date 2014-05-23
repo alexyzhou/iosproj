@@ -22,7 +22,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"%d",[_data count]);
+    NSLog(@"%lu",(unsigned long)[_data count]);
     return [_data count];
 }
 
