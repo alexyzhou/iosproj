@@ -19,6 +19,7 @@
     NSMutableDictionary *_userData;
     NSMutableArray *_videoData;
     NSDateFormatter *_dateFormatter;
+    MPMoviePlayerController *_videoPlayer;
     BOOL _isDragging;
 }
 - (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier;
@@ -56,10 +57,16 @@
             NSLog(@"couldn't find index path");
         } else {
             // get the cell at indexPath (the one you long pressed)
+            VJNYVideoCardViewCell* cell = (VJNYVideoCardViewCell*)[self.videoCollectionView cellForItemAtIndexPath:indexPath];
+            UIImage* imageToShow = [VJNYUtilities imageWithView7:cell];
+            UIImageView* imageView = [[UIImageView alloc] initWithFrame:self.videoPlayerView.bounds];
+            imageView.contentMode = UIViewContentModeScaleAspectFit;
+            [imageView setClipsToBounds:YES];
+            imageView.image = imageToShow;
+            [self.videoPlayerView addSubview:imageView];
+            //VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row];
             
-            VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row];
-            
-            [self playVideo:video.url];
+            //[self playVideo:video.url];
             
         }
     }
@@ -69,21 +76,27 @@
 
 - (void)playVideo:(NSString*)url {
     NSLog(@"Video Playback: %@",url);
-    // 3 - Play the video
-    MPMoviePlayerViewController *theMovie = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL URLWithString:url]];
-    [self presentMoviePlayerViewControllerAnimated:theMovie];
+    // 1 - Play the video
+    _videoPlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:url]];
+    // 2 - Prepare the Param
+    _videoPlayer.view.frame = self.videoPlayerView.bounds;
+    _videoPlayer.controlStyle = MPMovieControlStyleNone;
+    [_videoPlayer setScalingMode:MPMovieScalingModeFill];
+    [self.videoPlayerView addSubview:_videoPlayer.view];
+    [_videoPlayer play];
+    
     // 4 - Register for the playback finished notification
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myMovieFinishedCallback:)
-                                                 name:MPMoviePlayerPlaybackDidFinishNotification object:theMovie];
+                                                 name:MPMoviePlayerPlaybackDidFinishNotification object:_videoPlayer];
     _isDragging = false;
 }
 
 // When the movie is done, release the controller.
 -(void)myMovieFinishedCallback:(NSNotification*)aNotification {
-    [self dismissMoviePlayerViewControllerAnimated];
-    MPMoviePlayerController* theMovie = [aNotification object];
+    NSLog(@"video play finished");
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:MPMoviePlayerPlaybackDidFinishNotification object:theMovie];
+                                                    name:MPMoviePlayerPlaybackDidFinishNotification object:_videoPlayer];
+    //_videoPlayer = nil;
 }
 
 -(void)initWithChannelID:(NSInteger)channelID andName:(NSString*)name {

@@ -20,5 +20,7 @@
 +(NSString*)videoCellIdentifier;
 
 +(NSString*)segueShowVideoPageByChannel;
++ (UIImage *) imageWithView:(UIView *)view;
++ (UIImage *) imageWithView7:(UIView *)view;
 @end
 

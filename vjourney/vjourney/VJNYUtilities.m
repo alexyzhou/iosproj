@@ -7,6 +7,7 @@
 //
 
 #import "VJNYUtilities.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation VJNYUtilities
 
@@ -36,6 +37,25 @@ static UIAlertView* _progressAlert = NULL;
 +(void)showAlertWithNoTitle:(NSString*)content {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:content message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alert show];
+}
+
+#pragma mark - UIImage Helper
++ (UIImage *) imageWithView:(UIView *)view {
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return img;
+}
++ (UIImage *) imageWithView7:(UIView *)view {
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 1.5f);
+    [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:NO];
+    UIImage * snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return snapshotImage;
 }
 
 #pragma mark - Const Values
