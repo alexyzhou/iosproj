@@ -67,7 +67,7 @@
                 [resultObj.response addObject:channel];
             }
         }
-    } else if ([resultObj.action isEqualToString:@"video/Latest"]) {
+    } else if ([resultObj.action isEqualToString:@"videoAndUser/Latest"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             
@@ -77,20 +77,31 @@
             
             for (NSString* objStr in userDic) {
                 VJNYPOJOVideo* video = [[VJNYPOJOVideo alloc] init];
-                //NSLog(@"%@",objStr);
+                VJNYPOJOUser* user = [[VJNYPOJOUser alloc] init];
                 
                 NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
                 
-                video.vid = [(NSNumber*)[objDic objectForKey:@"id"] intValue];
-                video.description = [objDic objectForKey:@"description"];
-                video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"url"]];
-                video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"time"] intValue]];
-                video.userId = [(NSNumber*)[objDic objectForKey:@"user_id"] intValue];
-                video.like = [(NSNumber*)[objDic objectForKey:@"like"] intValue];
-                video.channelId= [(NSNumber*)[objDic objectForKey:@"channel_id"] intValue];
-                video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"coverUrl"]];
+                NSString* userStr = [objDic objectForKey:@"user"];
+                NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                NSString* videoStr = [objDic objectForKey:@"video"];
+                NSDictionary * videoDic = [NSJSONSerialization JSONObjectWithData:[videoStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
                 
-                [resultObj.response addObject:video];
+                
+                video.vid = [(NSNumber*)[videoDic objectForKey:@"id"] intValue];
+                video.description = [videoDic objectForKey:@"description"];
+                video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"url"]];
+                video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[videoDic objectForKey:@"time"] intValue]];
+                video.userId = [(NSNumber*)[videoDic objectForKey:@"userId"] intValue];
+                video.like = [(NSNumber*)[videoDic objectForKey:@"like"] intValue];
+                video.channelId= [(NSNumber*)[videoDic objectForKey:@"channelId"] intValue];
+                video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
+                
+                user.uid = [(NSNumber*)[userDic objectForKey:@"id"] intValue];
+                user.name = [userDic objectForKey:@"name"];
+                user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
+                user.token = [userDic objectForKey:@"token"];
+                
+                [resultObj.response addObject:[NSArray arrayWithObjects:user, video, nil]];
             }
         }
     }

@@ -20,8 +20,4 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *channelView;
 
-- (IBAction)searchChannelAction:(id)sender;
-
--(void)enterVideoPageByChannelID:(NSInteger)channelID AndTitle:(NSString*)name;
-
 @end

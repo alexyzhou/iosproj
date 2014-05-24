@@ -139,7 +139,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
         NSString* imageUrl = ((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row-1]).coverUrl;
         UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
         if (imageData == nil) {
-            [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:indexPath IsPromo:NO];
+            [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:indexPath AndMode:0];
             cell.image.image = nil;
         } else {
             cell.image.image = imageData;
@@ -164,12 +164,12 @@ static VJNYWhatsNewViewController* _instance = NULL;
 }
 
 #pragma mark - Cache Handler
-- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier IsPromo:(BOOL)isPromo {
+- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode {
     
-    if (isPromo) {
+    if (mode == 1) {
         VJNYChannelCoverFlowCellView *cover = [coverflow coverAtIndex:[(NSNumber*)identifier intValue]];
         cover.image = data;
-    } else {
+    } else if (mode == 0) {
         NSIndexPath* path = (NSIndexPath*)identifier;
         if ([self.channelView.indexPathsForVisibleRows indexOfObject:path] == NSNotFound)
         {
@@ -288,7 +288,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     NSString* imageUrl = ((VJNYPOJOChannel*)[_promoChannelData objectAtIndex:index]).coverUrl;
     UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
     if (imageData == nil) {
-        [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:[NSNumber numberWithInt:index] IsPromo:YES];
+        [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:[NSNumber numberWithInt:index] AndMode:1];
         cover.image = nil;
     } else {
         cover.image = imageData;

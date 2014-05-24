@@ -122,7 +122,7 @@
     NSString* imageUrl = channel.coverUrl;
     UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
     if (imageData == nil) {
-        [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:indexPath IsPromo:NO];
+        [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:indexPath AndMode:0];
         cell.image.image = nil;
     } else {
         cell.image.image = imageData;
@@ -149,8 +149,8 @@
 }
 
 #pragma mark - Cache Handler
-- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier IsPromo:(BOOL)isPromo {
-    assert(isPromo==NO);
+- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode {
+    assert(mode==0);
     
     NSIndexPath* path = (NSIndexPath*)identifier;
     if ([self.channelView.indexPathsForVisibleRows indexOfObject:path] == NSNotFound)
@@ -262,17 +262,6 @@
     return YES;
 }
 
-#pragma mark - Button Event Handler
-
-- (IBAction)searchChannelAction:(id)sender {
-}
-
 #pragma mark - custom Methods
-
--(void)enterVideoPageByChannelID:(NSInteger)channelID AndTitle:(NSString*)name {
-    VJNYVideoViewController *videoViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"videoListPage"];
-    [videoViewController initWithChannelID:channelID andName:name];
-    [self.navigationController pushViewController:videoViewController animated:YES];
-}
 
 @end

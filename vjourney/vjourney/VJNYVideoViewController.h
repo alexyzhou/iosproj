@@ -7,14 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "VJNYVideoTableViewController.h"
+#import "VJNYDataCache.h"
+#import "VJNYHTTPHelper.h"
+#import "VJNYPOJOHttpResult.h"
+#import "VJNYHTTPResultCode.h"
 
-@interface VJNYVideoViewController : UIViewController {
+@interface VJNYVideoViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate> {
     NSInteger _channelID;
     NSString* _channelName;
-    VJNYVideoTableViewController* _videoController;
 }
-@property (weak, nonatomic) IBOutlet UIView *videoListView;
+@property (weak, nonatomic) IBOutlet UICollectionView *videoCollectionView;
+@property (weak, nonatomic) IBOutlet UIView *videoPlayerView;
+@property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressRecognizer;
+
+- (IBAction)longPressHandler:(id)sender;
 
 -(void)initWithChannelID:(NSInteger)channelID andName:(NSString*)name;
 

@@ -55,6 +55,7 @@ static const int maxCacheCount = 20;
 #pragma mark - Image Load
 
 -(UIImage*)loadImageInBackground:(NSString *)url {
+    //NSLog(@"VJNYCache load image:%@",url);
     NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
     UIImage* imageData = [UIImage imageWithData:data];
     [_dataCache setObject:imageData forKey:url];
@@ -66,6 +67,7 @@ static const int maxCacheCount = 20;
             [_dataCache removeObjectForKey:urlToRemove];
         }
     }
+    //NSLog(@"Finished loading Image");
     return imageData;
 }
 
@@ -77,21 +79,21 @@ static const int maxCacheCount = 20;
     [self performSelectorOnMainThread:@selector(respondToDelegate:) withObject:[NSArray arrayWithObjects:imageData, url, nil] waitUntilDone:YES];
 }
 
--(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier IsPromo:(BOOL)isPromo {
+-(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier AndMode:(int)mode {
     NSMutableArray* _requestArr = [_dataDelegateQueue objectForKey:url];
     if (_requestArr != nil) {
         [_requestArr addObject:delegate];
         [[_dataIdentifierQueue objectForKey:url] addObject:identifier];
-        [[_requestIsPromo objectForKey:url] addObject:[NSNumber numberWithBool:isPromo]];
+        [[_requestIsPromo objectForKey:url] addObject:[NSNumber numberWithInt:mode]];
     } else {
         _requestArr = [[NSMutableArray alloc] initWithObjects:delegate, nil];
         NSMutableArray* _requestIdArr = [[NSMutableArray alloc] initWithObjects:identifier, nil];
-        NSMutableArray* _requestIsPromoArr = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithBool:isPromo], nil];
+        NSMutableArray* _requestIsPromoArr = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithInt:mode], nil];
         [_dataDelegateQueue setObject:_requestArr forKey:url];
         [_dataIdentifierQueue setObject:_requestIdArr forKey:url];
         [_requestIsPromo setObject:_requestIsPromoArr forKey:url];
         [self performSelectorInBackground:@selector(loadImage:) withObject:url];
-        NSLog(@"request init");
+        //NSLog(@"request init");
     }
 }
 
@@ -106,9 +108,9 @@ static const int maxCacheCount = 20;
     for (int i = 0; i < [delegateArr count]; i++) {
         id identifier = [identifierArr objectAtIndex:i];
         id<VJNYDataCacheDelegate> delegate = (id<VJNYDataCacheDelegate>)[delegateArr objectAtIndex:i];
-        BOOL isPromo = [((NSNumber*)[isPromoArr objectAtIndex:i]) boolValue];
-        if ([delegate respondsToSelector:@selector(dataRequestFinished:WithIdentifier:IsPromo:)]) {
-            [delegate dataRequestFinished:data WithIdentifier:identifier IsPromo:isPromo];
+        int isPromo = [((NSNumber*)[isPromoArr objectAtIndex:i]) intValue];
+        if ([delegate respondsToSelector:@selector(dataRequestFinished:WithIdentifier:AndMode:)]) {
+            [delegate dataRequestFinished:data WithIdentifier:identifier AndMode:isPromo];
         }
         
     }

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ASIHTTPRequest.h"
+#import "ASIHTTPRequestDelegate.h"
 
 @interface VJNYHTTPHelper : NSObject
 +(NSURL*)connectionUrlByAppendingRequest:(NSString*)request;

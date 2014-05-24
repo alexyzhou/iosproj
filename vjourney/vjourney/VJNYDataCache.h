@@ -14,7 +14,7 @@
 
 +(VJNYDataCache*)instance;
 -(UIImage*)dataByURL:(NSString*)url;
--(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier IsPromo:(BOOL)isPromo;
+-(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier AndMode:(int)mode;
 @end
 
 @protocol VJNYDataCacheDelegate <NSObject>
@@ -24,5 +24,5 @@
  @param index The index for the coverflow cover.
  @return A `TKCoverflowCoverView` view that is either newly created or from the coverflow's reusable queue.
  */
-- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier IsPromo:(BOOL)isPromo;
+- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode;
 @end
