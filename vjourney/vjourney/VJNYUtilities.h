@@ -16,6 +16,9 @@
 
 +(NSString*)channelCellIdentifier;
 +(NSString*)channelPromoCellIdentifier;
++(NSString*)channelSearchCellIdentifier;
 +(NSString*)videoCellIdentifier;
+
++(NSString*)segueShowVideoPageByChannel;
 @end
 

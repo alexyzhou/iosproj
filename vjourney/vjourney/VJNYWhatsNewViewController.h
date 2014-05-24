@@ -26,6 +26,5 @@
 - (IBAction)searchChannelAction:(id)sender;
 
 +(VJNYWhatsNewViewController*)instance;
--(void)enterVideoPageByChannelID:(NSInteger)channelID AndTitle:(NSString*)name;
 
 @end

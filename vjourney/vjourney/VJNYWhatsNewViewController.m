@@ -74,7 +74,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     // Dispose of any resources that can be recreated.
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -82,8 +82,14 @@ static VJNYWhatsNewViewController* _instance = NULL;
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:[VJNYUtilities segueShowVideoPageByChannel]]) {
+        VJNYVideoViewController *videoViewController = segue.destinationViewController;
+        NSIndexPath* indexPath = [self.channelView indexPathForSelectedRow];
+        VJNYPOJOChannel* channel = [_channelData objectAtIndex:indexPath.row-1];
+        [videoViewController initWithChannelID:channel.cid andName:channel.name];
+    }
 }
-*/
+
 
 #pragma mark - Table view data source
 
@@ -130,14 +136,15 @@ static VJNYWhatsNewViewController* _instance = NULL;
         }
         
         // Set up the cell...
-        NSString* imageUrl = ((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row]).coverUrl;
+        NSString* imageUrl = ((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row-1]).coverUrl;
         UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
         if (imageData == nil) {
-            [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:indexPath];
+            [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:indexPath IsPromo:NO];
+            cell.image.image = nil;
         } else {
             cell.image.image = imageData;
         }
-        cell.title.text = ((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row]).name;
+        cell.title.text = ((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row-1]).name;
         return cell;
     }
 }
@@ -152,27 +159,27 @@ static VJNYWhatsNewViewController* _instance = NULL;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Navigation logic may go here. Create and push another view controller.
-    
-    [[VJNYWhatsNewViewController instance] enterVideoPageByChannelID:((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row]).cid AndTitle:((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row]).name];
         
     [self.channelView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark - Cache Handler
-- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier {
-    NSIndexPath* path = (NSIndexPath*)identifier;
-    if ([self.channelView.indexPathsForVisibleRows indexOfObject:path] == NSNotFound)
-    {
-        // This indeed is an indexPath no longer visible
-        // Do something to this non-visible cell...
+- (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier IsPromo:(BOOL)isPromo {
+    
+    if (isPromo) {
+        VJNYChannelCoverFlowCellView *cover = [coverflow coverAtIndex:[(NSNumber*)identifier intValue]];
+        cover.image = data;
     } else {
-        VJNYChannelTableViewCell* cell = (VJNYChannelTableViewCell*)[self.channelView cellForRowAtIndexPath:path];
-        cell.image.image = data;
+        NSIndexPath* path = (NSIndexPath*)identifier;
+        if ([self.channelView.indexPathsForVisibleRows indexOfObject:path] == NSNotFound)
+        {
+            // This indeed is an indexPath no longer visible
+            // Do something to this non-visible cell...
+        } else {
+            VJNYChannelTableViewCell* cell = (VJNYChannelTableViewCell*)[self.channelView cellForRowAtIndexPath:path];
+            cell.image.image = data;
+        }
     }
-}
-- (void) dataPromoRequestFinished:(UIImage*)data WithIdentifier:(id)identifier {
-    VJNYChannelCoverFlowCellView *cover = [coverflow coverAtIndex:[(NSNumber*)identifier intValue]];
-    cover.image = data;
 }
 
 #pragma mark - 刷新控件的代理方法
@@ -281,7 +288,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     NSString* imageUrl = ((VJNYPOJOChannel*)[_promoChannelData objectAtIndex:index]).coverUrl;
     UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
     if (imageData == nil) {
-        [[VJNYDataCache instance] requestPromoDataByURL:imageUrl WithDelegate:self AndIdentifier:[NSNumber numberWithInt:index]];
+        [[VJNYDataCache instance] requestDataByURL:imageUrl WithDelegate:self AndIdentifier:[NSNumber numberWithInt:index] IsPromo:YES];
         cover.image = nil;
     } else {
         cover.image = imageData;
@@ -310,12 +317,6 @@ static VJNYWhatsNewViewController* _instance = NULL;
 }
 
 #pragma mark - custom Methods
-
--(void)enterVideoPageByChannelID:(NSInteger)channelID AndTitle:(NSString*)name {
-    VJNYVideoViewController *videoViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"videoListPage"];
-    [videoViewController initWithChannelID:channelID andName:name];
-    [self.navigationController pushViewController:videoViewController animated:YES];
-}
 
 
 @end

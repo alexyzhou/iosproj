@@ -41,6 +41,7 @@
         _title.textColor = [UIColor whiteColor];
         _title.layer.shadowOffset = CGSizeMake(2, 2);
         _title.textAlignment = NSTextAlignmentCenter;
+        _title.backgroundColor = [UIColor clearColor];
         
         //imageView.layer.shadowOffset = CGSizeMake(2, 2);
         //imageView.layer.shadowRadius = 2;
@@ -49,9 +50,12 @@
         [self addSubview:imageView];
         [self addSubview:_title];
         
-        _loadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((frame.size.width-titleWidth)/2, (frame.size.height-titleHeight)/2, titleWidth, titleHeight)];
-        _loadingIndicator.alpha = 1.0f;
-        //[self addSubview:_loadingIndicator];
+        _loadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((frame.size.width-50)/2, (frame.size.height-50)/2, 50, 50)];
+        [_loadingIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+        [self addSubview:_loadingIndicator];
+        
+        [self.layer setBorderColor:[[UIColor lightGrayColor] CGColor]];
+        [self.layer setBorderWidth:1.0f];
     }
     return self;
 }
@@ -65,15 +69,15 @@
     
     if (img == nil) {
         imageView.alpha = 0.0f;
-        _loadingIndicator.alpha = 0.0f;
+        _loadingIndicator.alpha = 1.0f;
         [_loadingIndicator startAnimating];
-        [self addSubview:_loadingIndicator];
+        [self bringSubviewToFront:_loadingIndicator];
     } else {
         UIImage *image = img;
         
-        _loadingIndicator.alpha = 1.0f;
+        _loadingIndicator.alpha = 0.0f;
         [_loadingIndicator stopAnimating];
-        [_loadingIndicator removeFromSuperview];
+        //[_loadingIndicator removeFromSuperview];
         
         /*float w = image.size.width;
          float h = image.size.height;
@@ -85,7 +89,7 @@
         //imageView.frame = CGRectMake(0, y, w, h);
         imageView.image = image;
         
-        [UIView animateWithDuration:0.2 animations:^{
+        [UIView animateWithDuration:0.1 animations:^{
             imageView.alpha = 1.0f;
         }];
         

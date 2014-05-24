@@ -49,5 +49,12 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)videoCellIdentifier {
     return @"videoCell";
 }
++(NSString*)channelSearchCellIdentifier {
+    return @"channelSearchCell";
+}
+
++(NSString*)segueShowVideoPageByChannel {
+    return @"segueShowVideoPageByChannel";
+}
 
 @end

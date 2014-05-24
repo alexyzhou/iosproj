@@ -7,7 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VJNYVideoViewController.h"
+#import "MJRefresh.h"
+#import "VJNYPOJOChannel.h"
+#import "VJNYHTTPHelper.h"
+#import "VJNYPOJOHttpResult.h"
+#import "VJNYHTTPResultCode.h"
+#import "VJNYChannelTableViewCell.h"
+#import "VJNYDataCache.h"
 
-@interface VJNYFollowViewController : UIViewController
+@interface VJNYFollowViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,MJRefreshBaseViewDelegate, ASIHTTPRequestDelegate,VJNYDataCacheDelegate>
+
+@property (weak, nonatomic) IBOutlet UITableView *channelView;
+
+- (IBAction)searchChannelAction:(id)sender;
+
+-(void)enterVideoPageByChannelID:(NSInteger)channelID AndTitle:(NSString*)name;
 
 @end

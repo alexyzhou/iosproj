@@ -11,12 +11,13 @@
 @interface VJNYDataCache ()
 {
     NSMutableDictionary* _dataCache;
+    NSMutableDictionary* _dataDelegateQueue;
+    NSMutableDictionary* _dataIdentifierQueue;
+    NSMutableDictionary* _requestIsPromo;
     NSMutableArray* _visitQueue;
 }
--(void)loadImage:(NSArray*)params;
--(void)loadImagePromo:(NSArray*)params;
+-(void)loadImage:(NSString*)url;
 -(void)respondToDelegate:(NSArray*)params;
--(void)respondPromoToDelegate:(NSArray*)params;
 -(UIImage*)loadImageInBackground:(NSString*)url;
 @end
 
@@ -31,6 +32,20 @@ static const int maxCacheCount = 20;
     }
     return _instance;
 }
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _dataCache = [[NSMutableDictionary alloc] init];
+        _dataDelegateQueue = [[NSMutableDictionary alloc] init];
+        _dataIdentifierQueue = [[NSMutableDictionary alloc] init];
+        _requestIsPromo = [[NSMutableDictionary alloc] init];
+        _visitQueue = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
 -(UIImage*)dataByURL:(NSString*)url {
     [_visitQueue removeObject:url];
     [_visitQueue addObject:url];
@@ -54,49 +69,52 @@ static const int maxCacheCount = 20;
     return imageData;
 }
 
--(void)loadImage:(NSArray*)params {
-    
-    NSString* url = [params objectAtIndex:0];
+-(void)loadImage:(NSString*)url {
+
     UIImage* imageData = [self loadImageInBackground:url];
     
-    id identifier = [params objectAtIndex:1];
-    id<VJNYDataCacheDelegate> delegate = (id<VJNYDataCacheDelegate>)[params objectAtIndex:2];
     // Image retrieved, call main thread method to update image, passing it the downloaded UIImage
-    [self performSelectorOnMainThread:@selector(respondToDelegate:) withObject:[NSArray arrayWithObjects:imageData, identifier, delegate, nil] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(respondToDelegate:) withObject:[NSArray arrayWithObjects:imageData, url, nil] waitUntilDone:YES];
 }
 
--(void)loadImagePromo:(NSArray *)params {
-    NSString* url = [params objectAtIndex:0];
-    UIImage* imageData = [self loadImageInBackground:url];
-    
-    id identifier = [params objectAtIndex:1];
-    id<VJNYDataCacheDelegate> delegate = (id<VJNYDataCacheDelegate>)[params objectAtIndex:2];
-    // Image retrieved, call main thread method to update image, passing it the downloaded UIImage
-    [self performSelectorOnMainThread:@selector(respondPromoToDelegate:) withObject:[NSArray arrayWithObjects:imageData, identifier, delegate, nil] waitUntilDone:YES];
-}
-
--(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier {
-    [self performSelectorInBackground:@selector(loadImage:) withObject:[NSArray arrayWithObjects:url,identifier,delegate, nil]];
-}
--(void)requestPromoDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier {
-    [self performSelectorInBackground:@selector(loadImagePromo:) withObject:[NSArray arrayWithObjects:url,identifier,delegate, nil]];
+-(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier IsPromo:(BOOL)isPromo {
+    NSMutableArray* _requestArr = [_dataDelegateQueue objectForKey:url];
+    if (_requestArr != nil) {
+        [_requestArr addObject:delegate];
+        [[_dataIdentifierQueue objectForKey:url] addObject:identifier];
+        [[_requestIsPromo objectForKey:url] addObject:[NSNumber numberWithBool:isPromo]];
+    } else {
+        _requestArr = [[NSMutableArray alloc] initWithObjects:delegate, nil];
+        NSMutableArray* _requestIdArr = [[NSMutableArray alloc] initWithObjects:identifier, nil];
+        NSMutableArray* _requestIsPromoArr = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithBool:isPromo], nil];
+        [_dataDelegateQueue setObject:_requestArr forKey:url];
+        [_dataIdentifierQueue setObject:_requestIdArr forKey:url];
+        [_requestIsPromo setObject:_requestIsPromoArr forKey:url];
+        [self performSelectorInBackground:@selector(loadImage:) withObject:url];
+        NSLog(@"request init");
+    }
 }
 
 -(void)respondToDelegate:(NSArray*)params {
     UIImage* data = [params objectAtIndex:0];
-    id identifier = [params objectAtIndex:1];
-    id<VJNYDataCacheDelegate> delegate = (id<VJNYDataCacheDelegate>)[params objectAtIndex:2];
-    if ([delegate respondsToSelector:@selector(dataRequestFinished:WithIdentifier:)]) {
-        [delegate dataRequestFinished:data WithIdentifier:identifier];
+    NSString* url = [params objectAtIndex:1];
+    
+    NSMutableArray *delegateArr = [_dataDelegateQueue objectForKey:url];
+    NSMutableArray *identifierArr = [_dataIdentifierQueue objectForKey:url];
+    NSMutableArray *isPromoArr = [_requestIsPromo objectForKey:url];
+    
+    for (int i = 0; i < [delegateArr count]; i++) {
+        id identifier = [identifierArr objectAtIndex:i];
+        id<VJNYDataCacheDelegate> delegate = (id<VJNYDataCacheDelegate>)[delegateArr objectAtIndex:i];
+        BOOL isPromo = [((NSNumber*)[isPromoArr objectAtIndex:i]) boolValue];
+        if ([delegate respondsToSelector:@selector(dataRequestFinished:WithIdentifier:IsPromo:)]) {
+            [delegate dataRequestFinished:data WithIdentifier:identifier IsPromo:isPromo];
+        }
+        
     }
-}
--(void)respondPromoToDelegate:(NSArray*)params {
-    UIImage* data = [params objectAtIndex:0];
-    id identifier = [params objectAtIndex:1];
-    id<VJNYDataCacheDelegate> delegate = (id<VJNYDataCacheDelegate>)[params objectAtIndex:2];
-    if ([delegate respondsToSelector:@selector(dataPromoRequestFinished:WithIdentifier:)]) {
-        [delegate dataPromoRequestFinished:data WithIdentifier:identifier];
-    }
+    
+    [_dataDelegateQueue removeObjectForKey:url];
+    [_dataIdentifierQueue removeObjectForKey:url];
 }
 
 @end
