@@ -13,6 +13,7 @@
 @property(nonatomic) NSInteger vid;
 @property(nonatomic) NSInteger userId;
 @property(nonatomic) NSInteger like;
+@property(nonatomic) NSInteger watched;
 @property(nonatomic) NSInteger channelId;
 @property(nonatomic,strong) NSString* description;
 @property(nonatomic,strong) NSString* url;

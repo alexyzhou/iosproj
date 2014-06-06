@@ -16,6 +16,7 @@
 @synthesize time=_time;
 @synthesize userId=_userId;
 @synthesize like=_like;
+@synthesize watched=_watched;
 @synthesize channelId=_channelId;
 @synthesize coverUrl=_coverUrl;
 @end

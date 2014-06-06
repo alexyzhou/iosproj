@@ -57,16 +57,19 @@
             NSLog(@"couldn't find index path");
         } else {
             // get the cell at indexPath (the one you long pressed)
-            VJNYVideoCardViewCell* cell = (VJNYVideoCardViewCell*)[self.videoCollectionView cellForItemAtIndexPath:indexPath];
+            /*VJNYVideoCardViewCell* cell = (VJNYVideoCardViewCell*)[self.videoCollectionView cellForItemAtIndexPath:indexPath];
             UIImage* imageToShow = [VJNYUtilities imageWithView7:cell];
             UIImageView* imageView = [[UIImageView alloc] initWithFrame:self.videoPlayerView.bounds];
             imageView.contentMode = UIViewContentModeScaleAspectFit;
             [imageView setClipsToBounds:YES];
             imageView.image = imageToShow;
-            [self.videoPlayerView addSubview:imageView];
-            //VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row];
+            [self.videoPlayerView addSubview:imageView];*/
             
-            //[self playVideo:video.url];
+            NSLog(@"%f,%f",self.videoPlayerView.frame.size.height,self.videoPlayerView.frame.size.width);
+            
+            VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row];
+            
+            [self playVideo:video.url];
             
         }
     }
@@ -80,7 +83,7 @@
     _videoPlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:url]];
     // 2 - Prepare the Param
     _videoPlayer.view.frame = self.videoPlayerView.bounds;
-    _videoPlayer.controlStyle = MPMovieControlStyleNone;
+    _videoPlayer.controlStyle = MPMovieControlStyleEmbedded;
     [_videoPlayer setScalingMode:MPMovieScalingModeFill];
     [self.videoPlayerView addSubview:_videoPlayer.view];
     [_videoPlayer play];

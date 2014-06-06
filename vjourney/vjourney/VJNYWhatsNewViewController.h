@@ -21,9 +21,11 @@
 
 @interface VJNYWhatsNewViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,MJRefreshBaseViewDelegate, ASIHTTPRequestDelegate,VJNYDataCacheDelegate,TKCoverflowViewDelegate,TKCoverflowViewDataSource>
 
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UITableView *channelView;
 
 - (IBAction)searchChannelAction:(id)sender;
+- (IBAction)segmentedFilterClickAction:(id)sender;
 
 +(VJNYWhatsNewViewController*)instance;
 

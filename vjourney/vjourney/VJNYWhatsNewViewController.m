@@ -49,7 +49,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     //self.channelView.scrollIndicatorInsets = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
     self.channelView.separatorColor = [UIColor clearColor];
     
-    self.title = @"What's New";
+    //self.title = @"What's New";
     
     // 1.初始化数据
     _channelData = [NSMutableArray array];
@@ -157,11 +157,11 @@ static VJNYWhatsNewViewController* _instance = NULL;
     }
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+/*- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Navigation logic may go here. Create and push another view controller.
         
     [self.channelView deselectRowAtIndexPath:indexPath animated:YES];
-}
+}*/
 
 #pragma mark - Cache Handler
 - (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode {
@@ -188,7 +188,14 @@ static VJNYWhatsNewViewController* _instance = NULL;
 {
     if (refreshView == _header) {
         //reload Data
-        [VJNYHTTPHelper getJSONRequest:@"channel/latest" WithParameters:nil AndDelegate:self];
+        if ([_segmentedControl selectedSegmentIndex] == 0) {
+            // hot
+            [VJNYHTTPHelper getJSONRequest:@"channel/hot" WithParameters:nil AndDelegate:self];
+        } else {
+            // latest
+            [VJNYHTTPHelper getJSONRequest:@"channel/latest" WithParameters:nil AndDelegate:self];
+        }
+        
     } else if (refreshView == _footer) {
         [self performSelector:@selector(doneWithView:) withObject:refreshView afterDelay:2.0];
     }
@@ -240,7 +247,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     // 当以文本形式读取返回内容时用这个方法
     NSString *responseString = [request responseString];
     VJNYPOJOHttpResult* result = [VJNYPOJOHttpResult resultFromResponseString:responseString];
-    if ([result.action isEqualToString:@"channel/Latest"]) {
+    if ([result.action isEqualToString:@"channel/Latest"] || [result.action isEqualToString:@"channel/Hot"]) {
         if (result.result == Success) {
             _channelData = result.response;
             [self doneWithView:_header];
@@ -314,6 +321,16 @@ static VJNYWhatsNewViewController* _instance = NULL;
 #pragma mark - Button Event Handler
 
 - (IBAction)searchChannelAction:(id)sender {
+}
+
+- (IBAction)segmentedFilterClickAction:(id)sender {
+    if ([_segmentedControl selectedSegmentIndex] == 0) {
+        // hot
+        [VJNYHTTPHelper getJSONRequest:@"channel/hot" WithParameters:nil AndDelegate:self];
+    } else {
+        // latest
+        [VJNYHTTPHelper getJSONRequest:@"channel/latest" WithParameters:nil AndDelegate:self];
+    }
 }
 
 #pragma mark - custom Methods

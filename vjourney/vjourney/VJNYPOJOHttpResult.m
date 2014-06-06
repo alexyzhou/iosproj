@@ -41,7 +41,7 @@
             resultObj.response = [VJNYPOJOUser instance];
             
         }
-    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"]) {
+    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             
@@ -93,6 +93,7 @@
                 video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[videoDic objectForKey:@"time"] intValue]];
                 video.userId = [(NSNumber*)[videoDic objectForKey:@"userId"] intValue];
                 video.like = [(NSNumber*)[videoDic objectForKey:@"like"] intValue];
+                video.watched = [(NSNumber*)[videoDic objectForKey:@"watched"] intValue];
                 video.channelId= [(NSNumber*)[videoDic objectForKey:@"channelId"] intValue];
                 video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
                 
