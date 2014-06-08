@@ -169,7 +169,7 @@
 {
     if (refreshView == _header) {
         //reload Data
-        [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/%d",_channelId] WithParameters:nil AndDelegate:self];
+        [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/%zd",_channelId] WithParameters:nil AndDelegate:self];
     } else if (refreshView == _footer) {
         [self performSelector:@selector(doneWithView:) withObject:refreshView afterDelay:2.0];
     }

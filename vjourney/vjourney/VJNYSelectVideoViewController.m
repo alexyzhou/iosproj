@@ -131,7 +131,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSLog(@"count is %d",[self.listData count]);
+    NSLog(@"count is %tu",[self.listData count]);
     return [self.listData count];
 }
 

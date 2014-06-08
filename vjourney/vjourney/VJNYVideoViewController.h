@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *videoCollectionView;
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerView;
 @property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressRecognizer;
+@property (weak, nonatomic) IBOutlet UIScrollView *contentScrollView;
 
 - (IBAction)longPressHandler:(id)sender;
 

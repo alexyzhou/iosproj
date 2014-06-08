@@ -51,7 +51,7 @@ static UIAlertView* _progressAlert = NULL;
     return img;
 }
 + (UIImage *) imageWithView7:(UIView *)view {
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 1.5f);
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0f);
     [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:NO];
     UIImage * snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

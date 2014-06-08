@@ -10,7 +10,7 @@
 
 @implementation VJNYHTTPHelper
 
-static NSString* _remoteIpAddr = @"175.159.9.207:8080";
+static NSString* _remoteIpAddr = @"175.159.9.77:8080";
 
 +(void)setIPAddr:(NSString*)ip {
     _remoteIpAddr = [NSString stringWithFormat:@"%@:8080",ip];

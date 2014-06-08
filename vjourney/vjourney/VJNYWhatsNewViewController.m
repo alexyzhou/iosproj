@@ -256,8 +256,9 @@ static VJNYWhatsNewViewController* _instance = NULL;
     } else if ([result.action isEqualToString:@"channel/Promo"]) {
         if (result.result == Success) {
             _promoChannelData = result.response;
-            [coverflow setNumberOfCovers:[_promoChannelData count]];
-            [coverflow bringCoverAtIndexToFront:[_promoChannelData count]/2 animated:NO];
+            [coverflow setNumberOfCovers:(int)[_promoChannelData count]];
+            [coverflow bringCoverAtIndexToFront:(int)[_promoChannelData count]/2 animated:NO];
+            [self performSelector:@selector(flipCoverFlowView) withObject:nil afterDelay:5];
         }
     }
     
@@ -307,15 +308,24 @@ static VJNYWhatsNewViewController* _instance = NULL;
 	
 	VJNYChannelCoverFlowCellView *cover = [coverflowView coverAtIndex:index];
 	if(cover == nil) return;
-	[UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:1];
-	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:cover cache:YES];
-	[UIView commitAnimations];
+	
 	
 	NSLog(@"Index: %d",index);
     NSLog(@"Frame:%f:%f",cover.frame.origin.x,cover.frame.origin.y);
     NSLog(@"Size:%f:%f",cover.frame.size.width,cover.frame.size.height);
 	
+}
+
+- (void) flipCoverFlowView {
+    
+    VJNYChannelCoverFlowCellView *cover = [coverflow coverAtIndex:(int)[coverflow currentIndex]];
+    
+    [UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:1];
+	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:cover cache:YES];
+	[UIView commitAnimations];
+    
+    [self performSelector:@selector(flipCoverFlowView) withObject:nil afterDelay:5];
 }
 
 #pragma mark - Button Event Handler
