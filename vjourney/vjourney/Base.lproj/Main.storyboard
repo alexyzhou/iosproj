@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="mIf-vo-0hc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -163,6 +163,10 @@
                                     <constraint firstAttribute="height" constant="64" id="fSj-Uz-ayX"/>
                                 </constraints>
                             </imageView>
+                            <imageView userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="balloon.png" translatesAutoresizingMaskIntoConstraints="NO" id="46W-ff-KUj">
+                                <rect key="frame" x="25" y="50" width="88" height="121"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -183,6 +187,7 @@
                     <navigationItem key="navigationItem" id="DIS-ig-kzA"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="ballonImageView" destination="46W-ff-KUj" id="3g5-Lk-J4n"/>
                         <outlet property="bgImageView" destination="VTN-J0-jpR" id="HMz-dq-BIX"/>
                         <outlet property="helloLabelView" destination="Vft-aK-eJC" id="cHi-oP-OV4"/>
                         <outlet property="logoImageView" destination="yCy-eV-Dd6" id="ZtR-fD-hdG"/>
@@ -190,173 +195,12 @@
                         <outlet property="signInBgImageView" destination="efX-GX-uS8" id="AmI-kA-RkY"/>
                         <outlet property="signInView" destination="ePA-jN-lLd" id="gNB-Nq-jgz"/>
                         <outlet property="userNameInputField" destination="f7r-bg-Q08" id="AxV-az-AmP"/>
+                        <segue destination="Fr8-7f-gxJ" kind="modal" identifier="segueLoginShowMainPage" modalTransitionStyle="crossDissolve" id="F2M-68-DPF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1210" y="0.0"/>
-        </scene>
-        <!--Login View Controller-->
-        <scene sceneID="dtq-Mf-Gn4">
-            <objects>
-                <viewController storyboardIdentifier="loginPage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="mEc-er-3BG" customClass="VJNYLoginViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="oip-nw-ZR2"/>
-                        <viewControllerLayoutGuide type="bottom" id="hLW-g9-br3"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="TAs-rt-sa6">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="GQf-De-7YX">
-                                <rect key="frame" x="150" y="90" width="138" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="alphabet" returnKeyType="next"/>
-                                <connections>
-                                    <outlet property="delegate" destination="mEc-er-3BG" id="PGt-Wb-mnf"/>
-                                </connections>
-                            </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="20h-SE-JwJ">
-                                <rect key="frame" x="150" y="145" width="138" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="mEc-er-3BG" id="1f7-Uw-qOb"/>
-                                </connections>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rd-65-dZl">
-                                <rect key="frame" x="225" y="203" width="63" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Register">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="gqp-bj-Ewv" kind="push" id="e5H-Yc-fV6"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Username:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="add-dB-X07">
-                                <rect key="frame" x="42" y="93" width="100" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Password:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMq-gA-Jn2">
-                                <rect key="frame" x="42" y="149" width="100" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Don't have an account?" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Asz-Pw-cMk">
-                                <rect key="frame" x="85" y="183" width="203" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="12"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="xBn-YD-fIf">
-                        <barButtonItem key="rightBarButtonItem" title="Login" id="SqK-id-M4K">
-                            <connections>
-                                <action selector="loginAction:" destination="mEc-er-3BG" id="VC5-3S-3s3"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
-                    <connections>
-                        <outlet property="passwordInput" destination="20h-SE-JwJ" id="2az-lc-tCh"/>
-                        <outlet property="usernameInput" destination="GQf-De-7YX" id="UJI-YJ-x0a"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Rbm-nk-1Oh" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1636" y="0.0"/>
-        </scene>
-        <!--Register View Controller - Register-->
-        <scene sceneID="MdR-9M-ehG">
-            <objects>
-                <viewController storyboardIdentifier="registerPage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="gqp-bj-Ewv" customClass="VJNYRegisterViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="pj9-gL-Mur"/>
-                        <viewControllerLayoutGuide type="bottom" id="bZ7-ra-xnd"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="ofE-ig-OoV">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gnG-gI-AG6">
-                                <rect key="frame" x="150" y="90" width="138" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="alphabet" returnKeyType="next"/>
-                                <connections>
-                                    <outlet property="delegate" destination="gqp-bj-Ewv" id="XJJ-g9-Pag"/>
-                                </connections>
-                            </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Username:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nJz-O4-65Z">
-                                <rect key="frame" x="42" y="94" width="100" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Hbx-aE-v6o">
-                                <rect key="frame" x="150" y="145" width="138" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="alphabet" returnKeyType="next" secureTextEntry="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="gqp-bj-Ewv" id="mgy-IW-Kpi"/>
-                                </connections>
-                            </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Password:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cK7-4Q-gfO">
-                                <rect key="frame" x="42" y="149" width="100" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0v5-aj-NBv">
-                                <rect key="frame" x="150" y="195" width="138" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="alphabet" returnKeyType="next"/>
-                                <connections>
-                                    <outlet property="delegate" destination="gqp-bj-Ewv" id="RRQ-W1-mNi"/>
-                                </connections>
-                            </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLJ-Qy-qgn">
-                                <rect key="frame" x="42" y="199" width="100" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Register" id="wdh-Ds-wL3">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="UAe-nb-D1I">
-                            <connections>
-                                <action selector="registerAction:" destination="gqp-bj-Ewv" id="ay2-Qc-fji"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="nameInput" destination="0v5-aj-NBv" id="OJy-Xr-blb"/>
-                        <outlet property="passwordInput" destination="Hbx-aE-v6o" id="IjO-aD-vwJ"/>
-                        <outlet property="usernameInput" destination="gnG-gI-AG6" id="4rU-YX-lUA"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="s9P-vK-2c6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2142" y="-201"/>
+            <point key="canvasLocation" x="1645" y="776"/>
         </scene>
         <!--Whats New View Controller-->
         <scene sceneID="tIE-Wj-zMF">
@@ -727,24 +571,6 @@
             </objects>
             <point key="canvasLocation" x="3275" y="-723"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="EXp-o0-Xqx">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="mIf-vo-0hc" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="JCg-Zo-HCK">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="GYg-KE-BZ5"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="pVH-tP-Yx9" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="684" y="0.0"/>
-        </scene>
         <!--View Controller-->
         <scene sceneID="xbU-Sb-aXL">
             <objects>
@@ -782,7 +608,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5C8-dz-gfh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1606" y="1046"/>
+            <point key="canvasLocation" x="1592" y="1504"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="Ehh-Vn-m4I">
@@ -976,6 +802,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="balloon.png" width="337" height="417"/>
         <image name="bg_sign_in.jpg" width="640" height="1136"/>
         <image name="bg_welcome.jpg" width="640" height="1136"/>
         <image name="logo.png" width="953" height="962"/>
@@ -990,6 +817,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="F2M-68-DPF"/>
         <segue reference="ad1-Zp-8rj"/>
     </inferredMetricsTieBreakers>
 </document>

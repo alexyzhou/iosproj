@@ -7,9 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VJNYUtilities.h"
+#import "VJNYHTTPHelper.h"
+#import "VJNYPOJOHttpResult.h"
+#import "VJNYHTTPResultCode.h"
+#import "ASIFormDataRequest.h"
 
-@interface VJNYWelcomeViewController : UIViewController<UITextFieldDelegate>
+@interface VJNYWelcomeViewController : UIViewController<UITextFieldDelegate,ASIHTTPRequestDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *ballonImageView;
+
 @property (weak, nonatomic) IBOutlet UILabel *helloLabelView;
 @property (weak, nonatomic) IBOutlet UIImageView *bgImageView;
 @property (weak, nonatomic) IBOutlet UIView *signInView;

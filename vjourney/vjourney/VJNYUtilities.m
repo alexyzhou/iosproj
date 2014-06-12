@@ -76,5 +76,8 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)segueShowVideoPageByChannel {
     return @"segueShowVideoPageByChannel";
 }
++(NSString*)segueLoginShowMainPage {
+    return @"segueLoginShowMainPage";
+}
 
 @end
