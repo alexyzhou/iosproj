@@ -57,6 +57,9 @@ static UIAlertView* _progressAlert = NULL;
     UIGraphicsEndImageContext();
     return snapshotImage;
 }
++(BOOL)isRetina{
+    return ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale == 2.0));
+}
 
 #pragma mark - Const Values
 
@@ -69,6 +72,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)videoCellIdentifier {
     return @"videoCell";
 }
++(NSString*)videoThumbnailCellIdentifier {
+    return @"videoThumbnailCell";
+}
 +(NSString*)channelSearchCellIdentifier {
     return @"channelSearchCell";
 }
@@ -78,6 +84,9 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)segueLoginShowMainPage {
     return @"segueLoginShowMainPage";
+}
++(NSString*)segueVideoCutPage {
+    return @"segueVideoCutPage";
 }
 
 @end

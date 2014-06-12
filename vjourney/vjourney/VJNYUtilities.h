@@ -13,14 +13,17 @@
 +(UIAlertView*)alertViewWithProgress;
 +(void)showAlert:(NSString*)title andContent:(NSString*)content;
 +(void)showAlertWithNoTitle:(NSString*)content;
++(BOOL)isRetina;
 
 +(NSString*)channelCellIdentifier;
 +(NSString*)channelPromoCellIdentifier;
 +(NSString*)channelSearchCellIdentifier;
 +(NSString*)videoCellIdentifier;
++(NSString*)videoThumbnailCellIdentifier;
 
 +(NSString*)segueShowVideoPageByChannel;
 +(NSString*)segueLoginShowMainPage;
++(NSString*)segueVideoCutPage;
 + (UIImage *) imageWithView:(UIView *)view;
 + (UIImage *) imageWithView7:(UIView *)view;
 @end
