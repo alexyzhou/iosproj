@@ -757,7 +757,7 @@
             </objects>
             <point key="canvasLocation" x="3232" y="704"/>
         </scene>
-        <!--Video Capture View Controller - Capture Page-->
+        <!--Video Capture View Controller-->
         <scene sceneID="99V-aG-4jY">
             <objects>
                 <viewController id="2nw-By-S94" customClass="VJNYVideoCaptureViewController" sceneMemberID="viewController">
@@ -766,26 +766,100 @@
                         <viewControllerLayoutGuide type="bottom" id="o6j-WG-SV7"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="561-gW-rCF">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W3X-Kh-0id">
-                                <rect key="frame" x="100" y="179" width="121" height="57"/>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d9g-KL-vdz">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Select A Video">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="videoSelectAction:" destination="2nw-By-S94" eventType="touchUpInside" id="b9m-yH-QIj"/>
-                                </connections>
-                            </button>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pzO-Oi-Znl">
+                                <rect key="frame" x="0.0" y="320" width="320" height="10"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="10" id="Sv6-2Z-6gf"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ati-M0-r97">
+                                <rect key="frame" x="0.0" y="330" width="320" height="174"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W3X-Kh-0id">
+                                        <rect key="frame" x="232" y="62" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="srt-lc-SIw"/>
+                                            <constraint firstAttribute="height" constant="50" id="udJ-iP-w0c"/>
+                                        </constraints>
+                                        <state key="normal" title="Import"/>
+                                        <connections>
+                                            <action selector="videoSelectAction:" destination="2nw-By-S94" eventType="touchUpInside" id="b9m-yH-QIj"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tg6-a1-Uss">
+                                        <rect key="frame" x="37" y="62" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="9dI-Lx-5BH"/>
+                                            <constraint firstAttribute="width" constant="50" id="YUt-FQ-XdB"/>
+                                        </constraints>
+                                        <state key="normal" title="Delete"/>
+                                        <connections>
+                                            <action selector="videoDeleteAction:" destination="2nw-By-S94" eventType="touchUpInside" id="zEt-0Y-ovb"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLG-KA-6dq">
+                                        <rect key="frame" x="125" y="52" width="70" height="70"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="0.49019607840000001" green="0.72549019609999998" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="70" id="OXP-6b-6Q7"/>
+                                            <constraint firstAttribute="height" constant="70" id="p7s-4t-0PF"/>
+                                        </constraints>
+                                        <state key="normal" title="Capture"/>
+                                        <connections>
+                                            <action selector="endCaptureInSideAction:" destination="2nw-By-S94" eventType="touchUpInside" id="pSN-58-tmL"/>
+                                            <action selector="endCaptureOutSideAction:" destination="2nw-By-S94" eventType="touchUpOutside" id="ThA-nc-Ni3"/>
+                                            <action selector="startCaptureAction:" destination="2nw-By-S94" eventType="touchDown" id="38K-gB-qqo"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="W3X-Kh-0id" secondAttribute="centerY" id="8kA-aa-qhC"/>
+                                    <constraint firstAttribute="centerY" secondItem="BLG-KA-6dq" secondAttribute="centerY" id="NvB-Sm-JeH"/>
+                                    <constraint firstAttribute="centerY" secondItem="Tg6-a1-Uss" secondAttribute="centerY" id="flc-XY-hoq"/>
+                                    <constraint firstAttribute="centerX" secondItem="BLG-KA-6dq" secondAttribute="centerX" id="kZs-cx-7wV"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="ati-M0-r97" secondAttribute="bottom" id="F5K-G8-a2A"/>
+                            <constraint firstItem="ati-M0-r97" firstAttribute="top" secondItem="pzO-Oi-Znl" secondAttribute="bottom" id="Vpc-HH-ZT6"/>
+                            <constraint firstItem="pzO-Oi-Znl" firstAttribute="top" secondItem="d9g-KL-vdz" secondAttribute="bottom" id="gM5-3c-FiX"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Capture Page" id="XLL-P8-APN">
-                        <barButtonItem key="rightBarButtonItem" title="Next" id="bcq-85-r3J"/>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
+                    <navigationItem key="navigationItem" id="XLL-P8-APN">
+                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="cancel" id="v0l-Zo-Xh9">
+                            <connections>
+                                <action selector="cancelCaptureAction:" destination="2nw-By-S94" id="hmh-vB-xeN"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="previewView" destination="d9g-KL-vdz" id="ABj-jC-9wt"/>
+                        <outlet property="progressContainerView" destination="pzO-Oi-Znl" id="3lr-S1-bAB"/>
+                        <outlet property="videoCaptureButton" destination="BLG-KA-6dq" id="JNY-RZ-f37"/>
+                        <outlet property="videoDeleteButton" destination="Tg6-a1-Uss" id="Pjj-0V-BSI"/>
+                        <outlet property="videoSelectionOrDoneButton" destination="W3X-Kh-0id" id="isc-Ec-ecT"/>
                         <segue destination="165-tu-qg2" kind="push" identifier="segueVideoCutPage" id="RcF-mZ-o7h"/>
                     </connections>
                 </viewController>
@@ -809,14 +883,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <button opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uMU-Ye-VZI">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="video_play_button.png" translatesAutoresizingMaskIntoConstraints="NO" id="aya-YJ-Jch">
                                         <rect key="frame" x="125" y="125" width="70" height="70"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="video_play_button.png"/>
-                                        <connections>
-                                            <action selector="startPlayVideoAction:" destination="165-tu-qg2" eventType="touchUpInside" id="p5D-wT-47p"/>
-                                        </connections>
-                                    </button>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -824,7 +894,7 @@
                                 </constraints>
                             </view>
                             <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="qHZ-iz-Obb">
-                                <rect key="frame" x="0.0" y="325" width="320" height="91"/>
+                                <rect key="frame" x="0.0" y="325" width="320" height="86"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="ZEc-m5-fy3">
                                     <size key="itemSize" width="86" height="86"/>
@@ -834,7 +904,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="videoThumbnailCell" id="vcS-PI-lcK" customClass="VJNYVideoThumbnailViewCell">
-                                        <rect key="frame" x="0.0" y="3" width="86" height="86"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="86" height="86"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="86" height="86"/>
@@ -863,16 +933,32 @@
                                     <outlet property="delegate" destination="165-tu-qg2" id="i7q-8Y-g1l"/>
                                 </connections>
                             </collectionView>
+                            <imageView userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jt4-Wl-Rfz">
+                                <rect key="frame" x="230" y="320" width="40" height="96"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <gestureRecognizers/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uPr-Ef-E6s">
+                                <rect key="frame" x="70" y="320" width="40" height="96"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.50196081399917603" alpha="1" colorSpace="calibratedRGB"/>
+                                <gestureRecognizers/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="tPT-8I-tgQ" firstAttribute="top" secondItem="qHZ-iz-Obb" secondAttribute="bottom" id="DvW-Vz-X1R"/>
+                            <constraint firstItem="jt4-Wl-Rfz" firstAttribute="height" secondItem="uPr-Ef-E6s" secondAttribute="height" id="DBd-rj-k1R"/>
+                            <constraint firstItem="tPT-8I-tgQ" firstAttribute="top" secondItem="qHZ-iz-Obb" secondAttribute="bottom" constant="5" id="DvW-Vz-X1R"/>
                             <constraint firstItem="Oqw-KP-ly5" firstAttribute="leading" secondItem="jPU-2l-q6u" secondAttribute="leading" id="NF4-UR-r0D"/>
                             <constraint firstItem="qHZ-iz-Obb" firstAttribute="leading" secondItem="jPU-2l-q6u" secondAttribute="leading" id="Y4u-UD-WaS"/>
                             <constraint firstItem="qHZ-iz-Obb" firstAttribute="top" secondItem="Oqw-KP-ly5" secondAttribute="bottom" constant="5" id="Z1a-2y-MSh"/>
+                            <constraint firstItem="jt4-Wl-Rfz" firstAttribute="centerY" secondItem="uPr-Ef-E6s" secondAttribute="centerY" id="g2u-4n-NOf"/>
                             <constraint firstAttribute="trailing" secondItem="Oqw-KP-ly5" secondAttribute="trailing" id="l99-b6-1Ef"/>
+                            <constraint firstItem="jt4-Wl-Rfz" firstAttribute="top" secondItem="Oqw-KP-ly5" secondAttribute="bottom" id="rs4-OV-ZX5"/>
                             <constraint firstAttribute="trailing" secondItem="qHZ-iz-Obb" secondAttribute="trailing" id="s8b-o3-Fgm"/>
                             <constraint firstItem="Oqw-KP-ly5" firstAttribute="top" secondItem="jPU-2l-q6u" secondAttribute="top" id="wh9-PF-HwS"/>
+                            <constraint firstItem="tPT-8I-tgQ" firstAttribute="top" secondItem="jt4-Wl-Rfz" secondAttribute="bottom" id="wrD-Yp-x1Q"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
@@ -885,8 +971,10 @@
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="leftSlider" destination="uPr-Ef-E6s" id="ojz-f2-Ggw"/>
+                        <outlet property="rightSlider" destination="jt4-Wl-Rfz" id="Ak6-w2-Krf"/>
                         <outlet property="videoPlayBackView" destination="Oqw-KP-ly5" id="2nb-e5-pK1"/>
-                        <outlet property="videoPlayButton" destination="uMU-Ye-VZI" id="juG-4R-D9D"/>
+                        <outlet property="videoPlayButton" destination="aya-YJ-Jch" id="Fmy-xr-srr"/>
                         <outlet property="videoThumbnailCollectionView" destination="qHZ-iz-Obb" id="hyb-hk-Uvn"/>
                     </connections>
                 </viewController>

@@ -16,19 +16,31 @@
     MPMoviePlayerController* _videoPlayer;
     UIImageView* _coverImageView;
     AVAsset* _originalVideoAsset;
+    UIInterfaceOrientation _videoOrientation;
     AVAssetImageGenerator* _thumbnailImageGenerator;
     NSMutableDictionary* _thumbnailCache;
     CGFloat _timePerFrame;
     NSArray* _reqTimeArray;
+    NSMutableDictionary* _actualTimeArray;
+    
+    //For Slider
+    CGFloat _leftPosition;
+    CGFloat _rightPosition;
+    CGFloat _minGap;
+    //CGFloat _maxGap;
+    dispatch_queue_t _coverChangeQueue;
 }
 
 - (UIImage*)generateThumbnailByTime:(Float64)timePoint;
-
+- (void)updateCoverImage;
+- (CGFloat)getLeftTime;
+- (CGFloat)getRightTime;
 @end
 
 @implementation VJNYVideoCutViewController
 
-static CGFloat MAX_TIME_RANGE = 2.0f;
+static CGFloat MAX_TIME_RANGE = 4.0f;
+static CGFloat MIN_TIME_RANGE = 0.5f;
 
 @synthesize selectedVideoURL=_selectedVideoURL;
 
@@ -44,10 +56,16 @@ static CGFloat MAX_TIME_RANGE = 2.0f;
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.translucent = NO;
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    }
 }
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.translucent = YES;
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = YES;
+    }
 }
 
 - (void)viewDidLoad
@@ -68,12 +86,15 @@ static CGFloat MAX_TIME_RANGE = 2.0f;
     
     // Set up ImageGenerator
     _originalVideoAsset = [[AVURLAsset alloc] initWithURL:_selectedVideoURL options:nil];
+    AVAssetTrack* track = [[_originalVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    CGAffineTransform txf = [track preferredTransform];
+    _videoOrientation = [VJNYUtilities orientationByPreferredTransform:txf];
+    //CGSize videoSize = [track naturalSize];
+    
     _thumbnailImageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:_originalVideoAsset];
-    if ([VJNYUtilities isRetina]){
-        _thumbnailImageGenerator.maximumSize = CGSizeMake(self.videoThumbnailCollectionView.frame.size.height*2, self.videoThumbnailCollectionView.frame.size.height*2);
-    } else {
-        _thumbnailImageGenerator.maximumSize = CGSizeMake(self.videoThumbnailCollectionView.frame.size.height, self.videoThumbnailCollectionView.frame.size.height);
-    }
+    _thumbnailImageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+    _thumbnailImageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+    _thumbnailImageGenerator.maximumSize = CGSizeMake(_videoPlayBackView.frame.size.width*2, _videoPlayBackView.frame.size.height*2);
     _thumbnailCache = [NSMutableDictionary dictionary];
     
     // Set up Cover Image
@@ -81,32 +102,41 @@ static CGFloat MAX_TIME_RANGE = 2.0f;
     _coverImageView.image = [self generateThumbnailByTime:0];
     [self.videoPlayBackView addSubview:_coverImageView];
     
+    UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(startPlayVideoAction:)];
+    [_coverImageView addGestureRecognizer:tapGesture];
+    [_coverImageView setUserInteractionEnabled:YES];
+    
     [self.videoPlayBackView bringSubviewToFront:self.videoPlayButton];
     
     // Set up Thumbnails
-    
-    if (CMTimeGetSeconds(_originalVideoAsset.duration) < MAX_TIME_RANGE) {
-        _timePerFrame = CMTimeGetSeconds(_originalVideoAsset.duration);
-    } else {
-        CGSize rect = self.videoThumbnailCollectionView.frame.size;
-        CGFloat numberOfThumbnails = (rect.width / rect.height);
-        _timePerFrame = MAX_TIME_RANGE / numberOfThumbnails;
-    }
+    assert(CMTimeGetSeconds(_originalVideoAsset.duration) > MAX_TIME_RANGE);
+    //if (CMTimeGetSeconds(_originalVideoAsset.duration) < MAX_TIME_RANGE) {
+    //    _timePerFrame = CMTimeGetSeconds(_originalVideoAsset.duration);
+    //} else {
+    CGSize rect = self.videoThumbnailCollectionView.frame.size;
+    CGFloat numberOfThumbnails = (rect.width / rect.height);
+    _timePerFrame = MAX_TIME_RANGE / numberOfThumbnails;
+    //}
     
     NSMutableArray* _timeArray = [NSMutableArray array];
     NSInteger numberOfImgs = CMTimeGetSeconds(_originalVideoAsset.duration) / _timePerFrame;
     
     for (int i = 0; i < numberOfImgs; i++) {
         [_timeArray addObject:[NSValue valueWithCMTime:CMTimeMakeWithSeconds(i*_timePerFrame, _originalVideoAsset.duration.timescale)]];
+        //NSLog(@"%d-%f",i,CMTimeGetSeconds([[_timeArray objectAtIndex:i] CMTimeValue]));
     }
     _reqTimeArray = _timeArray;
+    _actualTimeArray = [NSMutableDictionary dictionaryWithCapacity:[_timeArray count]];
     
     [_thumbnailImageGenerator generateCGImagesAsynchronouslyForTimes:_reqTimeArray completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime,AVAssetImageGeneratorResult result, NSError *error) {
         
         if (result == AVAssetImageGeneratorSucceeded) {
+            UIImage* imageView= [VJNYUtilities uiImageByCGImage:image WithOrientation:_videoOrientation AndScale:2.0f];
             
-            UIImage* imageView = [[UIImage alloc] initWithCGImage:image];
-            int imageNo = [_reqTimeArray indexOfObject:[NSValue valueWithCMTime:requestedTime]];
+            NSUInteger imageNo = [_reqTimeArray indexOfObject:[NSValue valueWithCMTime:requestedTime]];
+            //NSLog(@"%f-%f",CMTimeGetSeconds(requestedTime),CMTimeGetSeconds(actualTime));
+            //NSLog(@"%d-%f",imageNo,CMTimeGetSeconds(actualTime));
+            [_actualTimeArray setObject:[NSValue valueWithCMTime:actualTime] forKey:[NSNumber numberWithUnsignedInteger:imageNo]];
             NSIndexPath* path = [NSIndexPath indexPathForItem:imageNo inSection:0];
             [_thumbnailCache setObject:imageView forKey:path];
             
@@ -118,6 +148,32 @@ static CGFloat MAX_TIME_RANGE = 2.0f;
             }
         }
     }];
+    
+    // Set up Sliders
+    
+    // Parameters
+    _minGap = self.videoThumbnailCollectionView.frame.size.height * (MIN_TIME_RANGE / _timePerFrame);
+    //_maxGap = self.videoThumbnailCollectionView.frame.size.height * (MAX_TIME_RANGE / _timePerFrame);
+    _coverChangeQueue = dispatch_queue_create("Change Cover Image Queue", nil);
+    CGRect sliderLeftRect = self.leftSlider.frame;
+    sliderLeftRect.size.width = _minGap / 3;
+    [_leftSlider setFrame:sliderLeftRect];
+    [_rightSlider setFrame:sliderLeftRect];
+    
+    UIPanGestureRecognizer *leftPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleLeftPan:)];
+    [self.leftSlider addGestureRecognizer:leftPan];
+    [self.leftSlider setUserInteractionEnabled:YES];
+    CGFloat totalWidth = self.view.frame.size.width;
+    self.leftSlider.center = CGPointMake(totalWidth/4, self.leftSlider.center.y);
+    _leftPosition = self.leftSlider.frame.origin.x;
+    
+    UIPanGestureRecognizer *rightPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleRightPan:)];
+    [self.rightSlider addGestureRecognizer:rightPan];
+    [self.rightSlider setUserInteractionEnabled:YES];
+    
+    self.rightSlider.center = CGPointMake(totalWidth*3/4, self.rightSlider.center.y);
+    _rightPosition = self.rightSlider.frame.origin.x+self.rightSlider.frame.size.width;
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -131,7 +187,63 @@ static CGFloat MAX_TIME_RANGE = 2.0f;
 - (UIImage*)generateThumbnailByTime:(Float64)timePoint {
     NSError *error;
     CMTime actualTime;
-    return [[UIImage alloc] initWithCGImage:[_thumbnailImageGenerator copyCGImageAtTime:CMTimeMakeWithSeconds(timePoint, _originalVideoAsset.duration.timescale) actualTime:&actualTime error:&error]];
+    CGImageRef imageRef = [_thumbnailImageGenerator copyCGImageAtTime:CMTimeMakeWithSeconds(timePoint, _originalVideoAsset.duration.timescale) actualTime:&actualTime error:&error];
+    return [VJNYUtilities uiImageByCGImage:imageRef WithOrientation:_videoOrientation AndScale:2.0f];
+    //return [[UIImage alloc] initWithCGImage:imageRef];
+}
+
+- (void)updateCoverImage {
+    dispatch_async(_coverChangeQueue, ^{
+        UIImage* newImage = [self generateThumbnailByTime:[self getLeftTime]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _coverImageView.alpha = 1.0f;
+            _coverImageView.image = newImage;
+        });
+    });
+}
+
+- (CGFloat)getLeftTime {
+    
+    NSIndexPath* path = [_videoThumbnailCollectionView indexPathForItemAtPoint:[self.view convertPoint:_leftSlider.center toView:_videoThumbnailCollectionView]];
+    UICollectionViewCell* cell = [_videoThumbnailCollectionView cellForItemAtIndexPath:path];
+    
+    CGFloat startTimePoint = CMTimeGetSeconds([[_actualTimeArray objectForKey:[NSNumber numberWithUnsignedInteger:path.row]] CMTimeValue]);
+    CGFloat relativeX = [self.view convertPoint:_leftSlider.center toView:_videoThumbnailCollectionView].x;
+    
+    // [Bug] last one?
+    CGFloat nextTimePoint = CMTimeGetSeconds([[_actualTimeArray objectForKey:[NSNumber numberWithUnsignedInteger:path.row+1]] CMTimeValue]);
+    
+    CGFloat offsetTimePoint = (nextTimePoint - startTimePoint) * ((relativeX - cell.frame.origin.x) / cell.frame.size.width);
+    
+    return startTimePoint + offsetTimePoint;
+}
+
+- (CGFloat)getRightTime {
+    
+    NSIndexPath* path = [_videoThumbnailCollectionView indexPathForItemAtPoint:[self.view convertPoint:_rightSlider.center toView:_videoThumbnailCollectionView]];
+    UICollectionViewCell* cell = [_videoThumbnailCollectionView cellForItemAtIndexPath:path];
+    
+    CGFloat startTimePoint = CMTimeGetSeconds([[_actualTimeArray objectForKey:[NSNumber numberWithUnsignedInteger:path.row]] CMTimeValue]);
+    CGFloat relativeX = [self.view convertPoint:_rightSlider.center toView:_videoThumbnailCollectionView].x;
+    
+    // [Bug] last one?
+    CGFloat nextTimePoint = CMTimeGetSeconds([[_actualTimeArray objectForKey:[NSNumber numberWithUnsignedInteger:path.row+1]] CMTimeValue]);
+    
+    CGFloat offsetTimePoint = (nextTimePoint - startTimePoint) * ((relativeX - cell.frame.origin.x) / cell.frame.size.width);
+    
+    return startTimePoint + offsetTimePoint;
+}
+
+#pragma mark - Video Playback Handler
+-(void)myMovieFinishedCallback:(NSNotification*)aNotification {
+    _coverImageView.alpha = 1.0f;
+    self.videoPlayButton.alpha = 1.0f;
+    MPMoviePlayerController* theMovie = [aNotification object];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:MPMoviePlayerPlaybackDidFinishNotification object:theMovie];
+    [_videoPlayer stop];
+    [_videoPlayer.view removeFromSuperview];
+    _videoPlayer = nil;
 }
 
 /*
@@ -175,13 +287,96 @@ static CGFloat MAX_TIME_RANGE = 2.0f;
     return CGSizeMake(self.videoThumbnailCollectionView.frame.size.height, self.videoThumbnailCollectionView.frame.size.height);
 }
 
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate) {
+        [self updateCoverImage];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self updateCoverImage];
+}
+
 
 #pragma mark - Button Event Handler
 
-- (IBAction)startPlayVideoAction:(id)sender {
+- (void)handleLeftPan:(UIPanGestureRecognizer *)gesture {
+    
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        [self.leftSlider setAlpha:1.0f];
+    } else if (gesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [gesture translationInView:self.view];
+        
+        _leftPosition += translation.x;
+        if (_leftPosition < 0) {
+            _leftPosition = 0;
+        } else if (_rightPosition - _leftPosition < _minGap) {// || _rightPosition - _leftPosition > _maxGap) {
+            _leftPosition -= translation.x;
+        }
+        [gesture setTranslation:CGPointZero inView:self.view];
+        self.leftSlider.center = CGPointMake(_leftPosition+self.leftSlider.frame.size.width/2, self.leftSlider.center.y);
+    } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        [self.leftSlider setAlpha:0.4f];
+        [self updateCoverImage];
+    }
+    
+}
+
+- (void)handleRightPan:(UIPanGestureRecognizer *)gesture {
+    
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        [self.rightSlider setAlpha:1.0f];
+    } else if (gesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [gesture translationInView:self.view];
+        
+        _rightPosition += translation.x;
+        if (_rightPosition > self.view.frame.size.width) {
+            _rightPosition -= translation.x;
+        } else if (_rightPosition - _leftPosition < _minGap) {// || _rightPosition - _leftPosition > _maxGap) {
+            _rightPosition -= translation.x;
+        }
+        [gesture setTranslation:CGPointZero inView:self.view];
+        //CGRect originRect = self.rightSlider.frame;
+        //originRect.origin.x = _rightPosition;
+        //[self.rightSlider setFrame:originRect];
+        self.rightSlider.center = CGPointMake(_rightPosition-self.rightSlider.frame.size.width/2, self.rightSlider.center.y);
+        //[self.view setNeedsLayout];
+    } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        [self.rightSlider setAlpha:0.4f];
+    }
+    
+}
+
+- (void)startPlayVideoAction:(UITapGestureRecognizer *)gesture {
+    if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
+        [_videoPlayer pause];
+        _videoPlayButton.alpha = 1.0f;
+    } else {
+        if (_videoPlayer == nil) {
+            _videoPlayer = [[MPMoviePlayerController alloc] init];
+            
+            _videoPlayer.contentURL = _selectedVideoURL;
+            _videoPlayer.view.frame = self.videoPlayBackView.bounds;
+            _videoPlayer.controlStyle = MPMovieControlStyleNone;
+            _videoPlayer.repeatMode = MPMovieRepeatModeNone;
+            [_videoPlayer setScalingMode:MPMovieScalingModeFill];
+            [self.videoPlayBackView addSubview:_videoPlayer.view];
+            [self.videoPlayBackView bringSubviewToFront:_coverImageView];
+            [self.videoPlayBackView bringSubviewToFront:_videoPlayButton];
+        }
+        [_videoPlayer setInitialPlaybackTime:[self getLeftTime]];
+        [_videoPlayer setEndPlaybackTime:[self getRightTime]];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myMovieFinishedCallback:)
+                                                     name:MPMoviePlayerPlaybackDidFinishNotification object:_videoPlayer];
+        [_videoPlayer play];
+        [self performSelector:@selector(hideCoverImage) withObject:nil afterDelay:0.2];
+    }
+}
+
+- (void)hideCoverImage {
     _coverImageView.alpha = 0.0f;
     self.videoPlayButton.alpha = 0.0f;
-    [_videoPlayer play];
-    
 }
 @end

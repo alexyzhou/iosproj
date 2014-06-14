@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface VJNYVideoCutViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
+@interface VJNYVideoCutViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIScrollViewDelegate>
 @property(nonatomic, strong) NSURL* selectedVideoURL;
 @property (weak, nonatomic) IBOutlet UIView *videoPlayBackView;
 @property (weak, nonatomic) IBOutlet UICollectionView *videoThumbnailCollectionView;
-@property (weak, nonatomic) IBOutlet UIButton *videoPlayButton;
+@property (weak, nonatomic) IBOutlet UIImageView *videoPlayButton;
 
-- (IBAction)startPlayVideoAction:(id)sender;
+@property (weak, nonatomic) IBOutlet UIImageView *leftSlider;
+@property (weak, nonatomic) IBOutlet UIImageView *rightSlider;
 
 @end
