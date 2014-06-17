@@ -28,22 +28,30 @@
 +(NSString*)channelSearchCellIdentifier;
 +(NSString*)videoCellIdentifier;
 +(NSString*)videoThumbnailCellIdentifier;
++(NSString*)filterCardCellIdentifier;
++(NSString*)shareCardCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 
 +(NSString*)segueShowVideoPageByChannel;
 +(NSString*)segueLoginShowMainPage;
 +(NSString*)segueVideoCutPage;
++(NSString*)segueVideoFilterPage;
++(NSString*)segueVideoSharePage;
++(NSString*)segueVideoCoverSelectPage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;
 
 +(NSString*)videoCaptureTmpFolderPath;
-+(NSString*)videoCutInputPath;
++(NSString*)videoFilterInputPath;
++(NSString*)videoFilterTempPath;
 +(NSString*)videoCutOutputPath;
 +(NSString*)videoShareTmpFolderPath;
 
 + (UIImage *) imageWithView:(UIView *)view;
 + (UIImage *) imageWithView7:(UIView *)view;
+
++ (void) addShadowForUIView:(UIView *)view;
 @end
 

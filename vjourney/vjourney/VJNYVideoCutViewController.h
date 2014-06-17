@@ -16,5 +16,6 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *leftSlider;
 @property (weak, nonatomic) IBOutlet UIImageView *rightSlider;
+- (IBAction)trimVideoAction:(id)sender;
 
 @end

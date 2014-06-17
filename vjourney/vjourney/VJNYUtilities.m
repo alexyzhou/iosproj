@@ -95,6 +95,12 @@ static UIAlertView* _progressAlert = NULL;
     UIGraphicsEndImageContext();
     return snapshotImage;
 }
++ (void) addShadowForUIView:(UIView *)view {
+    view.layer.shadowOffset = CGSizeMake(1.0f, -4.0f);
+    view.layer.shadowRadius = 5.0f;
+    view.layer.shadowOpacity = 0.5f;
+    view.layer.masksToBounds = NO;
+}
 +(BOOL)isRetina{
     return ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale == 2.0));
 }
@@ -146,6 +152,12 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)channelSearchCellIdentifier {
     return @"channelSearchCell";
 }
++(NSString*)filterCardCellIdentifier {
+    return @"videoFilterCell";
+}
++(NSString*)shareCardCellIdentifier {
+    return @"shareCardCell";
+}
 
 +(NSString*)segueShowVideoPageByChannel {
     return @"segueShowVideoPageByChannel";
@@ -155,6 +167,15 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)segueVideoCutPage {
     return @"segueVideoCutPage";
+}
++(NSString*)segueVideoFilterPage {
+    return @"segueVideoFilterPage";
+}
++(NSString*)segueVideoSharePage {
+    return @"segueVideoSharePage";
+}
++(NSString*)segueVideoCoverSelectPage {
+    return @"segueVideoCoverPage";
 }
 
 +(CGFloat)minCaptureTime {
@@ -167,10 +188,15 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)videoCaptureTmpFolderPath {
     return NSTemporaryDirectory();
 }
-+(NSString*)videoCutInputPath {
-    NSString* cutPath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Cut"];
++(NSString*)videoFilterInputPath {
+    NSString* cutPath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Filter"];
     [self checkAndCreateFolderForPath:cutPath];
     return [cutPath stringByAppendingString:@"/in.mp4"];
+}
++(NSString*)videoFilterTempPath {
+    NSString* cutPath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Filter"];
+    [self checkAndCreateFolderForPath:cutPath];
+    return [cutPath stringByAppendingString:@"/tmp.mp4"];
 }
 +(NSString*)videoCutOutputPath {
     NSString* cutPath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Cut"];

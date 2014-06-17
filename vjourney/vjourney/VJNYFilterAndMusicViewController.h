@@ -8,6 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
-@interface VJNYFilterAndMusicViewController : UIViewController
+@interface VJNYFilterAndMusicViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate>
+@property (weak, nonatomic) IBOutlet UIScrollView *contentScrollView;
+@property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
+@property (weak, nonatomic) IBOutlet UIImageView *playLogoView;
+
+@property (weak, nonatomic) IBOutlet UICollectionView *filterCardCollectionView;
+
+- (IBAction)selectFilterModeAction:(id)sender;
+
+- (IBAction)tapToPlayOrPauseAction:(id)sender;
+- (IBAction)pressToSelectFilterAction:(UILongPressGestureRecognizer *)_longPressRecognizer;
+
+- (IBAction)doneFilterAction:(id)sender;
+
+
+@property (weak, nonatomic) IBOutlet UIView *dragReceiverView;
+
+//Custom Properties
+@property(strong, nonatomic) NSURL* inputPath;
 
 @end

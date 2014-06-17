@@ -7,12 +7,22 @@
 //
 
 #import "VJNYVideoShareViewController.h"
+#import "VJNYSelectCoverViewController.h"
+#import "VJNYUtilities.h"
+#import "VJNYShareCardCell.h"
+#import <AVFoundation/AVFoundation.h>
 
-@interface VJNYVideoShareViewController ()
+@interface VJNYVideoShareViewController () {
+    NSMutableArray* _socialNetworkArray;
+}
+
+-(void)generateFirstCover;
 
 @end
 
 @implementation VJNYVideoShareViewController
+
+@synthesize inputPath=_inputPath;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -27,6 +37,29 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    // UI Customization
+    _textContainerView.layer.cornerRadius = 15;
+    _textContainerView.layer.masksToBounds = YES;
+    
+    //[VJNYUtilities addShadowForUIView:_coverContainerView];
+    
+    [VJNYUtilities addShadowForUIView:_shareCardCollectionView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    self.textTitleLabel.font = [UIFont fontWithName:@"CenturyGothic" size:15];
+    self.coverPromoLabel.font = [UIFont fontWithName:@"CenturyGothic" size:18];
+    
+    [self generateFirstCover];
+    
+    // Prepare Social Networks
+    _socialNetworkArray = [NSMutableArray arrayWithCapacity:3];
+    [_socialNetworkArray addObject:@"weibo"];
+    [_socialNetworkArray addObject:@"fb"];
+    [_socialNetworkArray addObject:@"twitter"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -35,7 +68,86 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
+#pragma mark - Keyboard
+
+- (void)keyBoardWillShow:(NSNotification *)note{
+    
+    CGRect rect = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat originalY = self.view.frame.size.height - _textContainerView.frame.size.height - _textContainerView.frame.origin.y;
+    CGFloat ty = originalY - rect.size.height - 74.0f + _contentScrollView.contentOffset.y;
+    [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+        self.view.transform = CGAffineTransformMakeTranslation(0, ty);
+    }];
+    
+}
+
+- (void)keyBoardWillHide:(NSNotification *)note{
+    
+    [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+        self.view.transform = CGAffineTransformIdentity;
+    }];
+}
+
+#pragma mark - UITextField Delegate
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [_textEditView resignFirstResponder];
+    return YES;
+}
+
+#pragma mark - Cover Image Helper
+-(void)generateFirstCover {
+    
+    // Generate First Cover Page
+    // Set up ImageGenerator
+    AVURLAsset* _originalVideoAsset = [[AVURLAsset alloc] initWithURL:_inputPath options:nil];
+    AVAssetTrack* track = [[_originalVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    CGAffineTransform txf = [track preferredTransform];
+    UIInterfaceOrientation _videoOrientation = [VJNYUtilities orientationByPreferredTransform:txf];
+    //CGSize videoSize = [track naturalSize];
+    
+    AVAssetImageGenerator* _thumbnailImageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:_originalVideoAsset];
+    _thumbnailImageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+    _thumbnailImageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+    _thumbnailImageGenerator.maximumSize = CGSizeMake(_coverImageView.frame.size.width*2, _coverImageView.frame.size.height*2);
+    
+    // Set up Cover Image
+    NSError *error;
+    CMTime actualTime;
+    CGImageRef imageRef = [_thumbnailImageGenerator copyCGImageAtTime:kCMTimeZero actualTime:&actualTime error:&error];
+    _coverImageView.image = [VJNYUtilities uiImageByCGImage:imageRef WithOrientation:_videoOrientation AndScale:2.0f];
+    
+}
+
+#pragma mark - Collection View Delegate
+-(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return [_socialNetworkArray count];
+}
+
+- (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    VJNYShareCardCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:[VJNYUtilities shareCardCellIdentifier] forIndexPath:indexPath];
+    
+    NSLog(@"%f-%f",cell.bounds.size.width,cell.bounds.size.height);
+    
+    //cell.backgroundImage.image = filter.cover;
+    cell.imageView.backgroundColor = [UIColor redColor];
+    
+    return cell;
+}
+
+#pragma mark - Cover Selection Delegate
+
+- (void)selectCoverDidCancel {
+    
+}
+
+- (void)selectCoverDidDoneWithImage:(UIImage *)image {
+    _coverImageView.image = image;
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -43,7 +155,29 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqual:[VJNYUtilities segueVideoCoverSelectPage]]) {
+        UINavigationController* controller = segue.destinationViewController;
+        VJNYSelectCoverViewController* rootController = [controller.viewControllers objectAtIndex:0];
+        rootController.inputPath = sender;
+        rootController.delegate = self;
+    }
 }
-*/
 
+
+- (IBAction)tapToChangeCoverAction:(UITapGestureRecognizer *)sender {
+    
+    [self performSegueWithIdentifier:[VJNYUtilities segueVideoCoverSelectPage] sender:_inputPath];
+    
+}
+
+- (IBAction)tapToBeginEditing:(UITapGestureRecognizer *)sender {
+    
+    if ([_textEditView isFirstResponder] == false) {
+        [_textEditView becomeFirstResponder];
+    }
+    
+}
+
+- (IBAction)gPSAction:(UIButton *)sender {
+}
 @end

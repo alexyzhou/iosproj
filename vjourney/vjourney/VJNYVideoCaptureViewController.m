@@ -7,6 +7,7 @@
 //
 
 #import "VJNYVideoCaptureViewController.h"
+#import "VJNYFilterAndMusicViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYVideoCutViewController.h"
 #import <AssetsLibrary/AssetsLibrary.h>
@@ -20,11 +21,19 @@
     UIView* _flashDotView;
     NSTimer *_holdTimer;
     BOOL _hasRecording;
+    BOOL _isCapture;
+    
+    //button mode
+    BOOL _isDeleteInConfirm;
     
     //video stuff
     AVCaptureVideoPreviewLayer *_previewLayer;
     ALAssetsLibrary *_assetLibrary;
     NSMutableArray *_capturedVideoArray;
+    float _currentCaptureBeginTime;
+    NSMutableArray *_capturedVideoLengthArray;
+    
+    float _progressToAdd;
 }
 
 - (void)changeFlashAction:(id)sender;
@@ -32,7 +41,7 @@
 - (void)flashViewAnimation;
 - (void)addNewRedProgress;
 - (void)addRecordingProgress;
-
+- (void)restoreDeleteButton;
 @end
 
 @implementation VJNYVideoCaptureViewController
@@ -51,11 +60,15 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_editing_head.jpg"] forBarMetrics:UIBarMetricsDefault];
+    
     // VideoPicker
     _videoPickerController = [[UIImagePickerController alloc] init];
     _videoPickerController.delegate = self;
     _videoPickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     _videoPickerController.videoQuality = UIImagePickerControllerQualityTypeMedium;
+    //[_videoPickerController.navigationBar setBarStyle:UIBarStyleBlack];
+    //[_videoPickerController.navigationBar setTintColor:[UIColor blackColor]];
     [_videoPickerController setMediaTypes:[NSArray arrayWithObjects:@"public.movie", nil]];
     
     // Setup Navigation Bar
@@ -63,13 +76,17 @@
     UIBarButtonItem *rightFlipButton = [[UIBarButtonItem alloc] initWithTitle:@"Flip" style:UIBarButtonItemStyleBordered target:self action:@selector(changeCameraDeviceAction:)];
     self.navigationItem.rightBarButtonItems = @[rightFlipButton,rightFlashButton];
     
+    _isDeleteInConfirm = false;
+    
     // Setup Capture
     [self _setup];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
+    //[self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
+    
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     
     [self _resetCapture];
     [[PBJVision sharedInstance] startPreview];
@@ -77,9 +94,10 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [self.navigationController.navigationBar setHidden:NO];
-    [self.navigationController.navigationBar setBarStyle:UIBarStyleDefault];
+    [super viewDidDisappear:animated];
+    //[self.navigationController.navigationBar setHidden:NO];
+    //[self.navigationController.navigationBar setBarStyle:UIBarStyleDefault];
+    //[self.navigationController.navigationBar setTintColor:[UIColor blueColor]];
     
     [[PBJVision sharedInstance] stopPreview];
     //[[UIApplication sharedApplication] setStatusBarHidden:NO];
@@ -97,11 +115,18 @@
     //prepare video stuff
     _assetLibrary=[[ALAssetsLibrary alloc] init];
     _capturedVideoArray = [NSMutableArray array];
+    _capturedVideoLengthArray = [NSMutableArray array];
     
     //prepare Progress View
     _redProgressArray = [NSMutableArray array];
     _hasRecording = false;
     _totalProgress=0;
+    _progressToAdd = 0.2f;
+    
+    //min capture line
+    UIView* minCaptureLine = [[UIView alloc] initWithFrame:CGRectMake([VJNYUtilities minCaptureTime] / 0.01f * _progressToAdd,0,1.0f,_progressContainerView.frame.size.height)];
+    [minCaptureLine setBackgroundColor:[UIColor whiteColor]];
+    [_progressContainerView addSubview:minCaptureLine];
     
     //flashDotView
     _flashDotView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, _progressContainerView.frame.size.height, _progressContainerView.frame.size.height)];
@@ -119,8 +144,6 @@
     
     //disable Delete Button
     _videoDeleteButton.enabled = NO;
-    
-    
 }
 
 - (void)addNewRedProgress {
@@ -133,6 +156,9 @@
         configureX = lastView.frame.origin.x + lastView.frame.size.width + spacingBetweenProgress;
     } else {
         _videoDeleteButton.enabled = YES;
+        [_videoSelectionOrDoneButton setTitle:@"Done" forState:UIControlStateNormal];
+        
+        _videoSelectionOrDoneButton.enabled = NO;
     }
     UIView *redView=[[UIView alloc] initWithFrame:CGRectMake(configureX, 0, 0, _progressContainerView.frame.size.height)];
     redView.backgroundColor = [UIColor redColor];
@@ -140,23 +166,29 @@
     
     _flashDotView.center = CGPointMake(configureX + _flashDotView.frame.size.width/2, _flashDotView.center.y);
     [_redProgressArray addObject:redView];
+    
+    _currentCaptureBeginTime = _totalProgress;
 }
 
 -(void)addRecordingProgress {
     
-    static float progressToAdd = 0.21f;
+    
     static float timeToAdd = 0.01f;
     
     CGRect lastFrame=((UIView *)[_redProgressArray lastObject]).frame;
-    lastFrame.size.width+=progressToAdd;
+    lastFrame.size.width+=_progressToAdd;
     ((UIView *)[_redProgressArray lastObject]).frame=lastFrame;
     
-    _flashDotView.center = CGPointMake(_flashDotView.center.x + progressToAdd, _flashDotView.center.y);
+    _flashDotView.center = CGPointMake(_flashDotView.center.x + _progressToAdd, _flashDotView.center.y);
     
     _totalProgress+=timeToAdd;
     
     if (_totalProgress >= [VJNYUtilities minCaptureTime]) {
-        //_videoSelectionOrDoneButton.enabled=YES;
+        _videoSelectionOrDoneButton.enabled = YES;
+    }
+    if (_totalProgress >= [VJNYUtilities maxCaptureTime]) {
+        [self _endCapture];
+        _videoCaptureButton.enabled = NO;
     }
 }
 
@@ -169,6 +201,14 @@
         _flashDotView.alpha=1;
     }
     [self performSelector:@selector(flashViewAnimation) withObject:nil afterDelay:1];
+}
+
+- (void)restoreDeleteButton {
+    [_videoDeleteButton setTitle:@"Delete" forState:UIControlStateNormal];
+    if ([_redProgressArray count] > 0) {
+        [[_redProgressArray lastObject] setAlpha:1.0f];
+    }
+    _isDeleteInConfirm = false;
 }
 
 #pragma mark - Video Handler
@@ -199,12 +239,19 @@
 
 -(void)_endCapture
 {
-    [UIApplication sharedApplication].idleTimerDisabled=NO;
-    [[PBJVision sharedInstance] endVideoCapture];
-    [_holdTimer invalidate];
-    _holdTimer = nil;
-    
-    NSLog(@"%f",_totalProgress);
+    if (_isCapture) {
+        [UIApplication sharedApplication].idleTimerDisabled=NO;
+        [[PBJVision sharedInstance] endVideoCapture];
+        [_holdTimer invalidate];
+        _holdTimer = nil;
+        
+        NSLog(@"%f",_totalProgress);
+        float lastLength = _totalProgress - _currentCaptureBeginTime;
+        NSLog(@"%f",lastLength);
+        [_capturedVideoLengthArray addObject:[NSNumber numberWithFloat:lastLength]];
+        
+        _isCapture = false;
+    }
 }
 
 -(void)_resetCapture
@@ -228,6 +275,9 @@
     if ([segue.identifier isEqual:[VJNYUtilities segueVideoCutPage]]) {
         VJNYVideoCutViewController* controller = [segue destinationViewController];
         controller.selectedVideoURL = (NSURL*)sender;
+    } else if ([segue.identifier isEqual:[VJNYUtilities segueVideoFilterPage]]) {
+        VJNYFilterAndMusicViewController* controller = [segue destinationViewController];
+        controller.inputPath = sender;
     }
     
 }
@@ -235,7 +285,9 @@
 #pragma mark - Button Event Handler
 
 - (IBAction)videoSelectAction:(id)sender {
+    [self restoreDeleteButton];
     if (_hasRecording == NO) {
+        
         [self presentViewController:_videoPickerController animated:YES completion:nil];
     } else {
         [self doneCaptureAction:sender];
@@ -243,9 +295,47 @@
 }
 
 - (IBAction)videoDeleteAction:(id)sender {
+    
+    if (_isDeleteInConfirm == false) {
+        _isDeleteInConfirm = true;
+        [_videoDeleteButton setTitle:@"Yes?" forState:UIControlStateNormal];
+        
+        UIView* lastProgressView = [_redProgressArray lastObject];
+        [lastProgressView setAlpha:0.5f];
+    } else {
+        NSString* lastVideoPath = [_capturedVideoArray lastObject];
+        [VJNYUtilities checkAndDeleteFileForPath:lastVideoPath];
+        [_capturedVideoArray removeLastObject];
+        
+        UIView* lastProgressView = [_redProgressArray lastObject];
+        [lastProgressView removeFromSuperview];
+        [_flashDotView setCenter:CGPointMake(_flashDotView.center.x - lastProgressView.frame.size.width, _flashDotView.center.y)];
+        [_redProgressArray removeLastObject];
+        
+        _totalProgress -= [[_capturedVideoLengthArray lastObject] floatValue];
+        [_capturedVideoLengthArray removeLastObject];
+        
+        if (_totalProgress < [VJNYUtilities minCaptureTime]) {
+            _videoSelectionOrDoneButton.enabled = NO;
+        }
+        if (_totalProgress < [VJNYUtilities maxCaptureTime]) {
+            _videoCaptureButton.enabled = YES;
+        }
+        
+        if ([_capturedVideoArray count] == 0) {
+            // removed all the videos
+            _hasRecording = false;
+            [_videoSelectionOrDoneButton setTitle:@"Import" forState:UIControlStateNormal];
+            
+            _videoSelectionOrDoneButton.enabled = YES;
+            _videoDeleteButton.enabled = NO;
+        }
+        [self restoreDeleteButton];
+    }
 }
 
 - (IBAction)startCaptureAction:(id)sender {
+    [self restoreDeleteButton];
     _hasRecording = true;
     [self _startCapture];
 }
@@ -306,7 +396,7 @@
 
         
         // 4 - Get path
-        NSString *paths = [VJNYUtilities videoCutInputPath];
+        NSString *paths = [VJNYUtilities videoFilterInputPath];
         [VJNYUtilities checkAndDeleteFileForPath:paths];
         NSURL *url = [NSURL fileURLWithPath:paths];
         // 5 - Create exporter
@@ -326,7 +416,7 @@
 
 -(void)exportDidFinish:(AVAssetExportSession*)session {
     if (session.status == AVAssetExportSessionStatusCompleted) {
-        NSURL *outputURL = session.outputURL;
+        /*NSURL *outputURL = session.outputURL;
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         if ([library videoAtPathIsCompatibleWithSavedPhotosAlbum:outputURL]) {
             [library writeVideoAtPathToSavedPhotosAlbum:outputURL completionBlock:^(NSURL *assetURL, NSError *error){
@@ -339,10 +429,12 @@
                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Video Saved" message:@"Saved To Photo Album"
                                                                        delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                         [alert show];
+                        
                     }
                 });
             }];
-        }
+        }*/
+        [self performSegueWithIdentifier:[VJNYUtilities segueVideoFilterPage] sender:session.outputURL];
     } else {
         NSLog(@"%@",session.error.localizedDescription);
     }
@@ -355,9 +447,11 @@
 }
 
 - (void)visionSessionDidStart:(PBJVision *)vision {
+    
 }
 
 - (void)visionSessionDidStop:(PBJVision *)vision {
+    
 }
 
 - (void)visionPreviewDidStart:(PBJVision *)vision {
@@ -391,7 +485,7 @@
 
 - (void)visionDidStartVideoCapture:(PBJVision *)vision
 {
-    
+    _isCapture = true;
 }
 
 - (void)visionDidPauseVideoCapture:(PBJVision *)vision
@@ -418,8 +512,21 @@
     [picker dismissViewControllerAnimated:YES completion:nil];
     NSURL* videoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
     
-    [self performSegueWithIdentifier:[VJNYUtilities segueVideoCutPage] sender:videoUrl];
-    NSLog(@"%@",[videoUrl absoluteString]);
+    //AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:videoUrl];
+    AVURLAsset* asset = [[AVURLAsset alloc] initWithURL:videoUrl options:nil];
+    
+    CMTime duration = asset.duration;
+    float seconds = CMTimeGetSeconds(duration);
+    NSLog(@"%f",seconds);
+    if (seconds > [VJNYUtilities maxCaptureTime]) {
+        // send to cut
+        [self performSegueWithIdentifier:[VJNYUtilities segueVideoCutPage] sender:videoUrl];
+    } else {
+        // send to filter
+        [self performSegueWithIdentifier:[VJNYUtilities segueVideoFilterPage] sender:videoUrl];
+    }
+    
+    //NSLog(@"%@",[videoUrl absoluteString]);
     // TODO: read in data at videoUrl and write upload it to your server
     
 }

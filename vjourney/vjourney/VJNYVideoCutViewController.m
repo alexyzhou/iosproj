@@ -7,6 +7,7 @@
 //
 
 #import "VJNYVideoCutViewController.h"
+#import "VJNYFilterAndMusicViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYVideoThumbnailViewCell.h"
 #import <MediaPlayer/MediaPlayer.h>
@@ -39,8 +40,8 @@
 
 @implementation VJNYVideoCutViewController
 
-static CGFloat MAX_TIME_RANGE = 4.0f;
-static CGFloat MIN_TIME_RANGE = 0.5f;
+//static CGFloat MAX_TIME_RANGE = 6.0f;
+static CGFloat MIN_TIME_RANGE = 2.0f;
 
 @synthesize selectedVideoURL=_selectedVideoURL;
 
@@ -55,14 +56,17 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.navigationController.navigationBar.translucent = NO;
+    //[self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
+    //[self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    //self.navigationController.navigationBar.translucent = NO;
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
 }
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBar.translucent = YES;
+    //[self.navigationController.navigationBar setBarStyle:UIBarStyleDefault];
+    //self.navigationController.navigationBar.translucent = YES;
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     }
@@ -81,7 +85,7 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
     _videoPlayer.view.frame = self.videoPlayBackView.bounds;
     _videoPlayer.controlStyle = MPMovieControlStyleNone;
     _videoPlayer.repeatMode = MPMovieRepeatModeNone;
-    [_videoPlayer setScalingMode:MPMovieScalingModeFill];
+    [_videoPlayer setScalingMode:MPMovieScalingModeAspectFill];
     [self.videoPlayBackView addSubview:_videoPlayer.view];
     
     // Set up ImageGenerator
@@ -108,14 +112,20 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
     
     [self.videoPlayBackView bringSubviewToFront:self.videoPlayButton];
     
+    
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
     // Set up Thumbnails
-    assert(CMTimeGetSeconds(_originalVideoAsset.duration) > MAX_TIME_RANGE);
+    assert(CMTimeGetSeconds(_originalVideoAsset.duration) > [VJNYUtilities maxCaptureTime]);
     //if (CMTimeGetSeconds(_originalVideoAsset.duration) < MAX_TIME_RANGE) {
     //    _timePerFrame = CMTimeGetSeconds(_originalVideoAsset.duration);
     //} else {
-    CGSize rect = self.videoThumbnailCollectionView.frame.size;
+    CGSize rect = self.videoThumbnailCollectionView.bounds.size;
     CGFloat numberOfThumbnails = (rect.width / rect.height);
-    _timePerFrame = MAX_TIME_RANGE / numberOfThumbnails;
+    _timePerFrame = [VJNYUtilities maxCaptureTime] / numberOfThumbnails;
     //}
     
     NSMutableArray* _timeArray = [NSMutableArray array];
@@ -173,6 +183,7 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
     
     self.rightSlider.center = CGPointMake(totalWidth*3/4, self.rightSlider.center.y);
     _rightPosition = self.rightSlider.frame.origin.x+self.rightSlider.frame.size.width;
+    
     
 }
 
@@ -246,7 +257,7 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
     _videoPlayer = nil;
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -254,8 +265,12 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqual:[VJNYUtilities segueVideoFilterPage]]) {
+        VJNYFilterAndMusicViewController* controller = [segue destinationViewController];
+        controller.inputPath = sender;
+    }
 }
-*/
+
 
 #pragma mark - UICollectionView Handler
 
@@ -378,5 +393,54 @@ static CGFloat MIN_TIME_RANGE = 0.5f;
 - (void)hideCoverImage {
     _coverImageView.alpha = 0.0f;
     self.videoPlayButton.alpha = 0.0f;
+}
+- (IBAction)trimVideoAction:(id)sender {
+    
+    [VJNYUtilities showProgressAlertView];
+    
+    NSURL *videoFileUrl = _selectedVideoURL;
+    
+    AVAsset *anAsset = [[AVURLAsset alloc] initWithURL:videoFileUrl options:nil];
+    NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:anAsset];
+    if ([compatiblePresets containsObject:AVAssetExportPresetMediumQuality]) {
+        
+        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc]
+                              initWithAsset:anAsset presetName:AVAssetExportPresetPassthrough];
+        // Implementation continues.
+        
+        NSURL *furl = [NSURL fileURLWithPath:[VJNYUtilities videoCutOutputPath]];
+        [VJNYUtilities checkAndDeleteFileForPath:[VJNYUtilities videoCutOutputPath]];
+        
+        exportSession.outputURL = furl;
+        exportSession.outputFileType = AVFileTypeQuickTimeMovie;
+        
+        CMTime start = CMTimeMakeWithSeconds([self getLeftTime], anAsset.duration.timescale);
+        CMTime duration = CMTimeMakeWithSeconds([self getRightTime]-[self getLeftTime], anAsset.duration.timescale);
+        CMTimeRange range = CMTimeRangeMake(start, duration);
+        exportSession.timeRange = range;
+        
+        
+        [exportSession exportAsynchronouslyWithCompletionHandler:^{
+            
+            switch ([exportSession status]) {
+                case AVAssetExportSessionStatusFailed:
+                    NSLog(@"Export failed: %@", [[exportSession error] localizedDescription]);
+                    break;
+                case AVAssetExportSessionStatusCancelled:
+                    NSLog(@"Export canceled");
+                    break;
+                default:
+                    NSLog(@"NONE");
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [VJNYUtilities dismissProgressAlertView];
+                        [self performSegueWithIdentifier:[VJNYUtilities segueVideoFilterPage] sender:exportSession.outputURL];
+                    });
+                    
+                    break;
+            }
+        }];
+        
+    }
+    
 }
 @end
