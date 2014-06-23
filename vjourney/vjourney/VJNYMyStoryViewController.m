@@ -7,6 +7,9 @@
 //
 
 #import "VJNYMyStoryViewController.h"
+#import "VJNYUserProfileViewController.h"
+#import "VJNYPOJOUser.h"
+#import "VJNYUtilities.h"
 
 @interface VJNYMyStoryViewController ()
 
@@ -27,6 +30,10 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    VJNYUserProfileViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardUserProfilePage]];
+    controller.userId = [VJNYPOJOUser sharedInstance].uid;
+    [self addChildViewController:controller];
+    [self.view addSubview:controller.view];
 }
 
 - (void)didReceiveMemoryWarning

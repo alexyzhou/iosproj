@@ -41,7 +41,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+
     // Set up Background
     [VJNYUtilities initBgImageForTabView:self.view];
     [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];

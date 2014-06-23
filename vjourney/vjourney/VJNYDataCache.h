@@ -15,6 +15,7 @@
 +(VJNYDataCache*)instance;
 -(UIImage*)dataByURL:(NSString*)url;
 -(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier AndMode:(int)mode;
++ (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate;
 @end
 
 @protocol VJNYDataCacheDelegate <NSObject>

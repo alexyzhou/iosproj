@@ -26,9 +26,11 @@
     BOOL _isDragging;
     
     UIActivityIndicatorView* _activityIndicatorView;
+    
+    NSMutableDictionary* _likeVideoDic;
 }
-- (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier;
 - (void)playVideo:(NSString*)url;
+- (NSMutableDictionary*)genUserVideoRequestDic;
 @end
 
 @implementation VJNYVideoViewController
@@ -42,7 +44,19 @@
     return self;
 }
 
-#pragma mark - longPressHandler
+#pragma mark - Gesture Handler
+
+- (IBAction)tapToPlayOrPauseVideoAction:(UITapGestureRecognizer *)sender {
+    
+    if (_videoPlayer.contentURL != nil) {
+        if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
+            [_videoPlayer pause];
+            _videoPlayButton.alpha = 1.0f;
+        } else {
+            [self playVideo:[_videoPlayer.contentURL absoluteString]];
+        }
+    }
+}
 
 - (IBAction)longPressHandler:(id)sender {
     
@@ -83,10 +97,10 @@
         if (_isDragging) {
             CGPoint dragPoint = [_longPressRecognizer locationInView:self.view];
             [_dragIndicatorImageView setCenter:dragPoint];
-            if ([self.videoPlayerView pointInside:dragPoint withEvent:nil]) {
-                self.videoPlayerView.backgroundColor = [UIColor grayColor];
-            } else if ([self.videoPlayerView.backgroundColor isEqual:[UIColor grayColor]]){
-                self.videoPlayerView.backgroundColor = [UIColor blackColor];
+            if ([self.videoMaskView pointInside:dragPoint withEvent:nil]) {
+                self.videoMaskView.backgroundColor = [UIColor grayColor];
+            } else if ([self.videoMaskView.backgroundColor isEqual:[UIColor grayColor]]){
+                self.videoMaskView.backgroundColor = [UIColor clearColor];
             }
         }
     }
@@ -94,9 +108,32 @@
     {
         //else do cleanup
         _isDragging = false;
-        if ([self.videoPlayerView pointInside:[_longPressRecognizer locationInView:self.view] withEvent:nil]) {
+        if ([self.videoMaskView pointInside:[_longPressRecognizer locationInView:self.view] withEvent:nil]) {
+            self.videoMaskView.backgroundColor = [UIColor clearColor];
             VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
             [self playVideo:video.url];
+            
+            _videoUserAvatarView.alpha = 1.0f;
+            _videoUserNameView.alpha = 1.0f;
+            
+            VJNYPOJOUser* user = [_userData objectForKey:video.userId];
+            [VJNYDataCache loadImage:_videoUserAvatarView WithUrl:user.avatarUrl AndMode:2 AndIdentifier:[NSNumber numberWithLong:_dragVideoIndex] AndDelegate:self];
+            _videoUserNameView.text = user.name;
+            
+            // Http Request
+            NSMutableDictionary* dic = [self genUserVideoRequestDic];
+            [dic setObject:[[NSNumber numberWithBool:YES] stringValue] forKey:@"watch"];
+            [VJNYHTTPHelper sendJSONRequest:@"video/watch" WithParameters:dic AndDelegate:self];
+            
+            NSNumber* likedValue = [_likeVideoDic objectForKey:video.vid];
+            
+            if (likedValue == nil) {
+                [self.likeButton setEnabled:NO];
+                [VJNYHTTPHelper sendJSONRequest:@"video/isLike" WithParameters:[self genUserVideoRequestDic] AndDelegate:self];
+            } else {
+                [self.likeButton setEnabled:YES];
+                [self.likeButton setSelected:[likedValue boolValue]];
+            }
         }
         [UIView animateWithDuration:0.2f animations:^(void){
             _dragIndicatorImageView.alpha = 0.0f;
@@ -113,6 +150,8 @@
 - (void)playVideo:(NSString*)url {
     NSLog(@"Video Playback: %@",url);
     
+    _videoPlayButton.alpha = 0.0f;
+    
     if (_videoPlayer == nil) {
         // 1 - Play the video
         _videoPlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:url]];
@@ -121,7 +160,9 @@
         _videoPlayer.controlStyle = MPMovieControlStyleNone;
         _videoPlayer.repeatMode = MPMovieRepeatModeOne;
         [_videoPlayer setScalingMode:MPMovieScalingModeFill];
-        [self.videoPlayerView addSubview:_videoPlayer.view];
+        //[self.videoPlayerView addSubview:_videoPlayer.view];
+        [self.videoPlayerView insertSubview:_videoPlayer.view atIndex:0];
+        //[self.videoPlayerView bringSubviewToFront:_videoPlayButton];
     }
     
     if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
@@ -155,10 +196,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = _channelName;
-    self.contentScrollView.contentSize = CGSizeMake(320, 504);
     _isDragging = false;
+    _dragVideoIndex = -1;
+    [_likeButton setEnabled:NO];
+    _likeVideoDic = [NSMutableDictionary dictionary];
     
     _activityIndicatorView = nil;
+    _videoPlayButton.alpha = 0.0f;
+    _videoUserAvatarView.alpha = 0.0f;
+    _videoUserNameView.alpha = 0.0f;
+    _videoCollectionView.backgroundColor = [UIColor clearColor];
+    _videoMaskView.alpha = 0.4f;
+    [VJNYUtilities addShadowForUIView:_videoCollectionView];
     
     // 1.初始化数据
     _videoData = [NSMutableArray array];
@@ -170,9 +219,7 @@
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"HH:mm,yyyy-MM-dd"];
     
-    [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
-    
-    
+    [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
     
     if (_isFollow == -1) {
         // we need to contact the server
@@ -186,17 +233,18 @@
         [VJNYHTTPHelper sendJSONRequest:@"channel/isFollow" WithParameters:dic AndDelegate:self];
         
     } else if (_isFollow == 1) {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(clickToUploadAction:)];
+        [self switchToUploadButtonForRightButton];
+        //self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(clickToUploadAction:)];
     }
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.navigationController.navigationBar.translucent = NO;
+    //self.navigationController.navigationBar.translucent = NO;
 }
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBar.translucent = YES;
+    //self.navigationController.navigationBar.translucent = YES;
     if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
         [_videoPlayer stop];
     }
@@ -219,11 +267,11 @@
 }
 
 - (void)switchToFollowButtonForRightButton {
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(clickToFollowAction:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:@"button_follow.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStylePlain target:self action:@selector(clickToFollowAction:)];
 }
 
 - (void)switchToUploadButtonForRightButton {
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(clickToUploadAction:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:@"button_camera.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStylePlain target:self action:@selector(clickToUploadAction:)];
 }
 
 
@@ -263,11 +311,11 @@
     cell.timeView.text = [_dateFormatter stringFromDate:video.time];
     cell.descriptionView.text = video.description;
     
-    [self loadImage:cell.avatarView WithUrl:ownerUser.avatarUrl AndMode:0 AndIdentifier:indexPath];
-    [self loadImage:cell.coverView WithUrl:video.coverUrl AndMode:1 AndIdentifier:indexPath];
+    [VJNYDataCache loadImage:cell.avatarView WithUrl:ownerUser.avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    [VJNYDataCache loadImage:cell.coverView WithUrl:video.coverUrl AndMode:1 AndIdentifier:indexPath AndDelegate:self];
     
-    cell.contentView.layer.borderColor = [[UIColor blueColor] CGColor];//[[UIColor colorWithRed:1 green: 0.6 blue:0.8 alpha:1] CGColor];
-    cell.contentView.layer.borderWidth = 1.0f;
+    //cell.contentView.layer.borderColor = [[UIColor blueColor] CGColor];//[[UIColor colorWithRed:1 green: 0.6 blue:0.8 alpha:1] CGColor];
+    //cell.contentView.layer.borderWidth = 1.0f;
     
     //cell.layer.shadowOffset = CGSizeMake(3.0f, 2.0f);
     //cell.layer.shadowRadius = 3.0f;
@@ -284,30 +332,35 @@
 
 #pragma mark - Custom Methods
 
-- (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier {
-    
-    UIImage* imageData = [[VJNYDataCache instance] dataByURL:url];
-    if (imageData == nil) {
-        [[VJNYDataCache instance] requestDataByURL:url WithDelegate:self AndIdentifier:identifier AndMode:mode];
-        cell.image = nil;
-    } else {
-        cell.image = imageData;
-    }
+- (NSMutableDictionary*)genUserVideoRequestDic {
+    NSMutableDictionary* dic = [NSMutableDictionary dictionary];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
+    [dic setObject:[video.vid stringValue] forKey:@"videoId"];
+    [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+    return dic;
 }
 
 #pragma mark - Cache Handler
 - (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode {
     
-    NSIndexPath* path = (NSIndexPath*)identifier;
-    
-    VJNYVideoCardViewCell* cell = (VJNYVideoCardViewCell*)[self.videoCollectionView cellForItemAtIndexPath:path];
-    
-    if (mode == 0) {
-        //avatar
-        cell.avatarView.image = data;
-    } else if (mode == 1) {
-        //cover
-        cell.coverView.image = data;
+    if (mode < 2) {
+        NSIndexPath* path = (NSIndexPath*)identifier;
+        
+        VJNYVideoCardViewCell* cell = (VJNYVideoCardViewCell*)[self.videoCollectionView cellForItemAtIndexPath:path];
+        if (mode == 0) {
+            //avatar
+            cell.avatarView.image = data;
+        } else if (mode == 1) {
+            //cover
+            cell.coverView.image = data;
+        }
+    } else if (mode == 2) {
+        long originIndex = [identifier longValue];
+        if (originIndex == _dragVideoIndex) {
+            // we are still in the same video
+            _videoUserAvatarView.image = data;
+        }
     }
 }
 
@@ -396,6 +449,21 @@
                 [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Login Failed!, Reason:%d",result.result]];
             }
         });
+    } else if ([result.action isEqualToString:@"video/IsLike"]) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (result.result == Success) {
+                NSNumber* video_id = [result.response objectForKey:@"videoId"];
+                NSNumber* likedResult = [result.response objectForKey:@"result"];
+                [_likeVideoDic setObject:likedResult forKey:video_id];
+                
+                VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
+                if ([video.vid isEqualToNumber:video_id]) {
+                    [_likeButton setEnabled:YES];
+                    [_likeButton setSelected:[likedResult boolValue]];
+                }
+            }
+        });
     }
     
     // 当以二进制形式读取返回内容时用这个方法
@@ -425,6 +493,27 @@
     
     [self performSegueWithIdentifier:[VJNYUtilities segueVideoCapturePage] sender:self];
     
+}
+
+- (IBAction)clickToLikeVideoAction:(UIButton*)sender {
+    if (_dragVideoIndex != -1) {
+        if (sender.selected == NO) {
+            [sender setSelected:YES];
+        } else {
+            [sender setSelected:NO];
+        }
+        NSMutableDictionary* dic = [self genUserVideoRequestDic];
+        [dic setObject:[[NSNumber numberWithBool:sender.selected] stringValue] forKey:@"like"];
+        [VJNYHTTPHelper sendJSONRequest:@"video/like" WithParameters:dic AndDelegate:self];
+        VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
+        [_likeVideoDic setObject:[NSNumber numberWithBool:sender.selected] forKey:video.vid];
+    }
+}
+
+- (IBAction)clickToChatAction:(id)sender {
+}
+
+- (IBAction)clickToSeeWatchedAction:(id)sender {
 }
 
 @end

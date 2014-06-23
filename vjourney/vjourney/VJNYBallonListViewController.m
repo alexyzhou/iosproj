@@ -21,8 +21,6 @@
     BOOL _isDragging;
 }
 
-- (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier;
-
 @end
 
 @implementation VJNYBallonListViewController
@@ -221,22 +219,9 @@
     
     VJNYPOJOWhisper* whisper = [_ballonArray objectAtIndex:indexPath.row];
     
-    [self loadImage:cell.imageView WithUrl:whisper.coverUrl AndMode:0 AndIdentifier:indexPath];
+    [VJNYDataCache loadImage:cell.imageView WithUrl:whisper.coverUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     
     return cell;
-}
-
-#pragma mark - Custom Methods
-
-- (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier {
-    
-    UIImage* imageData = [[VJNYDataCache instance] dataByURL:url];
-    if (imageData == nil) {
-        [[VJNYDataCache instance] requestDataByURL:url WithDelegate:self AndIdentifier:identifier AndMode:mode];
-        cell.image = nil;
-    } else {
-        cell.image = imageData;
-    }
 }
 
 #pragma mark - Cache Handler

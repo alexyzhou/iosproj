@@ -20,7 +20,6 @@ static UIAlertView* _progressAlert = NULL;
     VJNYPOJOUser* user = [VJNYPOJOUser sharedInstance];
     user.name = @"userName0";
     user.uid = [NSNumber numberWithLong:1];
-    user.username = @"0";
     user.token = @"bdd4bc5d3e058f8242e9ebdd1bff7f73";
     user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"avatar/12.png"];
 }
@@ -36,6 +35,8 @@ static UIAlertView* _progressAlert = NULL;
     [controller.navigationBar setTintColor:[UIColor whiteColor]];
     [controller.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
 }
+
+
 
 +(UIAlertView*)alertViewWithProgress {
     
@@ -185,6 +186,12 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)ballonCardCellIdentifier {
     return @"ballonCardCell";
 }
++(NSString*)profileHeadCellIdentifier {
+    return @"profileHeadCell";
+}
++(NSString*)profileVideoCellIdentifier {
+    return @"profileVideoCell";
+}
 
 
 #pragma mark - Segue
@@ -218,6 +225,9 @@ static UIAlertView* _progressAlert = NULL;
 
 +(NSString*)storyboardBallonBasePage {
     return @"sBallonBasePage";
+}
++(NSString*)storyboardUserProfilePage {
+    return @"sUserProfilePage";
 }
 
 #pragma mark - Const Values

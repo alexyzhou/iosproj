@@ -36,6 +36,8 @@
 +(NSString*)filterCardCellIdentifier;
 +(NSString*)shareCardCellIdentifier;
 +(NSString*)ballonCardCellIdentifier;
++(NSString*)profileHeadCellIdentifier;
++(NSString*)profileVideoCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 
@@ -49,6 +51,7 @@
 +(NSString*)segueBallonStoragePage;
 
 +(NSString*)storyboardBallonBasePage;
++(NSString*)storyboardUserProfilePage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;

@@ -54,6 +54,17 @@ static const int maxCacheCount = 20;
 
 #pragma mark - Image Load
 
++ (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate {
+    
+    UIImage* imageData = [[VJNYDataCache instance] dataByURL:url];
+    if (imageData == nil) {
+        [[VJNYDataCache instance] requestDataByURL:url WithDelegate:delegate AndIdentifier:identifier AndMode:mode];
+        cell.image = nil;
+    } else {
+        cell.image = imageData;
+    }
+}
+
 -(UIImage*)loadImageInBackground:(NSString *)url {
     //NSLog(@"VJNYCache load image:%@",url);
     NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
