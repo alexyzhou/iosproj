@@ -10,6 +10,6 @@
 
 #import "VJNYHTTPHelper.h"
 
-@interface VJNYInboxViewController : UIViewController
+@interface VJNYInboxViewController : UIViewController<UINavigationControllerDelegate>
 
 @end

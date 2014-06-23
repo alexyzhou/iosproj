@@ -11,6 +11,7 @@
 #import "VJNYPOJOUser.h"
 #import "VJNYPOJOChannel.h"
 #import "VJNYPOJOVideo.h"
+#import "VJNYPOJOWhisper.h"
 #import "VJNYHTTPResultCode.h"
 #import "VJNYHTTPHelper.h"
 

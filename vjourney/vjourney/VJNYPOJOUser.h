@@ -10,11 +10,15 @@
 
 @interface VJNYPOJOUser : NSObject
 
-@property(nonatomic) NSInteger uid;
+@property(nonatomic, strong) NSNumber* uid;
+@property(nonatomic, strong) NSString* username;
 @property(nonatomic, strong) NSString* name;
 @property(nonatomic, strong) NSString* avatarUrl;
 @property(nonatomic, strong) NSString* token;
+@property(nonatomic, strong) NSString* gender;
+@property(nonatomic, strong) NSNumber* age;
 
-+(VJNYPOJOUser*)instance;
++(VJNYPOJOUser*)sharedInstance;
 
+-(void)insertIdentityToDirectory:(NSMutableDictionary*)dic;
 @end

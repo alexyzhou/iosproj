@@ -11,6 +11,7 @@
 #import "VJNYUtilities.h"
 #import "VJNYPOJOVideo.h"
 #import "VJNYPOJOUser.h"
+#import "ASIFormDataRequest.h"
 
 #import <MediaPlayer/MediaPlayer.h>
 
@@ -23,6 +24,8 @@
     UIImageView *_dragIndicatorImageView;
     long _dragVideoIndex;
     BOOL _isDragging;
+    
+    UIActivityIndicatorView* _activityIndicatorView;
 }
 - (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier;
 - (void)playVideo:(NSString*)url;
@@ -141,9 +144,10 @@
     //_videoPlayer = nil;
 }*/
 
--(void)initWithChannelID:(NSInteger)channelID andName:(NSString*)name {
+-(void)initWithChannelID:(NSNumber*)channelID andName:(NSString*)name andIsFollow:(int)follow {
     _channelID = channelID;
     _channelName = name;
+    _isFollow = follow;
 }
 
 - (void)viewDidLoad
@@ -153,6 +157,8 @@
     self.title = _channelName;
     self.contentScrollView.contentSize = CGSizeMake(320, 504);
     _isDragging = false;
+    
+    _activityIndicatorView = nil;
     
     // 1.初始化数据
     _videoData = [NSMutableArray array];
@@ -164,7 +170,24 @@
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"HH:mm,yyyy-MM-dd"];
     
-    [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/%zd",_channelID] WithParameters:nil AndDelegate:self];
+    [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
+    
+    
+    
+    if (_isFollow == -1) {
+        // we need to contact the server
+        [self switchToProgressIndicatorForRightButton];
+        
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+        [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+        [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+        
+        [VJNYHTTPHelper sendJSONRequest:@"channel/isFollow" WithParameters:dic AndDelegate:self];
+        
+    } else if (_isFollow == 1) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(clickToUploadAction:)];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -174,6 +197,9 @@
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.translucent = YES;
+    if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
+        [_videoPlayer stop];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -182,7 +208,25 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
+#pragma mark - UI Configuration
+
+- (void)switchToProgressIndicatorForRightButton {
+    if (_activityIndicatorView == nil) {
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    }
+    [self navigationItem].rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_activityIndicatorView];
+    [_activityIndicatorView startAnimating];
+}
+
+- (void)switchToFollowButtonForRightButton {
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(clickToFollowAction:)];
+}
+
+- (void)switchToUploadButtonForRightButton {
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(clickToUploadAction:)];
+}
+
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -190,8 +234,13 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqual:[VJNYUtilities segueVideoCapturePage]]) {
+        UINavigationController* controller = segue.destinationViewController;
+        VJNYVideoCaptureViewController* videoController = [controller.viewControllers objectAtIndex:0];
+        videoController.delegate = sender;
+    }
 }
-*/
+
 
 #pragma mark - UICollectionView Delegate
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -208,7 +257,7 @@
     VJNYVideoCardViewCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:[VJNYUtilities videoCellIdentifier] forIndexPath:indexPath];
     
     VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row];
-    VJNYPOJOUser* ownerUser = [_userData objectForKey:[NSNumber numberWithLong:[video userId]]];
+    VJNYPOJOUser* ownerUser = [_userData objectForKey:[video userId]];
     
     cell.nameView.text = ownerUser.name;
     cell.timeView.text = [_dateFormatter stringFromDate:video.time];
@@ -262,6 +311,37 @@
     }
 }
 
+#pragma mark - Video Upload Delegate
+
+- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
+    
+    [VJNYUtilities showProgressAlertView];
+    
+    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"add/video"]];
+    
+    // Success
+    [request addData:videoData withFileName:@"test.mov" andContentType:@"video/quicktime" forKey:@"file"];
+    [request addData:coverData withFileName:@"test.jpg" andContentType:@"image/jpeg" forKey:@"cover"];
+    //[request setData:filedata forKey:@"file"];
+    //[request setPostValue:@"test.mov" forKey:@"fileName"];
+    
+    
+    [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+    
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData
+                                                 encoding:NSUTF8StringEncoding];
+    NSLog(@"%@",jsonString);
+    
+    [request addPostValue:jsonString forKey:@"description"];
+    
+    [request setDelegate:self];
+    [request startAsynchronous];
+}
+
 #pragma mark - HTTP Delegate
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
@@ -272,13 +352,50 @@
         if (result.result == Success) {
             for (NSArray* arr in result.response) {
                 VJNYPOJOUser* user = [arr objectAtIndex:0];
-                if ([_userData objectForKey:[NSNumber numberWithLong:user.uid]]==nil) {
-                    [_userData setObject:user forKey:[NSNumber numberWithLong:user.uid]];
+                if ([_userData objectForKey:user.uid]==nil) {
+                    [_userData setObject:user forKey:user.uid];
                 }
                 [_videoData addObject:[arr objectAtIndex:1]];
             }
             [self.videoCollectionView reloadData];
         }
+    } else if ([result.action isEqualToString:@"channel/IsFollow"]) {
+        if (result.result == Success) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_activityIndicatorView stopAnimating];
+                
+                if ([result.response boolValue] == true) {
+                    [self switchToUploadButtonForRightButton];
+                    _isFollow = 1;
+                } else {
+                    [self switchToFollowButtonForRightButton];
+                    _isFollow = 0;
+                }
+            });
+        }
+    } else if ([result.action isEqualToString:@"channel/Follow"]) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_activityIndicatorView stopAnimating];
+            
+            if (result.result == Success) {
+                [self switchToUploadButtonForRightButton];
+                _isFollow = 1;
+            } else {
+                [self switchToFollowButtonForRightButton];
+                _isFollow = 0;
+            }
+        });
+    } else if ([result.action isEqualToString:@"add/video"]) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [VJNYUtilities dismissProgressAlertView];
+            if (result.result == Success) {
+                [VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
+            } else {
+                [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Login Failed!, Reason:%d",result.result]];
+            }
+        });
     }
     
     // 当以二进制形式读取返回内容时用这个方法
@@ -291,5 +408,23 @@
     [VJNYUtilities showAlertWithNoTitle:error.localizedDescription];
 }
 
+#pragma mark - Custom Button Events
+
+- (void)clickToFollowAction:(UIBarButtonItem *)sender {
+    
+    [self switchToProgressIndicatorForRightButton];
+    
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+    
+    [VJNYHTTPHelper sendJSONRequest:@"channel/follow" WithParameters:dic AndDelegate:self];
+}
+- (void)clickToUploadAction:(UIBarButtonItem *)sender {
+    
+    [self performSegueWithIdentifier:[VJNYUtilities segueVideoCapturePage] sender:self];
+    
+}
 
 @end

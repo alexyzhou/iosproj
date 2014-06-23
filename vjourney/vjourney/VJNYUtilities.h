@@ -10,6 +10,11 @@
 
 @interface VJNYUtilities : NSObject
 
+// For Testing
++(void)initTestParameters;
++(void)initBgImageForTabView:(UIView*)view;
++(void)initBgImageForNaviBarWithTabView:(UINavigationController*)controller;
+
 +(UIAlertView*)alertViewWithProgress;
 +(void)showProgressAlertView;
 +(void)dismissProgressAlertView;
@@ -30,15 +35,20 @@
 +(NSString*)videoThumbnailCellIdentifier;
 +(NSString*)filterCardCellIdentifier;
 +(NSString*)shareCardCellIdentifier;
++(NSString*)ballonCardCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 
 +(NSString*)segueShowVideoPageByChannel;
 +(NSString*)segueLoginShowMainPage;
++(NSString*)segueVideoCapturePage;
 +(NSString*)segueVideoCutPage;
 +(NSString*)segueVideoFilterPage;
 +(NSString*)segueVideoSharePage;
 +(NSString*)segueVideoCoverSelectPage;
++(NSString*)segueBallonStoragePage;
+
++(NSString*)storyboardBallonBasePage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;

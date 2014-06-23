@@ -7,11 +7,35 @@
 //
 
 #import "VJNYUtilities.h"
+#import "VJNYHTTPHelper.h"
+#import "VJNYPOJOUser.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation VJNYUtilities
 
 static UIAlertView* _progressAlert = NULL;
+
+// For Testing
++(void)initTestParameters {
+    VJNYPOJOUser* user = [VJNYPOJOUser sharedInstance];
+    user.name = @"userName0";
+    user.uid = [NSNumber numberWithLong:1];
+    user.username = @"0";
+    user.token = @"bdd4bc5d3e058f8242e9ebdd1bff7f73";
+    user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"avatar/12.png"];
+}
+
++(void)initBgImageForTabView:(UIView*)view {
+    UIImageView* bg_image = [[UIImageView alloc] initWithFrame:view.bounds];
+    bg_image.image = [UIImage imageNamed:@"bg_main.jpg"];
+    [view insertSubview:bg_image atIndex:0];
+}
+
++(void)initBgImageForNaviBarWithTabView:(UINavigationController*)controller {
+    [controller.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_main_head.jpg"] forBarMetrics:UIBarMetricsDefault];
+    [controller.navigationBar setTintColor:[UIColor whiteColor]];
+    [controller.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
+}
 
 +(UIAlertView*)alertViewWithProgress {
     
@@ -135,7 +159,7 @@ static UIAlertView* _progressAlert = NULL;
     }    
 }
 
-#pragma mark - Const Values
+#pragma mark - Cell Identifiers
 
 +(NSString*)channelCellIdentifier {
     return @"channelCell";
@@ -158,12 +182,21 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)shareCardCellIdentifier {
     return @"shareCardCell";
 }
++(NSString*)ballonCardCellIdentifier {
+    return @"ballonCardCell";
+}
+
+
+#pragma mark - Segue
 
 +(NSString*)segueShowVideoPageByChannel {
     return @"segueShowVideoPageByChannel";
 }
 +(NSString*)segueLoginShowMainPage {
     return @"segueLoginShowMainPage";
+}
++(NSString*)segueVideoCapturePage {
+    return @"segueVideoCapturePage";
 }
 +(NSString*)segueVideoCutPage {
     return @"segueVideoCutPage";
@@ -177,6 +210,17 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)segueVideoCoverSelectPage {
     return @"segueVideoCoverPage";
 }
++(NSString*)segueBallonStoragePage {
+    return @"segueBallonStoragePage";
+}
+
+#pragma mark - Storyboard IDs
+
++(NSString*)storyboardBallonBasePage {
+    return @"sBallonBasePage";
+}
+
+#pragma mark - Const Values
 
 +(CGFloat)minCaptureTime {
     return 5.0f;

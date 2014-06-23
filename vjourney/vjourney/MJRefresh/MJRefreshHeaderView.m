@@ -79,7 +79,7 @@
     if (_state == state) return;
     
     // 2.保存旧状态
-    MJRefreshState oldState = _state;
+    // MJRefreshState oldState = _state;
     
     // 3.调用父类方法
     [super setState:state];

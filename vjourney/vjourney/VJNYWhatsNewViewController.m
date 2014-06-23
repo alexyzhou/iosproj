@@ -41,15 +41,18 @@ static VJNYWhatsNewViewController* _instance = NULL;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    // Set up Background
+    [VJNYUtilities initBgImageForTabView:self.view];
+    [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];
+    
     _instance = self;
     
     coverflow = nil;
     
-    //self.channelView.contentInset = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
-    //self.channelView.scrollIndicatorInsets = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
+    self.channelView.contentInset = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
+    self.channelView.scrollIndicatorInsets = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
     self.channelView.separatorColor = [UIColor clearColor];
-    
-    //self.title = @"What's New";
     
     // 1.初始化数据
     _channelData = [NSMutableArray array];
@@ -86,7 +89,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
         NSIndexPath* indexPath = [self.channelView indexPathForSelectedRow];
         VJNYPOJOChannel* channel = [_channelData objectAtIndex:indexPath.row-1];
-        [videoViewController initWithChannelID:channel.cid andName:channel.name];
+        [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:-1];
     }
 }
 
@@ -153,7 +156,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     if (indexPath.row == 0) {
         return 221;
     } else {
-        return 120;
+        return 160;
     }
 }
 

@@ -33,12 +33,12 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [VJNYUtilities initBgImageForTabView:self.view];
+    [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];
     
-    //self.channelView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 49.0f, 0.0f);
-    //self.channelView.scrollIndicatorInsets = UIEdgeInsetsMake(0.0f, 0.0f, 49.0f, 0.0f);
+    self.channelView.contentInset = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
+    self.channelView.scrollIndicatorInsets = UIEdgeInsetsMake(65.0f, 0.0f, 49.0f, 0.0f);
     self.channelView.separatorColor = [UIColor clearColor];
-    
-    self.title = @"I'm IN";
     
     // 1.初始化数据
     _channelData = [NSMutableArray array];
@@ -81,7 +81,7 @@
             channel = [_channelData objectAtIndex:indexPath.row];
         }
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
-        [videoViewController initWithChannelID:channel.cid andName:channel.name];
+        [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:1];
     }
 }
 
@@ -132,7 +132,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 120;
+    return 160;
 }
 
 /*- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -169,7 +169,11 @@
 {
     if (refreshView == _header) {
         //reload Data
-        [VJNYHTTPHelper getJSONRequest:@"channel/latest" WithParameters:nil AndDelegate:self];
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+        [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+        
+        [VJNYHTTPHelper sendJSONRequest:@"channel/latest/user" WithParameters:dic AndDelegate:self];
     } else if (refreshView == _footer) {
         [self performSelector:@selector(doneWithView:) withObject:refreshView afterDelay:2.0];
     }
@@ -221,7 +225,7 @@
     // 当以文本形式读取返回内容时用这个方法
     NSString *responseString = [request responseString];
     VJNYPOJOHttpResult* result = [VJNYPOJOHttpResult resultFromResponseString:responseString];
-    if ([result.action isEqualToString:@"channel/Latest"]) {
+    if ([result.action isEqualToString:@"channel/LatestByUser"]) {
         if (result.result == Success) {
             _channelData = result.response;
             [self doneWithView:_header];

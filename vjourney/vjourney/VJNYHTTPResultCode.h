@@ -13,7 +13,8 @@ typedef enum {
     Success,
     FailedWithGeneralError,
     FailedWithSQLError,
-    FailedWithParamError
+    FailedWithParamError,
+    FailedWithTokenError
 } VJNYHTTPResultCode;
 
 #endif

@@ -28,6 +28,12 @@
     CGFloat _leftPosition;
     CGFloat _rightPosition;
     CGFloat _minGap;
+    
+    UIView* _leftMaskView;
+    UIView* _rightMaskView;
+    UIView* _topMaskView;
+    UIView* _bottomMaskView;
+    BOOL _firstTimeLoad;
     //CGFloat _maxGap;
     dispatch_queue_t _coverChangeQueue;
 }
@@ -56,15 +62,13 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    //[self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
-    //[self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    //self.navigationController.navigationBar.translucent = NO;
+    
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
 }
 -(void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
+    //[super viewWillDisappear:animated];
     //[self.navigationController.navigationBar setBarStyle:UIBarStyleDefault];
     //self.navigationController.navigationBar.translucent = YES;
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
@@ -112,79 +116,130 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
     
     [self.videoPlayBackView bringSubviewToFront:self.videoPlayButton];
     
-    
+    _leftMaskView = nil;
+    _rightMaskView = nil;
+    _topMaskView = nil;
+    _bottomMaskView = nil;
+    _firstTimeLoad = true;
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    // Set up Thumbnails
-    assert(CMTimeGetSeconds(_originalVideoAsset.duration) > [VJNYUtilities maxCaptureTime]);
-    //if (CMTimeGetSeconds(_originalVideoAsset.duration) < MAX_TIME_RANGE) {
-    //    _timePerFrame = CMTimeGetSeconds(_originalVideoAsset.duration);
-    //} else {
-    CGSize rect = self.videoThumbnailCollectionView.bounds.size;
-    CGFloat numberOfThumbnails = (rect.width / rect.height);
-    _timePerFrame = [VJNYUtilities maxCaptureTime] / numberOfThumbnails;
-    //}
-    
-    NSMutableArray* _timeArray = [NSMutableArray array];
-    NSInteger numberOfImgs = CMTimeGetSeconds(_originalVideoAsset.duration) / _timePerFrame;
-    
-    for (int i = 0; i < numberOfImgs; i++) {
-        [_timeArray addObject:[NSValue valueWithCMTime:CMTimeMakeWithSeconds(i*_timePerFrame, _originalVideoAsset.duration.timescale)]];
-        //NSLog(@"%d-%f",i,CMTimeGetSeconds([[_timeArray objectAtIndex:i] CMTimeValue]));
-    }
-    _reqTimeArray = _timeArray;
-    _actualTimeArray = [NSMutableDictionary dictionaryWithCapacity:[_timeArray count]];
-    
-    [_thumbnailImageGenerator generateCGImagesAsynchronouslyForTimes:_reqTimeArray completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime,AVAssetImageGeneratorResult result, NSError *error) {
+    if (_firstTimeLoad == true) {
+        _firstTimeLoad = false;
+        // Set up Thumbnails
         
-        if (result == AVAssetImageGeneratorSucceeded) {
-            UIImage* imageView= [VJNYUtilities uiImageByCGImage:image WithOrientation:_videoOrientation AndScale:2.0f];
-            
-            NSUInteger imageNo = [_reqTimeArray indexOfObject:[NSValue valueWithCMTime:requestedTime]];
-            //NSLog(@"%f-%f",CMTimeGetSeconds(requestedTime),CMTimeGetSeconds(actualTime));
-            //NSLog(@"%d-%f",imageNo,CMTimeGetSeconds(actualTime));
-            [_actualTimeArray setObject:[NSValue valueWithCMTime:actualTime] forKey:[NSNumber numberWithUnsignedInteger:imageNo]];
-            NSIndexPath* path = [NSIndexPath indexPathForItem:imageNo inSection:0];
-            [_thumbnailCache setObject:imageView forKey:path];
-            
-            if ([[self.videoThumbnailCollectionView indexPathsForVisibleItems] containsObject:path]) {
-                VJNYVideoThumbnailViewCell* cell = (VJNYVideoThumbnailViewCell*)[self.videoThumbnailCollectionView cellForItemAtIndexPath:path];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    cell.imageView.image = imageView;
-                });
-            }
+        CGSize rect = self.videoThumbnailCollectionView.bounds.size;
+        CGFloat numberOfThumbnails = (rect.width / rect.height);
+        
+        if (CMTimeGetSeconds(_originalVideoAsset.duration) < [VJNYUtilities maxCaptureTime]) {
+            _timePerFrame = CMTimeGetSeconds(_originalVideoAsset.duration) / (numberOfThumbnails+1);
+        } else {
+            _timePerFrame = [VJNYUtilities maxCaptureTime] / numberOfThumbnails;
         }
-    }];
-    
-    // Set up Sliders
-    
-    // Parameters
-    _minGap = self.videoThumbnailCollectionView.frame.size.height * (MIN_TIME_RANGE / _timePerFrame);
-    //_maxGap = self.videoThumbnailCollectionView.frame.size.height * (MAX_TIME_RANGE / _timePerFrame);
-    _coverChangeQueue = dispatch_queue_create("Change Cover Image Queue", nil);
-    CGRect sliderLeftRect = self.leftSlider.frame;
-    sliderLeftRect.size.width = _minGap / 3;
-    [_leftSlider setFrame:sliderLeftRect];
-    [_rightSlider setFrame:sliderLeftRect];
-    
-    UIPanGestureRecognizer *leftPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleLeftPan:)];
-    [self.leftSlider addGestureRecognizer:leftPan];
-    [self.leftSlider setUserInteractionEnabled:YES];
-    CGFloat totalWidth = self.view.frame.size.width;
-    self.leftSlider.center = CGPointMake(totalWidth/4, self.leftSlider.center.y);
-    _leftPosition = self.leftSlider.frame.origin.x;
-    
-    UIPanGestureRecognizer *rightPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleRightPan:)];
-    [self.rightSlider addGestureRecognizer:rightPan];
-    [self.rightSlider setUserInteractionEnabled:YES];
-    
-    self.rightSlider.center = CGPointMake(totalWidth*3/4, self.rightSlider.center.y);
-    _rightPosition = self.rightSlider.frame.origin.x+self.rightSlider.frame.size.width;
-    
-    
+        
+        NSMutableArray* _timeArray = [NSMutableArray array];
+        NSInteger numberOfImgs = CMTimeGetSeconds(_originalVideoAsset.duration) / _timePerFrame;
+        
+        for (int i = 0; i < numberOfImgs; i++) {
+            [_timeArray addObject:[NSValue valueWithCMTime:CMTimeMakeWithSeconds(i*_timePerFrame, _originalVideoAsset.duration.timescale)]];
+            //NSLog(@"%d-%f",i,CMTimeGetSeconds([[_timeArray objectAtIndex:i] CMTimeValue]));
+        }
+        _reqTimeArray = _timeArray;
+        _actualTimeArray = [NSMutableDictionary dictionaryWithCapacity:[_timeArray count]];
+        
+        [_thumbnailImageGenerator generateCGImagesAsynchronouslyForTimes:_reqTimeArray completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime,AVAssetImageGeneratorResult result, NSError *error) {
+            
+            if (result == AVAssetImageGeneratorSucceeded) {
+                UIImage* imageView= [VJNYUtilities uiImageByCGImage:image WithOrientation:_videoOrientation AndScale:2.0f];
+                
+                NSUInteger imageNo = [_reqTimeArray indexOfObject:[NSValue valueWithCMTime:requestedTime]];
+                //NSLog(@"%f-%f",CMTimeGetSeconds(requestedTime),CMTimeGetSeconds(actualTime));
+                //NSLog(@"%d-%f",imageNo,CMTimeGetSeconds(actualTime));
+                [_actualTimeArray setObject:[NSValue valueWithCMTime:actualTime] forKey:[NSNumber numberWithUnsignedInteger:imageNo]];
+                NSIndexPath* path = [NSIndexPath indexPathForItem:imageNo inSection:0];
+                [_thumbnailCache setObject:imageView forKey:path];
+                
+                if ([[self.videoThumbnailCollectionView indexPathsForVisibleItems] containsObject:path]) {
+                    VJNYVideoThumbnailViewCell* cell = (VJNYVideoThumbnailViewCell*)[self.videoThumbnailCollectionView cellForItemAtIndexPath:path];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        cell.imageView.image = imageView;
+                    });
+                }
+            }
+        }];
+        
+        // Set up Sliders
+        
+        // Parameters
+        _minGap = self.videoThumbnailCollectionView.frame.size.height * (MIN_TIME_RANGE / _timePerFrame);
+        //_maxGap = self.videoThumbnailCollectionView.frame.size.height * (MAX_TIME_RANGE / _timePerFrame);
+        _coverChangeQueue = dispatch_queue_create("Change Cover Image Queue", nil);
+        /*CGRect sliderLeftRect = self.leftSlider.frame;
+         sliderLeftRect.size.width = _minGap / 3;
+         [_leftSlider setFrame:sliderLeftRect];
+         [_rightSlider setFrame:sliderLeftRect];*/
+        
+        UIPanGestureRecognizer *leftPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleLeftPan:)];
+        [self.leftSlider addGestureRecognizer:leftPan];
+        [self.leftSlider setUserInteractionEnabled:YES];
+        CGFloat totalWidth = self.view.frame.size.width;
+        self.leftSlider.center = CGPointMake(totalWidth/4, self.leftSlider.center.y);
+        _leftPosition = self.leftSlider.frame.origin.x;
+        
+        UIPanGestureRecognizer *rightPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleRightPan:)];
+        [self.rightSlider addGestureRecognizer:rightPan];
+        [self.rightSlider setUserInteractionEnabled:YES];
+        
+        self.rightSlider.center = CGPointMake(totalWidth*3/4, self.rightSlider.center.y);
+        _rightPosition = self.rightSlider.frame.origin.x+self.rightSlider.frame.size.width;
+        
+        CGRect containerRect = _videoThumbnailCollectionView.frame;
+        
+        if (_leftMaskView == nil) {
+            _leftMaskView = [[UIView alloc] initWithFrame:CGRectZero];
+            [_leftMaskView setBackgroundColor:[UIColor blackColor]];
+            [_leftMaskView setAlpha:0.7f];
+            [self.view addSubview:_leftMaskView];
+        }
+        
+        if (_rightMaskView == nil) {
+            _rightMaskView = [[UIView alloc] initWithFrame:CGRectZero];
+            [_rightMaskView setBackgroundColor:[UIColor blackColor]];
+            [_rightMaskView setAlpha:0.7f];
+            [self.view addSubview:_rightMaskView];
+        }
+        
+        if (_topMaskView == nil) {
+            _topMaskView = [[UIView alloc] initWithFrame:CGRectZero];
+            [_topMaskView setBackgroundColor:[UIColor whiteColor]];
+            [_topMaskView setAlpha:0.4f];
+            [self.view addSubview:_topMaskView];
+        }
+        
+        if (_bottomMaskView == nil) {
+            _bottomMaskView = [[UIView alloc] initWithFrame:CGRectZero];
+            [_bottomMaskView setBackgroundColor:[UIColor whiteColor]];
+            [_bottomMaskView setAlpha:0.4f];
+            [self.view addSubview:_bottomMaskView];
+        }
+        
+        [_leftSlider setAlpha:0.4f];
+        [_rightSlider setAlpha:0.4f];
+        
+        [_leftMaskView setFrame:CGRectMake(containerRect.origin.x, containerRect.origin.y, _leftPosition - containerRect.origin.x, containerRect.size.height)];
+        [_rightMaskView setFrame:CGRectMake(_rightPosition, containerRect.origin.y, containerRect.size.width - _rightPosition, containerRect.size.height)];
+        
+        [_topMaskView setFrame:CGRectMake(self.leftSlider.frame.origin.x+self.leftSlider.frame.size.width, self.leftSlider.frame.origin.y, self.rightSlider.frame.origin.x - self.leftSlider.frame.origin.x - self.leftSlider.frame.size.width, self.leftSlider.frame.size.width/2)];
+        [_bottomMaskView setFrame:CGRectMake(self.leftSlider.frame.origin.x+self.leftSlider.frame.size.width, self.leftSlider.frame.origin.y+self.leftSlider.frame.size.height-self.leftSlider.frame.size.width/2, self.rightSlider.frame.origin.x - self.leftSlider.frame.origin.x - self.leftSlider.frame.size.width, self.leftSlider.frame.size.width/2)];
+        
+    } else {
+        NSLog(@"Re-Organize!");
+        self.leftSlider.center = CGPointMake(_leftPosition+self.leftSlider.frame.size.width/2, self.leftSlider.center.y);
+        NSLog(@"%f",self.leftSlider.center.x);
+        self.rightSlider.center = CGPointMake(_rightPosition-self.rightSlider.frame.size.width/2, self.rightSlider.center.y);
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -320,7 +375,11 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
 - (void)handleLeftPan:(UIPanGestureRecognizer *)gesture {
     
     if (gesture.state == UIGestureRecognizerStateBegan) {
+        /*
         [self.leftSlider setAlpha:1.0f];
+        [_topMaskView setAlpha:1.0f];
+        [_bottomMaskView setAlpha:1.0f];
+         */
     } else if (gesture.state == UIGestureRecognizerStateChanged) {
         CGPoint translation = [gesture translationInView:self.view];
         
@@ -332,8 +391,16 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
         }
         [gesture setTranslation:CGPointZero inView:self.view];
         self.leftSlider.center = CGPointMake(_leftPosition+self.leftSlider.frame.size.width/2, self.leftSlider.center.y);
+        CGRect containerRect = _videoThumbnailCollectionView.frame;
+        [_leftMaskView setFrame:CGRectMake(containerRect.origin.x, containerRect.origin.y, _leftPosition - containerRect.origin.x, containerRect.size.height)];
+        [_topMaskView setFrame:CGRectMake(self.leftSlider.frame.origin.x+self.leftSlider.frame.size.width, _topMaskView.frame.origin.y, self.rightSlider.frame.origin.x - self.leftSlider.frame.origin.x - self.leftSlider.frame.size.width, _topMaskView.frame.size.height)];
+        [_bottomMaskView setFrame:CGRectMake(self.leftSlider.frame.origin.x+self.leftSlider.frame.size.width, _bottomMaskView.frame.origin.y, self.rightSlider.frame.origin.x - self.leftSlider.frame.origin.x - self.leftSlider.frame.size.width, _bottomMaskView.frame.size.height)];
     } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        /*
         [self.leftSlider setAlpha:0.4f];
+        [_topMaskView setAlpha:0.4f];
+        [_bottomMaskView setAlpha:0.4f];
+         */
         [self updateCoverImage];
     }
     
@@ -342,7 +409,11 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
 - (void)handleRightPan:(UIPanGestureRecognizer *)gesture {
     
     if (gesture.state == UIGestureRecognizerStateBegan) {
+        /*
         [self.rightSlider setAlpha:1.0f];
+        [_topMaskView setAlpha:1.0f];
+        [_bottomMaskView setAlpha:1.0f];
+         */
     } else if (gesture.state == UIGestureRecognizerStateChanged) {
         CGPoint translation = [gesture translationInView:self.view];
         
@@ -357,9 +428,17 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
         //originRect.origin.x = _rightPosition;
         //[self.rightSlider setFrame:originRect];
         self.rightSlider.center = CGPointMake(_rightPosition-self.rightSlider.frame.size.width/2, self.rightSlider.center.y);
+        CGRect containerRect = _videoThumbnailCollectionView.frame;
+        [_rightMaskView setFrame:CGRectMake(_rightPosition, containerRect.origin.y, containerRect.size.width - _rightPosition, containerRect.size.height)];
+        [_topMaskView setFrame:CGRectMake(self.leftSlider.frame.origin.x+self.leftSlider.frame.size.width, _topMaskView.frame.origin.y, self.rightSlider.frame.origin.x - self.leftSlider.frame.origin.x - self.leftSlider.frame.size.width, _topMaskView.frame.size.height)];
+        [_bottomMaskView setFrame:CGRectMake(self.leftSlider.frame.origin.x+self.leftSlider.frame.size.width, _bottomMaskView.frame.origin.y, self.rightSlider.frame.origin.x - self.leftSlider.frame.origin.x - self.leftSlider.frame.size.width, _bottomMaskView.frame.size.height)];
         //[self.view setNeedsLayout];
     } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        /*
         [self.rightSlider setAlpha:0.4f];
+        [_topMaskView setAlpha:0.4f];
+        [_bottomMaskView setAlpha:0.4f];
+        */
     }
     
 }

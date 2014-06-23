@@ -10,7 +10,7 @@
 
 @implementation VJNYHTTPHelper
 
-static NSString* _remoteIpAddr = @"175.159.5.199:8080";
+static NSString* _remoteIpAddr = @"175.159.8.172:8080";
 
 +(void)setIPAddr:(NSString*)ip {
     _remoteIpAddr = [NSString stringWithFormat:@"%@:8080",ip];
@@ -89,6 +89,7 @@ static NSString* _remoteIpAddr = @"175.159.5.199:8080";
     [request setRequestMethod:@"GET"];
     [request addRequestHeader:@"Accept" value:@"application/json"];
     [request addRequestHeader:@"content-type" value:@"application/json"];
+    [request setResponseEncoding:NSUTF8StringEncoding];
     
     request.allowCompressedResponse = NO;
     request.useCookiePersistence = NO;

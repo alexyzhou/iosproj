@@ -32,16 +32,18 @@
             NSString* userJson = [dict objectForKey:@"response"];
             NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
             
+            [VJNYPOJOUser sharedInstance].uid = [userDic objectForKey:@"id"];
+            [VJNYPOJOUser sharedInstance].name = [userDic objectForKey:@"name"];
+            [VJNYPOJOUser sharedInstance].username = [userDic objectForKey:@"userName"];
+            [VJNYPOJOUser sharedInstance].avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
+            [VJNYPOJOUser sharedInstance].token = [userDic objectForKey:@"token"];
+            [VJNYPOJOUser sharedInstance].gender = [userDic objectForKey:@"gender"];
+            [VJNYPOJOUser sharedInstance].age = [userDic objectForKey:@"age"];
             
-            [VJNYPOJOUser instance].uid = [(NSNumber*)[userDic objectForKey:@"id"] intValue];
-            [VJNYPOJOUser instance].name = [userDic objectForKey:@"name"];
-            [VJNYPOJOUser instance].avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
-            [VJNYPOJOUser instance].token = [userDic objectForKey:@"token"];
-            
-            resultObj.response = [VJNYPOJOUser instance];
+            resultObj.response = [VJNYPOJOUser sharedInstance];
             
         }
-    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"]) {
+    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/LatestByUser"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             
@@ -55,13 +57,13 @@
                 
                 NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
                 
-                channel.cid = [(NSNumber*)[objDic objectForKey:@"id"] intValue];
+                channel.cid = [objDic objectForKey:@"id"];
                 channel.name = [objDic objectForKey:@"name"];
                 channel.description = [objDic objectForKey:@"description"];
-                channel.creatorUserId = [(NSNumber*)[objDic objectForKey:@"creatorUserId"] intValue];
+                channel.creatorUserId = [objDic objectForKey:@"creatorUserId"];
                 channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"createTime"] intValue]];
-                channel.videoCount = [(NSNumber*)[objDic objectForKey:@"videoCount"] intValue];
-                channel.promotion = [[objDic objectForKey:@"promotion"] boolValue];
+                channel.videoCount = [objDic objectForKey:@"videoCount"];
+                channel.promotion = [objDic objectForKey:@"promotion"];
                 channel.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"coverUrl"]];
                 
                 [resultObj.response addObject:channel];
@@ -87,23 +89,49 @@
                 NSDictionary * videoDic = [NSJSONSerialization JSONObjectWithData:[videoStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
                 
                 
-                video.vid = [(NSNumber*)[videoDic objectForKey:@"id"] intValue];
+                video.vid = [videoDic objectForKey:@"id"];
                 video.description = [videoDic objectForKey:@"description"];
                 video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"url"]];
                 video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[videoDic objectForKey:@"time"] intValue]];
-                video.userId = [(NSNumber*)[videoDic objectForKey:@"userId"] intValue];
-                video.like = [(NSNumber*)[videoDic objectForKey:@"like"] intValue];
-                video.watched = [(NSNumber*)[videoDic objectForKey:@"watched"] intValue];
-                video.channelId= [(NSNumber*)[videoDic objectForKey:@"channelId"] intValue];
+                video.userId = [videoDic objectForKey:@"userId"];
+                video.like = [videoDic objectForKey:@"like"];
+                video.watched = [videoDic objectForKey:@"watched"];
+                video.channelId= [videoDic objectForKey:@"channelId"];
                 video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
                 
-                user.uid = [(NSNumber*)[userDic objectForKey:@"id"] intValue];
+                user.uid = [userDic objectForKey:@"id"];
                 user.name = [userDic objectForKey:@"name"];
                 user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
                 user.token = [userDic objectForKey:@"token"];
+                user.gender = [userDic objectForKey:@"gender"];
+                user.age = [userDic objectForKey:@"age"];
                 
                 [resultObj.response addObject:[NSArray arrayWithObjects:user, video, nil]];
             }
+        }
+    } else if ([resultObj.action isEqualToString:@"channel/IsFollow"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            
+            NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            resultObj.response = [NSNumber numberWithBool:[[userDic objectForKey:@"result"] boolValue]];
+        }
+    } else if ([resultObj.action isEqualToString:@"whisper/Get"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            
+            NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            VJNYPOJOWhisper* whisper = [[VJNYPOJOWhisper alloc] init];
+            whisper.wid = [userDic objectForKey:@"id"];
+            whisper.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"url"]];
+            whisper.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"coverUrl"]];
+            whisper.userId = [userDic objectForKey:@"userId"];
+            whisper.receiverId = [userDic objectForKey:@"receiverId"];
+            whisper.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[userDic objectForKey:@"time"] intValue]];
+            
+            resultObj.response = whisper;
         }
     }
     return resultObj;

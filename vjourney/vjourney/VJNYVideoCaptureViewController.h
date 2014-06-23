@@ -9,6 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "PBJVision.h"
 
+@protocol VJNYVideoUploadDelegate <NSObject>
+@required
+- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic;
+@end
+
 @interface VJNYVideoCaptureViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate,PBJVisionDelegate>
 - (IBAction)videoSelectAction:(id)sender;
 - (IBAction)videoDeleteAction:(id)sender;
@@ -24,4 +29,8 @@
 @property (weak, nonatomic) IBOutlet UIView *progressContainerView;
 @property (weak, nonatomic) IBOutlet UIButton *videoDeleteButton;
 
+@property (nonatomic, strong) id<VJNYVideoUploadDelegate> delegate;
+
 @end
+
+

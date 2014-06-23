@@ -46,6 +46,8 @@
 
 @implementation VJNYVideoCaptureViewController
 
+@synthesize delegate=_delegate;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -349,7 +351,7 @@
 }
 
 - (IBAction)cancelCaptureAction:(id)sender {
-    
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)changeFlashAction:(id)sender {
@@ -518,7 +520,7 @@
     CMTime duration = asset.duration;
     float seconds = CMTimeGetSeconds(duration);
     NSLog(@"%f",seconds);
-    if (seconds > [VJNYUtilities maxCaptureTime]) {
+    if (seconds > [VJNYUtilities minCaptureTime]) {
         // send to cut
         [self performSegueWithIdentifier:[VJNYUtilities segueVideoCutPage] sender:videoUrl];
     } else {

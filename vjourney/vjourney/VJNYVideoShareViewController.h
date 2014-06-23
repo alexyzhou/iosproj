@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-extern @protocol VJNYSelectCoverDelegate;
+#import "VJNYSelectCoverViewController.h"
 
 @interface VJNYVideoShareViewController : UIViewController<UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate,VJNYSelectCoverDelegate>
 @property (weak, nonatomic) IBOutlet UIView *coverContainerView;
@@ -20,6 +19,7 @@ extern @protocol VJNYSelectCoverDelegate;
 - (IBAction)tapToChangeCoverAction:(UITapGestureRecognizer *)sender;
 - (IBAction)tapToBeginEditing:(UITapGestureRecognizer *)sender;
 - (IBAction)gPSAction:(UIButton *)sender;
+- (IBAction)uploadAction:(UIBarButtonItem *)sender;
 
 @property (weak, nonatomic) IBOutlet UIView *textContainerView;
 @property (weak, nonatomic) IBOutlet UITextField *textEditView;

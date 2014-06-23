@@ -11,10 +11,12 @@
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOHttpResult.h"
 #import "VJNYHTTPResultCode.h"
+#import "VJNYVideoCaptureViewController.h"
 
-@interface VJNYVideoViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate> {
-    NSInteger _channelID;
+@interface VJNYVideoViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,VJNYVideoUploadDelegate> {
+    NSNumber* _channelID;
     NSString* _channelName;
+    int _isFollow;
 }
 @property (weak, nonatomic) IBOutlet UICollectionView *videoCollectionView;
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerView;
@@ -22,7 +24,9 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *contentScrollView;
 
 - (IBAction)longPressHandler:(id)sender;
+- (void)clickToFollowAction:(UIBarButtonItem *)sender;
+- (void)clickToUploadAction:(UIBarButtonItem *)sender;
 
--(void)initWithChannelID:(NSInteger)channelID andName:(NSString*)name;
+-(void)initWithChannelID:(NSNumber*)channelID andName:(NSString*)name andIsFollow:(int)follow;
 
 @end

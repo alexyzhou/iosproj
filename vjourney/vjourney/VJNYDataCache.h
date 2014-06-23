@@ -19,10 +19,5 @@
 
 @protocol VJNYDataCacheDelegate <NSObject>
 @required
-/** Returns a coverflow cover view to place at the cover index.
- @param coverflowView The coverflow view.
- @param index The index for the coverflow cover.
- @return A `TKCoverflowCoverView` view that is either newly created or from the coverflow's reusable queue.
- */
 - (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode;
 @end

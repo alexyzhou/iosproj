@@ -228,11 +228,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     
     _lastProcess = -1.0f;
     
-    _movieProcessingTimer = [NSTimer scheduledTimerWithTimeInterval:0.1f
-     target:self
-     selector:@selector(retrievingProgress)
-     userInfo:nil
-     repeats:YES];
+    _movieProcessingTimer = [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(retrievingProgress) userInfo:nil repeats:YES];
     
     __unsafe_unretained typeof(self) weakSelf = self;
     
@@ -252,7 +248,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 }
 
 - (void)retrievingProgress {
-    if (_lastProcess == _movieFile.progress && _movieFile.progress > 0.5f) {
+    if (_lastProcess == _movieFile.progress && _movieFile.progress > 0.8f) {
         // need to manually terminate
         NSLog(@"Manually!");
         [_movieFile endProcessing];

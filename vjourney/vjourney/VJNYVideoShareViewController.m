@@ -7,10 +7,15 @@
 //
 
 #import "VJNYVideoShareViewController.h"
-#import "VJNYSelectCoverViewController.h"
+#import "VJNYVideoCaptureViewController.h"
 #import "VJNYUtilities.h"
+#import "VJNYPOJOUser.h"
 #import "VJNYShareCardCell.h"
 #import <AVFoundation/AVFoundation.h>
+
+#import "VJNYHTTPHelper.h"
+#import "VJNYPOJOHttpResult.h"
+#import "VJNYHTTPResultCode.h"
 
 @interface VJNYVideoShareViewController () {
     NSMutableArray* _socialNetworkArray;
@@ -180,4 +185,29 @@
 
 - (IBAction)gPSAction:(UIButton *)sender {
 }
+
+- (IBAction)uploadAction:(UIBarButtonItem *)sender {
+    
+    if ([_textEditView.text isEqual:@""]) {
+        [VJNYUtilities showAlert:@"Error" andContent:@"Please fill in your description"];
+        [_textEditView becomeFirstResponder];
+        return;
+    }
+    
+    NSData* filedata = [NSData dataWithContentsOfURL:_inputPath];
+    NSData* coverdata = UIImageJPEGRepresentation(_coverImageView.image,1.0f);
+    
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+    [dic setObject:_textEditView.text forKey:@"description"];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    
+    VJNYVideoCaptureViewController* rootController = [self.navigationController.viewControllers objectAtIndex:0];
+    if ([rootController.delegate respondsToSelector:@selector(videoReadyForUploadWithVideoData:AndCoverData:AndPostValue:)]) {
+        [rootController.delegate videoReadyForUploadWithVideoData:filedata AndCoverData:coverdata AndPostValue:dic];
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 @end

@@ -7,12 +7,14 @@
 //
 
 #import "VJNYAppDelegate.h"
+#import "VJNYUtilities.h"
 
 @implementation VJNYAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    [VJNYUtilities initTestParameters];
     return YES;
 }
 							

@@ -10,11 +10,11 @@
 
 @interface VJNYPOJOVideo : NSObject
 
-@property(nonatomic) NSInteger vid;
-@property(nonatomic) NSInteger userId;
-@property(nonatomic) NSInteger like;
-@property(nonatomic) NSInteger watched;
-@property(nonatomic) NSInteger channelId;
+@property(nonatomic,strong) NSNumber* vid;
+@property(nonatomic,strong) NSNumber* userId;
+@property(nonatomic,strong) NSNumber* like;
+@property(nonatomic,strong) NSNumber* watched;
+@property(nonatomic,strong) NSNumber* channelId;
 @property(nonatomic,strong) NSString* description;
 @property(nonatomic,strong) NSString* url;
 @property(nonatomic,strong) NSDate* time;
