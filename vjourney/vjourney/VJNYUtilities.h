@@ -14,13 +14,18 @@
 +(void)initTestParameters;
 +(void)initBgImageForTabView:(UIView*)view;
 +(void)initBgImageForNaviBarWithTabView:(UINavigationController*)controller;
++(void)voidBgImageForTabBarWithController:(UITabBarController*)controller;
 
+
+// Helper
++(NSString*)formatDataString:(NSDate*)param;
 +(UIAlertView*)alertViewWithProgress;
 +(void)showProgressAlertView;
 +(void)dismissProgressAlertView;
 +(void)showAlert:(NSString*)title andContent:(NSString*)content;
 +(void)showAlertWithNoTitle:(NSString*)content;
 +(BOOL)isRetina;
++(UIFont*)customFontWithSize:(CGFloat)size;
 
 // FileSystem Helpers
 +(NSString *)documentsDirectory;
@@ -38,6 +43,9 @@
 +(NSString*)ballonCardCellIdentifier;
 +(NSString*)profileHeadCellIdentifier;
 +(NSString*)profileVideoCellIdentifier;
++(NSString*)chatMessageCellIdentifier;
++(NSString*)chatThreadCellIdentifier;
++(NSString*)sysNotifCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 
@@ -49,9 +57,13 @@
 +(NSString*)segueVideoSharePage;
 +(NSString*)segueVideoCoverSelectPage;
 +(NSString*)segueBallonStoragePage;
++(NSString*)segueChatDetailpage;
 
 +(NSString*)storyboardBallonBasePage;
 +(NSString*)storyboardUserProfilePage;
++(NSString*)storyboardChatListPage;
++(NSString*)storyboardChatDetailPage;
++(NSString*)storyboardSysNotifPage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;

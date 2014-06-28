@@ -7,6 +7,7 @@
 //
 
 #import "VJNYVideoViewController.h"
+#import "VJNYChatViewController.h"
 #import "VJNYVideoCardViewCell.h"
 #import "VJNYUtilities.h"
 #import "VJNYPOJOVideo.h"
@@ -159,7 +160,7 @@
         _videoPlayer.view.frame = self.videoPlayerView.bounds;
         _videoPlayer.controlStyle = MPMovieControlStyleNone;
         _videoPlayer.repeatMode = MPMovieRepeatModeOne;
-        [_videoPlayer setScalingMode:MPMovieScalingModeFill];
+        [_videoPlayer setScalingMode:MPMovieScalingModeAspectFill];
         //[self.videoPlayerView addSubview:_videoPlayer.view];
         [self.videoPlayerView insertSubview:_videoPlayer.view atIndex:0];
         //[self.videoPlayerView bringSubviewToFront:_videoPlayButton];
@@ -445,6 +446,10 @@
             [VJNYUtilities dismissProgressAlertView];
             if (result.result == Success) {
                 [VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
+#pragma mark - TODO
+                [_videoData removeAllObjects];
+                [_userData removeAllObjects];
+                [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
             } else {
                 [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Login Failed!, Reason:%d",result.result]];
             }
@@ -511,6 +516,23 @@
 }
 
 - (IBAction)clickToChatAction:(id)sender {
+    
+    if (_dragVideoIndex != -1) {
+        
+        VJNYChatViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardChatDetailPage]];
+        
+        VJNYVideoCardViewCell* cell = (VJNYVideoCardViewCell*)[self.videoCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:_dragVideoIndex inSection:0]];
+        VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
+        VJNYPOJOUser* user = [_userData objectForKey:video.userId];
+        
+        controller.target_avatar = cell.avatarView.image;
+        controller.target_id = user.uid;
+        controller.target_name = user.name;
+        controller.target_avatar_url = user.avatarUrl;
+        
+        [self.navigationController pushViewController:controller animated:YES];
+    }
+    
 }
 
 - (IBAction)clickToSeeWatchedAction:(id)sender {

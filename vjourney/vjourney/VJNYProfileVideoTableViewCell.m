@@ -37,23 +37,27 @@
 -(void)myMovieFinishedCallback:(NSNotification*)aNotification {
     NSLog(@"video play finished");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:_videoPlayer];
+    [_videoPlayer stop];
     _videoCoverImageView.alpha = 1.0f;
     _videoPlayButtonImageView.alpha = 1.0f;
+    [_videoPlayer.view removeFromSuperview];
+    _videoPlayer = nil;
 }
 
 #pragma mark - Custom Methods
 
-- (void)startPlayOrStopVideoWithURL:(NSURL*)url {
+- (BOOL)startPlayOrStopVideoWithURL:(NSURL*)url {
     
     if (_videoPlayer != nil && _videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
-        [self myMovieFinishedCallback:nil];
-        return;
+        [_videoPlayer pause];
+        _videoPlayButtonImageView.alpha = 1.0f;
+        return false;
     }
     
     _videoCoverImageView.alpha = 0.0f;
     _videoPlayButtonImageView.alpha = 0.0f;
     
-    NSLog(@"Video Playback: %@",url);
+    //NSLog(@"Video Playback: %@",url);
     
     if (_videoPlayer == nil) {
         // 1 - Play the video
@@ -62,7 +66,7 @@
         _videoPlayer.view.frame = self.videoPlayerContainerView.bounds;
         _videoPlayer.controlStyle = MPMovieControlStyleNone;
         _videoPlayer.repeatMode = MPMovieRepeatModeNone;
-        [_videoPlayer setScalingMode:MPMovieScalingModeFill];
+        [_videoPlayer setScalingMode:MPMovieScalingModeAspectFill];
         [self.videoPlayerContainerView insertSubview:_videoPlayer.view atIndex:0];
     }
     
@@ -72,6 +76,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myMovieFinishedCallback:)
                                                  name:MPMoviePlayerPlaybackDidFinishNotification object:_videoPlayer];
     
+    return true;
 }
 - (void)stopPlayVideo {
     if (_videoPlayer != nil && _videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {

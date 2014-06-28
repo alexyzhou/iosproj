@@ -19,7 +19,7 @@
 @property (strong, nonatomic) MPMoviePlayerController* videoPlayer;
 
 //Custom Method
-- (void)startPlayOrStopVideoWithURL:(NSURL*)url;
+- (BOOL)startPlayOrStopVideoWithURL:(NSURL*)url;
 - (void)stopPlayVideo;
 
 @end

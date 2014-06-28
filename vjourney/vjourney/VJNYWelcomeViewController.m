@@ -7,6 +7,7 @@
 //
 
 #import "VJNYWelcomeViewController.h"
+#import "VJNYUtilities.h"
 
 @interface VJNYWelcomeViewController ()
 
@@ -38,7 +39,7 @@
         }
     }*/
     
-    self.helloLabelView.font = [UIFont fontWithName:@"CenturyGothic" size:20];
+    self.helloLabelView.font = [VJNYUtilities customFontWithSize:20];
     
     //self.signInBgImageView.image = [self.bgImageView.image applyLightEffect];
     

@@ -13,7 +13,6 @@
     NSMutableArray *_channelData;
     NSArray *_searchResult;
     
-    MJRefreshHeaderView *_header;
     MJRefreshFooterView *_footer;
 }
 @end
@@ -44,17 +43,16 @@
     _channelData = [NSMutableArray array];
     
     // 2.集成刷新控件
-    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    /*MJRefreshFooterView *footer = [MJRefreshFooterView footer];
     footer.scrollView = self.channelView;
     footer.delegate = self;
     _footer = footer;
-    
-    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
-    header.scrollView = self.channelView;
-    header.delegate = self;
-    _header = header;
-    
-    [_header beginRefreshing];
+    */
+    [self refreshData];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self refreshData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -83,6 +81,17 @@
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
         [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:1];
     }
+}
+
+- (void)refreshData {
+    
+    [_channelData removeAllObjects];
+    
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    
+    [VJNYHTTPHelper sendJSONRequest:@"channel/latest/user" WithParameters:dic AndDelegate:self];
 }
 
 #pragma mark - Table view data source
@@ -118,6 +127,12 @@
         channel = [_channelData objectAtIndex:indexPath.row];
     }
     
+    cell.bgMaskView.layer.cornerRadius = 5;
+    cell.bgMaskView.layer.masksToBounds = YES;
+    
+    cell.image.layer.cornerRadius = 5;
+    cell.image.layer.masksToBounds = YES;
+    
     // Set up the cell...
     NSString* imageUrl = channel.coverUrl;
     UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
@@ -132,7 +147,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 160;
+    return 61;
 }
 
 /*- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -145,6 +160,19 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         //add code here for when you hit delete
+        
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+        [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+        
+        VJNYPOJOChannel* channel = [_channelData objectAtIndex:indexPath.row];
+        
+        [dic setObject:[channel.cid stringValue] forKey:@"channelId"];
+        
+        [VJNYHTTPHelper sendJSONRequest:@"channel/unFollow" WithParameters:dic AndDelegate:self];
+        
+        [_channelData removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 
@@ -167,20 +195,11 @@
 #pragma mark 开始进入刷新状态
 - (void)refreshViewBeginRefreshing:(MJRefreshBaseView *)refreshView
 {
-    if (refreshView == _header) {
-        //reload Data
-        NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
-        [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
-        
-        [VJNYHTTPHelper sendJSONRequest:@"channel/latest/user" WithParameters:dic AndDelegate:self];
-    } else if (refreshView == _footer) {
+    if (refreshView == _footer) {
         [self performSelector:@selector(doneWithView:) withObject:refreshView afterDelay:2.0];
     }
     
     NSLog(@"%@----开始进入刷新状态", refreshView.class);
-    
-    
 }
 
 #pragma mark 刷新完毕
@@ -228,8 +247,7 @@
     if ([result.action isEqualToString:@"channel/LatestByUser"]) {
         if (result.result == Success) {
             _channelData = result.response;
-            [self doneWithView:_header];
-            //[self.channelView reloadData];
+            [_channelView reloadData];
         }
     }
     
@@ -245,7 +263,6 @@
 
 - (void)dealloc
 {
-    [_header free];
     [_footer free];
 }
 
@@ -267,5 +284,6 @@
 }
 
 #pragma mark - custom Methods
+
 
 @end

@@ -35,8 +35,32 @@ static UIAlertView* _progressAlert = NULL;
     [controller.navigationBar setTintColor:[UIColor whiteColor]];
     [controller.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
 }
++(void)voidBgImageForTabBarWithController:(UITabBarController*)controller {
+    [controller.tabBar setBackgroundImage:[UIImage imageNamed:@"bg_main_bottom.jpg"]];
+    [controller.tabBar setTintColor:[UIColor whiteColor]];
+    [controller.tabBar setBarStyle:UIBarStyleBlack];
+}
 
 
++(NSString*)formatDataString:(NSDate*)param {
+    
+    NSTimeInterval intervals = param.timeIntervalSinceNow;
+    
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    
+    if (intervals < 3600*24) {
+        // less than a day
+        fmt.dateFormat = @"HH:mm:ss";
+    } else if (intervals < 3600*24*365){
+        // less than a year
+        fmt.dateFormat = @"MM-dd";
+    } else {
+        fmt.dateFormat = @"yyyy-MM-dd";
+    }
+    return [fmt stringFromDate:param];
+}
+
+#pragma mark - UI Helper
 
 +(UIAlertView*)alertViewWithProgress {
     
@@ -70,6 +94,11 @@ static UIAlertView* _progressAlert = NULL;
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:content message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alert show];
 }
++(UIFont*)customFontWithSize:(CGFloat)size {
+    return [UIFont fontWithName:@"CenturyGothic" size:size];
+}
+
+#pragma mark - IO Helper
 
 +(void)clearTempFiles {
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -192,6 +221,15 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)profileVideoCellIdentifier {
     return @"profileVideoCell";
 }
++(NSString*)chatMessageCellIdentifier {
+    return @"chatMessageCell";
+}
++(NSString*)chatThreadCellIdentifier {
+    return @"chatThreadCell";
+}
++(NSString*)sysNotifCellIdentifier {
+    return @"sysNotifCell";
+}
 
 
 #pragma mark - Segue
@@ -220,6 +258,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)segueBallonStoragePage {
     return @"segueBallonStoragePage";
 }
++(NSString*)segueChatDetailpage {
+    return @"segueChatDetailPage";
+}
 
 #pragma mark - Storyboard IDs
 
@@ -228,6 +269,15 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)storyboardUserProfilePage {
     return @"sUserProfilePage";
+}
++(NSString*)storyboardChatListPage {
+    return @"sChatListPage";
+}
++(NSString*)storyboardChatDetailPage {
+    return @"sChatDetailPage";
+}
++(NSString*)storyboardSysNotifPage {
+    return @"sSysNotifPage";
 }
 
 #pragma mark - Const Values

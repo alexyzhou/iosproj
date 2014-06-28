@@ -20,6 +20,8 @@
 
 @implementation VJNYBallonBaseViewController
 
+@synthesize slideDelegate=_slideDelegate;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -35,6 +37,16 @@
     // Do any additional setup after loading the view.
     //UINavigationController* controller = self.navigationController;
     //[controller pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"sBallonStoragePage"] animated:YES];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController.navigationBar setHidden:YES];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController.navigationBar setHidden:NO];
 }
 
 - (void)didReceiveMemoryWarning
@@ -144,5 +156,11 @@
     
     [self performSegueWithIdentifier:[VJNYUtilities segueVideoCapturePage] sender:self];
     
+}
+- (IBAction)showSliderAction:(id)sender {
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction)]) {
+        [_slideDelegate subViewDidTriggerSliderAction];
+    }
 }
 @end

@@ -20,8 +20,8 @@
     VJNYPOJOUser* _myUser;
     NSNumber* _storyCount;
     NSNumber* _totalLike;
-    VJNYPOJOVideo* _hotVideo;
     
+    NSMutableArray* _cellPlayingToStop;
 }
 
 @end
@@ -51,7 +51,6 @@
     _myUser = nil;
     _storyCount = nil;
     _totalLike = nil;
-    _hotVideo = nil;
     _videoData = [NSMutableArray array];
     
     // Fetch Data
@@ -62,7 +61,13 @@
     // Videos
     [VJNYHTTPHelper getJSONRequest:[@"video/latest/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
     // Hot Video
-    [VJNYHTTPHelper getJSONRequest:[@"video/hot/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
+    //[VJNYHTTPHelper getJSONRequest:[@"video/hot/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    VJNYProfileHeadTableViewCell* cell = (VJNYProfileHeadTableViewCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    [cell stopPlayVideo];
 }
 
 - (void)didReceiveMemoryWarning
@@ -102,6 +107,8 @@
         
         VJNYProfileHeadTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:[VJNYUtilities profileHeadCellIdentifier]];
         
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
         cell.videoPlayer = nil;
         
         [self initMyUser];
@@ -111,6 +118,9 @@
     } else {
         
         VJNYProfileVideoTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:[VJNYUtilities profileVideoCellIdentifier]];
+        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
         cell.videoPlayer = nil;
         VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row-1];
         [VJNYDataCache loadImage:cell.videoCoverImageView WithUrl:video.coverUrl AndMode:1 AndIdentifier:indexPath AndDelegate:self];
@@ -119,28 +129,26 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([tableView.indexPathsForVisibleRows indexOfObject:indexPath] == NSNotFound)
+    {
+        // This indeed is an indexPath no longer visible
+        // Do something to this non-visible cell...
+        if (indexPath.row > 0) {
+            [(VJNYProfileVideoTableViewCell*)cell stopPlayVideo];
+        }
+    }
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
         return 360;
     } else {
-        return 161;
+        return 321;
     }
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
-    VJNYProfileHeadTableViewCell* cell = (VJNYProfileHeadTableViewCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    
-    CGFloat scrollValue = scrollView.contentOffset.y;
-    
-    if (scrollValue > cell.videoPlayerContainerView.bounds.size.height) {
-        [cell stopPlayVideo];
-    } else {
-        [cell startPlayVideoWithURL:[NSURL URLWithString:[_hotVideo url]]];
-    }
-    
-}
-/*
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -149,7 +157,7 @@
         VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row-1];
         [cell startPlayOrStopVideoWithURL:[NSURL URLWithString:video.url]];
     }
-}*/
+}
 
 #pragma mark - Cache Handler
 - (void) dataRequestFinished:(UIImage*)data WithIdentifier:(id)identifier AndMode:(int)mode {
@@ -190,11 +198,6 @@
                 _videoData = result.response;
                 [self.tableView reloadData];
             }
-        } else if ([result.action isEqualToString:@"video/Hot/User"]) {
-            if (result.result == Success) {
-                _hotVideo = result.response;
-                [self playPopularVideo];
-            }
         }
     });
     
@@ -229,16 +232,6 @@
     }
     if (_totalLike != nil) {
         cell.likeCountLabel.text = [_totalLike stringValue];
-    }
-}
-
-- (void)playPopularVideo {
-    VJNYProfileHeadTableViewCell* cell = (VJNYProfileHeadTableViewCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    
-    if (_hotVideo != nil) {
-        if ([[self.tableView visibleCells] containsObject:cell]) {
-            [cell startPlayVideoWithURL:[NSURL URLWithString:_hotVideo.url]];
-        }
     }
 }
 

@@ -11,5 +11,6 @@
 @interface VJNYChannelTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *image;
 @property (weak, nonatomic) IBOutlet UILabel *title;
+@property (weak, nonatomic) IBOutlet UIView *bgMaskView;
 
 @end

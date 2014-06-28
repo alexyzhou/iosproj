@@ -45,6 +45,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     // Set up Background
     [VJNYUtilities initBgImageForTabView:self.view];
     [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];
+    [VJNYUtilities voidBgImageForTabBarWithController:self.tabBarController];
     
     _instance = self;
     
@@ -138,6 +139,12 @@ static VJNYWhatsNewViewController* _instance = NULL;
             cell = [[VJNYChannelTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[VJNYUtilities channelCellIdentifier]];
         }
         
+        cell.bgMaskView.layer.cornerRadius = 5;
+        cell.bgMaskView.layer.masksToBounds = YES;
+        
+        cell.image.layer.cornerRadius = 5;
+        cell.image.layer.masksToBounds = YES;
+        
         // Set up the cell...
         NSString* imageUrl = ((VJNYPOJOChannel*)[_channelData objectAtIndex:indexPath.row-1]).coverUrl;
         UIImage* imageData = [[VJNYDataCache instance] dataByURL:imageUrl];
@@ -156,7 +163,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     if (indexPath.row == 0) {
         return 221;
     } else {
-        return 160;
+        return 61;
     }
 }
 

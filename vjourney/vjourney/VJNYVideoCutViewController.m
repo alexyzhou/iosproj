@@ -455,7 +455,7 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
             _videoPlayer.view.frame = self.videoPlayBackView.bounds;
             _videoPlayer.controlStyle = MPMovieControlStyleNone;
             _videoPlayer.repeatMode = MPMovieRepeatModeNone;
-            [_videoPlayer setScalingMode:MPMovieScalingModeFill];
+            [_videoPlayer setScalingMode:MPMovieScalingModeAspectFill];
             [self.videoPlayBackView addSubview:_videoPlayer.view];
             [self.videoPlayBackView bringSubviewToFront:_coverImageView];
             [self.videoPlayBackView bringSubviewToFront:_videoPlayButton];

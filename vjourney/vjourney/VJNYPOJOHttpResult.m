@@ -7,6 +7,10 @@
 //
 
 #import "VJNYPOJOHttpResult.h"
+#import "VJDMModel.h"
+#import "VJDMMessage.h"
+#import "VJDMNotification.h"
+#import "VJDMThread.h"
 
 @implementation VJNYPOJOHttpResult
 
@@ -26,6 +30,8 @@
     resultObj.result = result;
     resultObj.action = [dict objectForKey:@"action"];
     resultObj.response = NULL;
+    
+    NSLog(@"Action-%@",resultObj.action);
     
     if ([resultObj.action isEqualToString:@"login"]) {
         if (result==Success) {
@@ -149,6 +155,95 @@
                 
                 [resultObj.response addObject:video];
             }
+        }
+    } else if ([resultObj.action isEqualToString:@"notif/Chat/Get"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            
+            NSArray * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            resultObj.response = [[NSMutableArray alloc] init];
+            
+            NSNumber* hasNewEntry = [NSNumber numberWithBool:NO];
+            
+            for (NSString* objStr in userDic) {
+                
+                if ([hasNewEntry boolValue] == false) {
+                    hasNewEntry = [NSNumber numberWithBool:YES];
+                }
+                
+                VJDMMessage* message = (VJDMMessage*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMMessage"];
+                
+                NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                NSString* userStr = [objDic objectForKey:@"user"];
+                NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                NSString* chatStr = [objDic objectForKey:@"chatRecord"];
+                NSDictionary * chatDic = [NSJSONSerialization JSONObjectWithData:[chatStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                
+                message.content = [chatDic objectForKey:@"content"];
+                message.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[chatDic objectForKey:@"time"] intValue]];
+                message.target_id = chatDic[@"fromUserId"];
+                message.type = MessageTypeOther;
+                
+                [resultObj.response addObject:message];
+                
+                VJDMThread* thread = (VJDMThread*)[[VJDMModel sharedInstance] getThreadByTargetID:message.target_id];
+                
+                if (thread == nil) {
+                    thread = (VJDMThread*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMThread"];
+                    thread.target_id = message.target_id;
+                    thread.target_name = userDic[@"name"];
+                    thread.avatar_url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:userDic[@"avatarUrl"]];
+                    thread.last_message = message.content;
+                    thread.last_time = message.time;
+                } else {
+                    if (thread.last_time.timeIntervalSince1970 < message.time.timeIntervalSince1970) {
+                        thread.last_message = message.content;
+                        thread.last_time = message.time;
+                    }
+                }
+            }
+            [[VJDMModel sharedInstance] saveChanges];
+            
+            resultObj.response = hasNewEntry;
+        }
+    } else if ([resultObj.action isEqualToString:@"notif/SysNotif/Get"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            
+            NSArray * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            resultObj.response = [[NSMutableArray alloc] init];
+            
+            NSNumber* hasNewEntry = [NSNumber numberWithBool:NO];
+            
+            for (NSString* objStr in userDic) {
+                
+                if ([hasNewEntry boolValue] == false) {
+                    hasNewEntry = [NSNumber numberWithBool:YES];
+                }
+                
+                VJDMNotification* notif = (VJDMNotification*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMNotification"];
+                
+                NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                NSString* userStr = [objDic objectForKey:@"user"];
+                NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                NSString* notifStr = [objDic objectForKey:@"notification"];
+                NSDictionary * notifDic = [NSJSONSerialization JSONObjectWithData:[notifStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                notif.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[notifDic objectForKey:@"time"] intValue]];
+                notif.content = notifDic[@"content"];
+                notif.type = [notifDic[@"type"] intValue];
+                notif.sender_id = notifDic[@"senderId"];
+                notif.sender_avatar_url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:userDic[@"avatarUrl"]];
+                
+            }
+            [[VJDMModel sharedInstance] saveChanges];
+            
+            resultObj.response = hasNewEntry;
         }
     } else if ([resultObj.action isEqualToString:@"video/Hot/User"]) {
         if (result==Success) {

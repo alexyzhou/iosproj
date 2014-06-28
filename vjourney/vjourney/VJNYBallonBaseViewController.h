@@ -9,11 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "ASIFormDataRequest.h"
 #import "VJNYVideoCaptureViewController.h"
+#import "VJNYInboxViewController.h"
 
 @interface VJNYBallonBaseViewController : UIViewController<ASIHTTPRequestDelegate, VJNYVideoUploadDelegate>
 
 - (IBAction)catchBallonAction:(id)sender;
 - (IBAction)ballonStorageAction:(id)sender;
 - (IBAction)uploadBallonAction:(id)sender;
+
+@property(nonatomic, strong) id<VJNYInboxSlideDelegate> slideDelegate;
+- (IBAction)showSliderAction:(id)sender;
 
 @end
