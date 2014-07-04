@@ -1157,7 +1157,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Voodoo-animate-0.png" translatesAutoresizingMaskIntoConstraints="NO" id="DwL-jD-clv">
-                                <rect key="frame" x="-25" y="-254" width="299" height="672"/>
+                                <rect key="frame" x="-23" y="-234" width="294" height="662"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="DwL-jD-clv" secondAttribute="height" multiplier="4:9" id="frn-Hi-fCX"/>
@@ -1212,9 +1212,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="bmw-Ru-LvV" secondAttribute="trailing" id="AEb-YB-SXh"/>
-                            <constraint firstAttribute="bottom" secondItem="DwL-jD-clv" secondAttribute="bottom" constant="150" id="AqA-A4-p6T"/>
+                            <constraint firstAttribute="bottom" secondItem="DwL-jD-clv" secondAttribute="bottom" constant="140" id="AqA-A4-p6T"/>
                             <constraint firstItem="bmw-Ru-LvV" firstAttribute="leading" secondItem="4xM-XH-AET" secondAttribute="leading" id="VDc-DH-IXD"/>
-                            <constraint firstItem="DwL-jD-clv" firstAttribute="top" secondItem="4xM-XH-AET" secondAttribute="top" constant="-254" id="XET-zk-c5n"/>
+                            <constraint firstItem="DwL-jD-clv" firstAttribute="top" secondItem="4xM-XH-AET" secondAttribute="top" constant="-234" id="XET-zk-c5n"/>
                             <constraint firstItem="bmw-Ru-LvV" firstAttribute="top" secondItem="4xM-XH-AET" secondAttribute="top" id="Xus-Mi-Wfh"/>
                             <constraint firstAttribute="centerX" secondItem="DwL-jD-clv" secondAttribute="centerX" constant="36" id="Yzw-X0-GC4"/>
                             <constraint firstAttribute="bottom" secondItem="8M1-zR-YQz" secondAttribute="bottom" constant="56" id="aBM-Jq-gO5"/>
@@ -1226,6 +1226,7 @@
                     <navigationItem key="navigationItem" id="IBg-pW-jJu"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="addVoodooButton" destination="8M1-zR-YQz" id="8Wt-ML-2t8"/>
                         <outlet property="ballonAnimationImageView" destination="DwL-jD-clv" id="7FK-gg-IOE"/>
                         <segue destination="mvB-b8-Mug" kind="push" identifier="segueBallonStoragePage" id="2eO-I9-m2I"/>
                         <segue destination="5wp-Vx-ipB" kind="modal" identifier="segueVideoCapturePage" id="rbI-zs-2pg"/>

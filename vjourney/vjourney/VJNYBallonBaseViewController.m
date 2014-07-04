@@ -16,6 +16,7 @@
 
 @interface VJNYBallonBaseViewController () {
     UIImageView* _uploadIndicator;
+    UIView* _uploadBannerView;
     BOOL _ballonAnimationReady;
 }
 
@@ -40,6 +41,7 @@
     // Do any additional setup after loading the view.
     
     _uploadIndicator = nil;
+    _uploadBannerView = nil;
     _ballonAnimationReady = false;
     
     UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panToShowSliderAction:)];
@@ -67,6 +69,7 @@
     [super viewDidDisappear:animated];
     [self.navigationController.navigationBar setHidden:NO];
     //[self.ballonAnimationImageView stopAnimating];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -97,7 +100,7 @@
 - (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
     
     //[VJNYUtilities showProgressAlertViewToView:self.view];
-    /*
+    
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"add/whisper"]];
     
     // Success
@@ -116,15 +119,24 @@
     
     [request setDelegate:self];
     [request startAsynchronous];
-    */
+    
+    [request setUploadProgressDelegate:self];
+    
+    // Set Upload Banner
+    _uploadBannerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 20)];
+    [_uploadBannerView setBackgroundColor:[UIColor blueColor]];
+    [_uploadBannerView setAlpha:0.5f];
+    [self.view addSubview:_uploadBannerView];
+    
     // Set Upload Indicator
     _uploadIndicator = [[UIImageView alloc] initWithFrame:CGRectMake(10, 65, 300, 196)];
-    //[VJNYUtilities addShadowForUIView:_uploadIndicator WithOffset:CGSizeMake(2.0f, 2.0f) AndRadius:3.0f];
+    [VJNYUtilities addShadowForUIView:_uploadIndicator WithOffset:CGSizeMake(2.0f, 2.0f) AndRadius:4.0f];
     //_uploadIndicator.backgroundColor = [UIColor redColor];
     _uploadIndicator.image = [UIImage imageWithData:coverData];
     _uploadIndicator.contentMode = UIViewContentModeScaleAspectFill;
     _uploadIndicator.clipsToBounds = YES;
     [self.view addSubview:_uploadIndicator];
+    [self.addVoodooButton setEnabled:NO];
     
     [UIView animateWithDuration:2 animations:^{
         [_uploadIndicator setFrame:CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/2+20, 0, 0)];
@@ -139,7 +151,7 @@
                 [self ballonAnimationHelperWithCurrentIndex:0 AndMaxIndex:27];
             });
             
-            [UIView animateWithDuration:1.5f delay:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            [UIView animateWithDuration:2.2f delay:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
                 self.ballonAnimationImageView.alpha = 0.0f;
             } completion:^(BOOL finished) {
                 
@@ -152,17 +164,25 @@
     }];
 }
 
+- (void)setProgress:(float)newProgress {
+    NSLog(@"%f",newProgress);
+    _uploadBannerView.frame = CGRectMake(0, 0, 320.0f*newProgress, 20);
+}
+
+#pragma mark - Animation
+
 - (void)ballonAnimationHelperWithCurrentIndex:(int)index AndMaxIndex:(int)maxIndex {
-    if (index < maxIndex) {
+    if (index <= maxIndex) {
         NSString *strImgeName = [NSString stringWithFormat:@"Voodoo-animate-%d@2x", index];
         NSString *filePath = [[NSBundle mainBundle]pathForResource:strImgeName ofType:@"png"];
+        
         UIImage *image = [[UIImage alloc]initWithContentsOfFile:filePath];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.ballonAnimationImageView.image = image;
         });
         
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1.5f/27.0f * NSEC_PER_SEC);
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1.7f/27.0f * NSEC_PER_SEC);
         dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
             [self ballonAnimationHelperWithCurrentIndex:index+1 AndMaxIndex:maxIndex];
         });
@@ -189,7 +209,15 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             //[VJNYUtilities dismissProgressAlertViewFromView:self.view];
             if (result.result == Success) {
-                [VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
+                //[VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
+                [UIView animateWithDuration:0.5f animations:^{
+                    [_uploadBannerView setAlpha:0.0f];
+                } completion:^(BOOL finished) {
+                    [_uploadBannerView removeFromSuperview];
+                    _uploadBannerView = nil;
+                    [self.addVoodooButton setEnabled:YES];
+                }];
+                
             } else {
                 [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Login Failed!, Reason:%d",result.result]];
             }

@@ -13,7 +13,7 @@
 #import "VJNYHTTPResultCode.h"
 #import "VJNYVideoCaptureViewController.h"
 
-@interface VJNYVideoViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,VJNYVideoUploadDelegate> {
+@interface VJNYVideoViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,VJNYVideoUploadDelegate,ASIProgressDelegate> {
     NSNumber* _channelID;
     NSString* _channelName;
     int _isFollow;

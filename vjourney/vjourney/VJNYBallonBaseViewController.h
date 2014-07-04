@@ -11,8 +11,9 @@
 #import "VJNYVideoCaptureViewController.h"
 #import "VJNYInboxViewController.h"
 
-@interface VJNYBallonBaseViewController : UIViewController<ASIHTTPRequestDelegate, VJNYVideoUploadDelegate>
+@interface VJNYBallonBaseViewController : UIViewController<ASIHTTPRequestDelegate, VJNYVideoUploadDelegate,ASIProgressDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ballonAnimationImageView;
+@property (weak, nonatomic) IBOutlet UIButton *addVoodooButton;
 
 - (IBAction)catchBallonAction:(id)sender;
 - (IBAction)ballonStorageAction:(id)sender;

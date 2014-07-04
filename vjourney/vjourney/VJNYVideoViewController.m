@@ -29,6 +29,8 @@
     UIActivityIndicatorView* _activityIndicatorView;
     
     NSMutableDictionary* _likeVideoDic;
+    
+    UIView* _uploadBannerView;
 }
 - (void)playVideo:(NSString*)url;
 - (NSMutableDictionary*)genUserVideoRequestDic;
@@ -196,6 +198,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    _uploadBannerView = nil;
+    
     self.title = _channelName;
     _isDragging = false;
     _dragVideoIndex = -1;
@@ -370,7 +375,7 @@
 
 - (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
     
-    [VJNYUtilities showProgressAlertViewToView:self.view];
+    //[VJNYUtilities showProgressAlertViewToView:self.view];
     
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"add/video"]];
     
@@ -397,6 +402,20 @@
     [request startAsynchronous];
     
     [request setUploadProgressDelegate:self];
+    
+    
+    // Set Upload Banner
+    _uploadBannerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 20)];
+    [_uploadBannerView setBackgroundColor:[UIColor blueColor]];
+    [_uploadBannerView setAlpha:0.5f];
+    [self.navigationController.view addSubview:_uploadBannerView];
+    
+    [self.navigationItem.rightBarButtonItem setEnabled:NO];
+}
+
+- (void)setProgress:(float)newProgress {
+    NSLog(@"%f",newProgress);
+    _uploadBannerView.frame = CGRectMake(0, 0, 320.0f*newProgress, 20);
 }
 
 #pragma mark - HTTP Delegate
@@ -446,9 +465,16 @@
     } else if ([result.action isEqualToString:@"add/video"]) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [VJNYUtilities dismissProgressAlertViewFromView:self.view];
+            //[VJNYUtilities dismissProgressAlertViewFromView:self.view];
             if (result.result == Success) {
-                [VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
+                //[VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
+                [UIView animateWithDuration:0.5f animations:^{
+                    [_uploadBannerView setAlpha:0.0f];
+                } completion:^(BOOL finished) {
+                    [_uploadBannerView removeFromSuperview];
+                    _uploadBannerView = nil;
+                    [self.navigationItem.rightBarButtonItem setEnabled:YES];
+                }];
 #pragma mark - TODO
                 [_videoData removeAllObjects];
                 [_userData removeAllObjects];

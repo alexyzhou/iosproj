@@ -59,8 +59,14 @@
     // TODO...
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController.navigationBar setOpaque:YES];
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self.navigationController.navigationBar setOpaque:NO];
     if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
         [self myMovieFinishedCallback:nil];
     }
