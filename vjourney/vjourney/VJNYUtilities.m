@@ -10,6 +10,7 @@
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOUser.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MBProgressHUD.h"
 
 @implementation VJNYUtilities
 
@@ -62,7 +63,7 @@ static UIAlertView* _progressAlert = NULL;
 
 #pragma mark - UI Helper
 
-+(UIAlertView*)alertViewWithProgress {
+/*+(UIAlertView*)alertViewWithProgress {
     
     if (_progressAlert == NULL) {
         _progressAlert = [[UIAlertView alloc] initWithTitle:@"Loading\nPlease Wait..."
@@ -76,13 +77,15 @@ static UIAlertView* _progressAlert = NULL;
     }
     
     return _progressAlert;
-}
+}*/
 
-+(void)showProgressAlertView {
-    [[self alertViewWithProgress] show];
++(void)showProgressAlertViewToView:(UIView*)view {
+    //[[self alertViewWithProgress] show];
+    [MBProgressHUD showHUDAddedTo:view animated:YES];
 }
-+(void)dismissProgressAlertView {
-    [[self alertViewWithProgress] dismissWithClickedButtonIndex:0 animated:YES];
++(void)dismissProgressAlertViewFromView:(UIView*)view {
+    //[[self alertViewWithProgress] dismissWithClickedButtonIndex:0 animated:YES];
+    [MBProgressHUD hideHUDForView:view animated:YES];
 }
 
 +(void)showAlert:(NSString*)title andContent:(NSString*)content {
@@ -150,8 +153,11 @@ static UIAlertView* _progressAlert = NULL;
     return snapshotImage;
 }
 + (void) addShadowForUIView:(UIView *)view {
-    view.layer.shadowOffset = CGSizeMake(1.0f, -4.0f);
-    view.layer.shadowRadius = 5.0f;
+    [self addShadowForUIView:view WithOffset:CGSizeMake(1.0f,-4.0f) AndRadius:5.0f];
+}
++ (void) addShadowForUIView:(UIView *)view WithOffset:(CGSize)size AndRadius:(CGFloat)radius {
+    view.layer.shadowOffset = size;
+    view.layer.shadowRadius = radius;
     view.layer.shadowOpacity = 0.5f;
     view.layer.masksToBounds = NO;
 }

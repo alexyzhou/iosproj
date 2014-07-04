@@ -19,6 +19,7 @@
     NSMutableArray* _videoData;
     VJNYPOJOUser* _myUser;
     NSNumber* _storyCount;
+    NSNumber* _channelCount;
     NSNumber* _totalLike;
     
     NSMutableArray* _cellPlayingToStop;
@@ -51,6 +52,7 @@
     _myUser = nil;
     _storyCount = nil;
     _totalLike = nil;
+    _channelCount = nil;
     _videoData = [NSMutableArray array];
     
     // Fetch Data
@@ -60,8 +62,8 @@
     [VJNYHTTPHelper getJSONRequest:[@"video/countByUser/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
     // Videos
     [VJNYHTTPHelper getJSONRequest:[@"video/latest/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
-    // Hot Video
-    //[VJNYHTTPHelper getJSONRequest:[@"video/hot/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
+    // Channel Count
+    [VJNYHTTPHelper getJSONRequest:[@"channel/countByUser/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -198,6 +200,11 @@
                 _videoData = result.response;
                 [self.tableView reloadData];
             }
+        } else if ([result.action isEqualToString:@"channel/CountByUser"]) {
+            if (result.result == Success) {
+                _channelCount = [result.response objectForKey:@"count"];
+                [self initVideoCountAndLike];
+            }
         }
     });
     
@@ -229,9 +236,18 @@
     
     if (_storyCount != nil) {
         cell.storyCountLabel.text = [_storyCount stringValue];
+    } else {
+        cell.storyCountLabel.text = @"0";
     }
     if (_totalLike != nil) {
         cell.likeCountLabel.text = [_totalLike stringValue];
+    } else {
+        cell.likeCountLabel.text = @"0";
+    }
+    if (_channelCount != nil) {
+        cell.topicCountLabel.text = [_channelCount stringValue];
+    } else {
+        cell.topicCountLabel.text = @"0";
     }
 }
 

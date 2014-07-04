@@ -11,8 +11,10 @@
 #import "VJNYDataCache.h"
 #import "VJNYInboxViewController.h"
 
-@interface VJNYSysNotifViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,VJNYDataCacheDelegate>
+@interface VJNYSysNotifViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,VJNYDataCacheDelegate,UIGestureRecognizerDelegate>
 - (IBAction)sideAction:(id)sender;
+- (IBAction)panToShowSliderAction:(UIPanGestureRecognizer *)sender;
+- (IBAction)tapToDismissSliderAction:(UITapGestureRecognizer *)sender;
 @property (weak, nonatomic) IBOutlet UIImageView *userAvatarImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UITableView *sysNotifTableView;

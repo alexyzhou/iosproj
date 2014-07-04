@@ -73,6 +73,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    VJNYVideoCaptureViewController* rootController = [[self.navigationController viewControllers] objectAtIndex:0];
+    if (rootController.captureMode == WhisperMode) {
+        [_textContainerView setHidden:YES];
+        [_shareCardCollectionView setHidden:YES];
+    }
+}
+
 #pragma mark - Keyboard
 
 - (void)keyBoardWillShow:(NSNotification *)note{
@@ -188,7 +197,9 @@
 
 - (IBAction)uploadAction:(UIBarButtonItem *)sender {
     
-    if ([_textEditView.text isEqual:@""]) {
+    VJNYVideoCaptureViewController* rootController = [self.navigationController.viewControllers objectAtIndex:0];
+    
+    if ([_textEditView.text isEqual:@""] && rootController.captureMode == GeneralMode) {
         [VJNYUtilities showAlert:@"Error" andContent:@"Please fill in your description"];
         [_textEditView becomeFirstResponder];
         return;
@@ -199,15 +210,22 @@
     
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
-    [dic setObject:_textEditView.text forKey:@"description"];
-    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
     
-    VJNYVideoCaptureViewController* rootController = [self.navigationController.viewControllers objectAtIndex:0];
-    if ([rootController.delegate respondsToSelector:@selector(videoReadyForUploadWithVideoData:AndCoverData:AndPostValue:)]) {
-        [rootController.delegate videoReadyForUploadWithVideoData:filedata AndCoverData:coverdata AndPostValue:dic];
+    if (rootController.captureMode == GeneralMode) {
+        [dic setObject:_textEditView.text forKey:@"description"];
     }
     
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    
+    [self dismissViewControllerAnimated:(rootController.captureMode != WhisperMode) completion:^{
+        
+        if ([rootController.delegate respondsToSelector:@selector(videoReadyForUploadWithVideoData:AndCoverData:AndPostValue:)]) {
+            [rootController.delegate videoReadyForUploadWithVideoData:filedata AndCoverData:coverdata AndPostValue:dic];
+        }
+        
+    }];
+    
+    
 }
 
 @end

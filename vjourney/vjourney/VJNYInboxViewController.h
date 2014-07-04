@@ -15,9 +15,12 @@
 @protocol VJNYInboxSlideDelegate <NSObject>
 @required
 -(void)subViewDidTriggerSliderAction;
+-(void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state;
+-(void)subViewDidTapOutsideSlider;
+-(BOOL)isSliderOff;
 @end
 
-@interface VJNYInboxViewController : UIViewController<UINavigationControllerDelegate,VJNYInboxSlideDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate>
+@interface VJNYInboxViewController : UIViewController<UINavigationControllerDelegate,VJNYInboxSlideDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *sliderView;
 @property (weak, nonatomic) IBOutlet UIImageView *userCoverView;
@@ -43,11 +46,17 @@
 @property (weak, nonatomic) IBOutlet UIImageView *vooDooIconView;
 @property (weak, nonatomic) IBOutlet UILabel *vooDooLabelView;
 
+@property (weak, nonatomic) IBOutlet UIScrollView *sliderScrollView;
 
 - (IBAction)dismissSliderViewAction:(id)sender;
 - (void)subViewDidTriggerSliderAction;
+- (void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state;
+- (void)subViewDidTapOutsideSlider;
+- (BOOL)isSliderOff;
 
 - (IBAction)tapToChangePageAction:(UITapGestureRecognizer *)sender;
+- (IBAction)panToDismissSliderAction:(UIPanGestureRecognizer *)sender;
+
 
 
 @end

@@ -13,6 +13,7 @@
 @interface VJNYHTTPHelper : NSObject
 +(NSURL*)connectionUrlByAppendingRequest:(NSString*)request;
 +(NSString*)pathUrlPrefix;
++(NSString*)pathUrlByRemovePrefix:(NSString*)fullUrl;
 +(NSString*)mediaPlayCodeWithURL:(NSString*)url andWidth:(NSInteger)width andHeight:(NSInteger)height;
 +(void)sendJSONRequest:(NSString*)target WithParameters:(NSMutableDictionary*)parameters AndDelegate:(id<ASIHTTPRequestDelegate>) delegate;
 +(void)getJSONRequest:(NSString*)target WithParameters:(NSMutableDictionary*)parameters AndDelegate:(id<ASIHTTPRequestDelegate>) delegate;

@@ -10,7 +10,7 @@
 
 @implementation VJNYHTTPHelper
 
-static NSString* _remoteIpAddr = @"175.159.5.105:8080";
+static NSString* _remoteIpAddr = @"175.159.5.51:8080";
 
 +(void)setIPAddr:(NSString*)ip {
     _remoteIpAddr = [NSString stringWithFormat:@"%@:8080",ip];
@@ -21,6 +21,14 @@ static NSString* _remoteIpAddr = @"175.159.5.105:8080";
 }
 +(NSString*)pathUrlPrefix {
     return [NSString stringWithFormat:@"http://%@/vjourney-service-webapp/",_remoteIpAddr];
+}
++(NSString*)pathUrlByRemovePrefix:(NSString*)fullUrl {
+    NSString* prefix = [self pathUrlPrefix];
+    if ([fullUrl length] > [prefix length]) {
+        return [fullUrl substringFromIndex:prefix.length];
+    } else {
+        return nil;
+    }
 }
 
 +(NSString*)mediaPlayCodeWithURL:(NSString*)url andWidth:(NSInteger)width andHeight:(NSInteger)height {

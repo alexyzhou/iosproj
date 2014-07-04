@@ -47,6 +47,7 @@
 @implementation VJNYVideoCaptureViewController
 
 @synthesize delegate=_delegate;
+@synthesize captureMode=_captureMode;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -371,7 +372,8 @@
     
     if ([_capturedVideoArray count] > 0) {
         
-        [[VJNYUtilities alertViewWithProgress] show];
+        //[[VJNYUtilities alertViewWithProgress] show];
+        [VJNYUtilities showProgressAlertViewToView:self.view];
         
         NSArray* sortedArray = [_capturedVideoArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [(NSString*)obj2 compare:(NSString*)obj1];
@@ -417,6 +419,7 @@
 }
 
 -(void)exportDidFinish:(AVAssetExportSession*)session {
+    [VJNYUtilities dismissProgressAlertViewFromView:self.view];
     if (session.status == AVAssetExportSessionStatusCompleted) {
         /*NSURL *outputURL = session.outputURL;
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
@@ -440,7 +443,7 @@
     } else {
         NSLog(@"%@",session.error.localizedDescription);
     }
-    [VJNYUtilities dismissProgressAlertView];
+    
 }
 
 #pragma mark - PBJVisionDelegate

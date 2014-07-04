@@ -46,6 +46,14 @@
     [VJNYDataCache loadImage:self.userAvatarImageView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:1 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
     self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
     self.userNameLabel.font = [VJNYUtilities customFontWithSize:23];
+    
+    UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panToShowSliderAction:)];
+    [self.view addGestureRecognizer:panGesture];
+    panGesture.delegate = self;
+    
+    UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToDismissSliderAction:)];
+    [self.view addGestureRecognizer:tapGesture];
+    tapGesture.delegate = self;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -123,7 +131,7 @@
     VJDMNotification* notif = [_notifArray objectAtIndex:indexPath.row];
     
     // 设置数据
-    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:notif.sender_avatar_url AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:notif.sender_avatar_url] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     cell.contentLabel.text = [notif contentStringByType];
     cell.contentLabel.font = [VJNYUtilities customFontWithSize:14.0];
     //NSLog(@"%@",cell.contentLabel.text);
@@ -178,4 +186,55 @@
         [_slideDelegate subViewDidTriggerSliderAction];
     }
 }
+
+- (IBAction)panToShowSliderAction:(UIPanGestureRecognizer *)sender {
+    
+    UIPanGestureRecognizer* gesture = sender;
+    CGPoint translation = [gesture translationInView:self.view];
+    [gesture setTranslation:CGPointZero inView:self.view];
+    
+    //NSLog(@"PanGesture:x-%f,y-%f",translation.x,translation.y);
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:)]) {
+        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state];
+    }
+    
+}
+
+- (IBAction)tapToDismissSliderAction:(UITapGestureRecognizer *)sender {
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider)]) {
+        [_slideDelegate subViewDidTapOutsideSlider];
+    }
+    
+}
+
+#pragma mark - Gesture Delegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if ([gestureRecognizer isMemberOfClass:UIPanGestureRecognizer.class]) {
+        CGPoint translation = [(UIPanGestureRecognizer*)gestureRecognizer translationInView:self.view];
+        BOOL isVerticalPan = (fabsf(translation.x) < fabsf(translation.y));
+        return !isVerticalPan;
+    } else {
+        return YES;
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if ([gestureRecognizer isMemberOfClass:UIPanGestureRecognizer.class]) {
+        return YES;
+    } else {
+        if ([_slideDelegate respondsToSelector:@selector(isSliderOff)]) {
+            return ![_slideDelegate isSliderOff];
+        }
+        return NO;
+    }
+}
+
 @end

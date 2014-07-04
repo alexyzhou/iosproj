@@ -475,7 +475,7 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
 }
 - (IBAction)trimVideoAction:(id)sender {
     
-    [VJNYUtilities showProgressAlertView];
+    [VJNYUtilities showProgressAlertViewToView:self.view];
     
     NSURL *videoFileUrl = _selectedVideoURL;
     
@@ -511,7 +511,7 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
                 default:
                     NSLog(@"NONE");
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [VJNYUtilities dismissProgressAlertView];
+                        [VJNYUtilities dismissProgressAlertViewFromView:self.view];
                         [self performSegueWithIdentifier:[VJNYUtilities segueVideoFilterPage] sender:exportSession.outputURL];
                     });
                     

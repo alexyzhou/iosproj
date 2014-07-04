@@ -101,11 +101,11 @@
 
 #pragma mark - activityIndicator Event
 - (void) actIndicatorBegin {
-    [[VJNYUtilities alertViewWithProgress] show];
+    [VJNYUtilities showProgressAlertViewToView:self.view];
 }
 
 -(void) actIndicatorEnd {
-    [[VJNYUtilities alertViewWithProgress] dismissWithClickedButtonIndex:0 animated:YES];
+    [VJNYUtilities dismissProgressAlertViewFromView:self.view];
 }
 
 #pragma mark - Button Action

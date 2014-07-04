@@ -14,7 +14,10 @@
 #import "VJNYHTTPHelper.h"
 #import "VJNYUtilities.h"
 
-@interface VJNYBallonBaseViewController ()
+@interface VJNYBallonBaseViewController () {
+    UIImageView* _uploadIndicator;
+    BOOL _ballonAnimationReady;
+}
 
 @end
 
@@ -35,18 +38,35 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    //UINavigationController* controller = self.navigationController;
-    //[controller pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"sBallonStoragePage"] animated:YES];
+    
+    _uploadIndicator = nil;
+    _ballonAnimationReady = false;
+    
+    UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panToShowSliderAction:)];
+    [self.view addGestureRecognizer:panGesture];
+    
+    UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToDismissSliderAction:)];
+    [self.view addGestureRecognizer:tapGesture];
+    
+    [VJNYUtilities addShadowForUIView:self.ballonAnimationImageView WithOffset:CGSizeMake(2.0f, 2.0f) AndRadius:3.0f];
+    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        
+//    });
+    
+    //[self.ballonAnimationImageView setAnimationRepeatCount:1];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setHidden:YES];
+    //[self.ballonAnimationImageView startAnimating];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
     [self.navigationController.navigationBar setHidden:NO];
+    //[self.ballonAnimationImageView stopAnimating];
 }
 
 - (void)didReceiveMemoryWarning
@@ -65,6 +85,7 @@
         UINavigationController* controller = segue.destinationViewController;
         VJNYVideoCaptureViewController* videoController = [controller.viewControllers objectAtIndex:0];
         videoController.delegate = sender;
+        videoController.captureMode = WhisperMode;
     } else if ([segue.identifier isEqual:[VJNYUtilities segueBallonStoragePage]]) {
         VJNYBallonListViewController* controller = segue.destinationViewController;
         controller.whisper = sender;
@@ -75,8 +96,8 @@
 
 - (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
     
-    [VJNYUtilities showProgressAlertView];
-    
+    //[VJNYUtilities showProgressAlertViewToView:self.view];
+    /*
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"add/whisper"]];
     
     // Success
@@ -95,6 +116,66 @@
     
     [request setDelegate:self];
     [request startAsynchronous];
+    */
+    // Set Upload Indicator
+    _uploadIndicator = [[UIImageView alloc] initWithFrame:CGRectMake(10, 65, 300, 196)];
+    //[VJNYUtilities addShadowForUIView:_uploadIndicator WithOffset:CGSizeMake(2.0f, 2.0f) AndRadius:3.0f];
+    //_uploadIndicator.backgroundColor = [UIColor redColor];
+    _uploadIndicator.image = [UIImage imageWithData:coverData];
+    _uploadIndicator.contentMode = UIViewContentModeScaleAspectFill;
+    _uploadIndicator.clipsToBounds = YES;
+    [self.view addSubview:_uploadIndicator];
+    
+    [UIView animateWithDuration:2 animations:^{
+        [_uploadIndicator setFrame:CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/2+20, 0, 0)];
+        _uploadIndicator.alpha = 0.0f;
+    } completion:^(BOOL finished) {
+        NSLog(@"uploadIndicator Animate Result: %d",finished);
+        if (finished) {
+            [_uploadIndicator removeFromSuperview];
+            _uploadIndicator = nil;
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                [self ballonAnimationHelperWithCurrentIndex:0 AndMaxIndex:27];
+            });
+            
+            [UIView animateWithDuration:1.5f delay:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+                self.ballonAnimationImageView.alpha = 0.0f;
+            } completion:^(BOOL finished) {
+                
+            }];
+            
+        } else {
+            NSLog(@"Error With animate");
+        }
+        
+    }];
+}
+
+- (void)ballonAnimationHelperWithCurrentIndex:(int)index AndMaxIndex:(int)maxIndex {
+    if (index < maxIndex) {
+        NSString *strImgeName = [NSString stringWithFormat:@"Voodoo-animate-%d@2x", index];
+        NSString *filePath = [[NSBundle mainBundle]pathForResource:strImgeName ofType:@"png"];
+        UIImage *image = [[UIImage alloc]initWithContentsOfFile:filePath];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.ballonAnimationImageView.image = image;
+        });
+        
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1.5f/27.0f * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+            [self ballonAnimationHelperWithCurrentIndex:index+1 AndMaxIndex:maxIndex];
+        });
+    } else {
+        NSString *strImgeName = [NSString stringWithFormat:@"Voodoo-animate-%d@2x", 0];
+        NSString *filePath = [[NSBundle mainBundle]pathForResource:strImgeName ofType:@"png"];
+        UIImage *image = [[UIImage alloc]initWithContentsOfFile:filePath];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.ballonAnimationImageView.image = image;
+            self.ballonAnimationImageView.alpha = 1.0f;
+        });
+    }
 }
 
 #pragma mark - HTTP Delegate
@@ -106,7 +187,7 @@
     if ([result.action isEqualToString:@"add/whisper"]) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [VJNYUtilities dismissProgressAlertView];
+            //[VJNYUtilities dismissProgressAlertViewFromView:self.view];
             if (result.result == Success) {
                 [VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
             } else {
@@ -116,7 +197,7 @@
     } else if ([result.action isEqualToString:@"whisper/Get"]) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [VJNYUtilities dismissProgressAlertView];
+            [VJNYUtilities dismissProgressAlertViewFromView:self.view];
             if (result.result == Success) {
                 VJNYPOJOWhisper* whisper = result.response;
                 [self performSegueWithIdentifier:[VJNYUtilities segueBallonStoragePage] sender:whisper];
@@ -138,7 +219,7 @@
 
 - (IBAction)catchBallonAction:(id)sender {
     
-    [VJNYUtilities showProgressAlertView];
+    [VJNYUtilities showProgressAlertViewToView:self.view];
     
     NSMutableDictionary* dic = [NSMutableDictionary dictionary];
     [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
@@ -163,4 +244,30 @@
         [_slideDelegate subViewDidTriggerSliderAction];
     }
 }
+
+#pragma mark - Gesture Delegate
+
+- (void)panToShowSliderAction:(UIPanGestureRecognizer *)sender {
+    
+    UIPanGestureRecognizer* gesture = sender;
+    CGPoint translation = [gesture translationInView:self.view];
+    [gesture setTranslation:CGPointZero inView:self.view];
+    
+    //NSLog(@"PanGesture:x-%f,y-%f",translation.x,translation.y);
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:)]) {
+        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state];
+    }
+    
+}
+
+- (void)tapToDismissSliderAction:(UITapGestureRecognizer *)sender {
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider)]) {
+        [_slideDelegate subViewDidTapOutsideSlider];
+    }
+    
+}
+
+
 @end

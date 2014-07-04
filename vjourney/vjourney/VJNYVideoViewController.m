@@ -287,6 +287,7 @@
         UINavigationController* controller = segue.destinationViewController;
         VJNYVideoCaptureViewController* videoController = [controller.viewControllers objectAtIndex:0];
         videoController.delegate = sender;
+        videoController.captureMode = GeneralMode;
     }
 }
 
@@ -369,7 +370,7 @@
 
 - (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
     
-    [VJNYUtilities showProgressAlertView];
+    [VJNYUtilities showProgressAlertViewToView:self.view];
     
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"add/video"]];
     
@@ -394,6 +395,8 @@
     
     [request setDelegate:self];
     [request startAsynchronous];
+    
+    [request setUploadProgressDelegate:self];
 }
 
 #pragma mark - HTTP Delegate
@@ -443,7 +446,7 @@
     } else if ([result.action isEqualToString:@"add/video"]) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [VJNYUtilities dismissProgressAlertView];
+            [VJNYUtilities dismissProgressAlertViewFromView:self.view];
             if (result.result == Success) {
                 [VJNYUtilities showAlert:@"Success" andContent:@"Upload Succeed!"];
 #pragma mark - TODO
@@ -528,7 +531,7 @@
         controller.target_avatar = cell.avatarView.image;
         controller.target_id = user.uid;
         controller.target_name = user.name;
-        controller.target_avatar_url = user.avatarUrl;
+        controller.target_avatar_url = [VJNYHTTPHelper pathUrlByRemovePrefix:user.avatarUrl];
         
         [self.navigationController pushViewController:controller animated:YES];
     }

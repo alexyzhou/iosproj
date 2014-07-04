@@ -188,7 +188,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 
 #pragma mark - Video Filter handler
 -(void)applyFilter:(int)filterIndex {
-    [VJNYUtilities showProgressAlertView];
+    [VJNYUtilities showProgressAlertViewToView:self.view];
     [_videoPlayer stop];
     _playLogoView.alpha = 0.0f;
     
@@ -231,6 +231,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     _movieProcessingTimer = [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(retrievingProgress) userInfo:nil repeats:YES];
     
     __unsafe_unretained typeof(self) weakSelf = self;
+    __unsafe_unretained typeof(UIView*) weakSelfView = self.view;
     
     [_movieWriter setCompletionBlock:^{
         [weakSelf->_filter removeTarget:weakSelf->_movieWriter];
@@ -240,7 +241,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
             weakSelf->_videoPlayer.contentURL = [NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]];
             [weakSelf->_videoPlayer play];
             weakSelf->_hasFilter = true;
-            [VJNYUtilities dismissProgressAlertView];
+            [VJNYUtilities dismissProgressAlertViewFromView:weakSelfView];
             //[timer invalidate];
             //self.progressLabel.text = @"100%";
         });

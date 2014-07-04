@@ -11,11 +11,13 @@
 
 @interface VJNYProfileHeadTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
+@property (weak, nonatomic) IBOutlet UIImageView *userCoverImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userDescriptionLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *userAvatarImageView;
 @property (weak, nonatomic) IBOutlet UILabel *storyCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *likeCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *topicCountLabel;
 
 @property (strong, nonatomic) MPMoviePlayerController* videoPlayer;
 

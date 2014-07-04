@@ -19,9 +19,9 @@
 
 // Helper
 +(NSString*)formatDataString:(NSDate*)param;
-+(UIAlertView*)alertViewWithProgress;
-+(void)showProgressAlertView;
-+(void)dismissProgressAlertView;
+//+(UIAlertView*)alertViewWithProgress;
++(void)showProgressAlertViewToView:(UIView*)view;
++(void)dismissProgressAlertViewFromView:(UIView*)view;
 +(void)showAlert:(NSString*)title andContent:(NSString*)content;
 +(void)showAlertWithNoTitle:(NSString*)content;
 +(BOOL)isRetina;
@@ -78,5 +78,6 @@
 + (UIImage *) imageWithView7:(UIView *)view;
 
 + (void) addShadowForUIView:(UIView *)view;
++ (void) addShadowForUIView:(UIView *)view WithOffset:(CGSize)size AndRadius:(CGFloat)radius;
 @end
 

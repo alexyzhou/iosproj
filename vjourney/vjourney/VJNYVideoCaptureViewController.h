@@ -9,6 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "PBJVision.h"
 
+#ifndef vjourney_VJNYVideoCaptureMode_h
+#define vjourney_VJNYVideoCaptureMode_h
+
+typedef enum {
+    GeneralMode = 0,
+    WhisperMode = 1
+} VJNYVideoCaptureMode;
+
+#endif
+
 @protocol VJNYVideoUploadDelegate <NSObject>
 @required
 - (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic;
@@ -30,6 +40,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *videoDeleteButton;
 
 @property (nonatomic, strong) id<VJNYVideoUploadDelegate> delegate;
+@property (nonatomic) VJNYVideoCaptureMode captureMode;
 
 @end
 

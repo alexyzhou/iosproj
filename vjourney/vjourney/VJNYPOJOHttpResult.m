@@ -195,7 +195,7 @@
                     thread = (VJDMThread*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMThread"];
                     thread.target_id = message.target_id;
                     thread.target_name = userDic[@"name"];
-                    thread.avatar_url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:userDic[@"avatarUrl"]];
+                    thread.avatar_url = userDic[@"avatarUrl"];
                     thread.last_message = message.content;
                     thread.last_time = message.time;
                 } else {
@@ -238,7 +238,7 @@
                 notif.content = notifDic[@"content"];
                 notif.type = [notifDic[@"type"] intValue];
                 notif.sender_id = notifDic[@"senderId"];
-                notif.sender_avatar_url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:userDic[@"avatarUrl"]];
+                notif.sender_avatar_url = userDic[@"avatarUrl"];
                 
             }
             [[VJDMModel sharedInstance] saveChanges];

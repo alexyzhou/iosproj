@@ -14,6 +14,7 @@
 #import "VJNYAppDelegate.h"
 #import "VJNYPOJOUser.h"
 #import "VJNYPOJOHttpResult.h"
+#import "VJNYAppDelegate.h"
 
 @interface VJNYInboxViewController () {
     BOOL _sliderHide;
@@ -39,8 +40,19 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.tabBarController setHidesBottomBarWhenPushed:YES];
+    [VJNYUtilities addShadowForUIView:self.sliderView WithOffset:CGSizeMake(4.0f, 4.0f) AndRadius:5.0f];
     
-    _sliderHide = true;
+    if ([self.sliderView isDescendantOfView:self.view]) {
+        [self.sliderView removeFromSuperview];
+        [self.tabBarController.view addSubview:self.sliderView];
+        NSDictionary* dicOfViews = [NSDictionary dictionaryWithObject:self.sliderView forKey:@"sliderView"];
+        [self.tabBarController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sliderView]|" options:0 metrics:nil views:dicOfViews]];
+        
+        NSLog(@"After Init: %f,%f",self.sliderView.frame.size.height,self.sliderView.frame.origin.y);
+        _sliderHide = true;
+        [self dismissSliderView];
+    }
+    
     _previousSelectedView = [NSMutableDictionary dictionary];
     _subViewControllers = [NSMutableDictionary dictionaryWithCapacity:4];
     
@@ -63,12 +75,6 @@
     [self setUIForSelectedView:_messageSelectionView WithIconView:_messageIconView AndLabel:_messageLabelView];
 }
 
-- (void)viewDidLayoutSubviews {
-    if (_sliderHide == true) {
-        [self dismissSliderView];
-    }
-}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -78,11 +84,18 @@
 #pragma mark - UI Helpers
 
 - (void)dismissSliderView {
-    self.sliderView.center = CGPointMake(self.sliderView.center.x - self.sliderView.frame.size.width - 20, self.sliderView.center.y);
+    self.sliderView.center = CGPointMake(-self.sliderView.frame.size.width/2-20, self.sliderView.center.y);
+    //self.sliderView.transform = CGAffineTransformMakeTranslation(-self.sliderView.frame.size.width-20, 0);
+    self.tabBarController.tabBar.userInteractionEnabled = YES;
 }
 
 - (void)showSliderView {
     self.sliderView.center = CGPointMake(self.sliderView.frame.size.width/2, self.sliderView.center.y);
+    //self.sliderView.transform = CGAffineTransformIdentity;
+
+    NSLog(@"After Show[sliderView]: %f,%f",self.sliderView.frame.size.height,self.sliderView.frame.origin.y);
+    NSLog(@"After Show: %f,%f",self.sliderScrollView.frame.size.height,self.sliderScrollView.frame.origin.y);
+    self.tabBarController.tabBar.userInteractionEnabled = NO;
 }
 
 - (void)switchToViewController:(int)number {
@@ -148,12 +161,14 @@
     }];
 }
 
-- (void)subViewDidTriggerSliderAction {
-    _sliderHide = false;
-    [UIView animateWithDuration:0.3f animations:^{
-        [self showSliderView];
-    }];
-    
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    CGPoint translation = [(UIPanGestureRecognizer*)gestureRecognizer translationInView:self.view];
+    BOOL isVerticalPan = (fabsf(translation.x) < fabsf(translation.y));
+    return !isVerticalPan;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
 }
 
 - (IBAction)tapToChangePageAction:(UITapGestureRecognizer *)sender {
@@ -181,13 +196,15 @@
     [self dismissSliderViewAction:nil];
 }
 
+
+
 - (UIColor *)colorWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
     return [UIColor colorWithRed:(red/255.0) green:(green/255.0) blue:(blue/255.0) alpha:alpha];
 }
 
 - (void)setUIForSelectedView:(UIView*)selectedView WithIconView:(UIImageView*)image AndLabel:(UILabel*)label {
     //1. Change Icon
-    
+    [image setHighlighted:YES];
     //2. Change Background
     selectedView.backgroundColor = [self colorWithRed:15 green:44 blue:77 alpha:1.0f];
     //3. Change Font Color
@@ -203,7 +220,7 @@
         return;
     }
     //1. Change Icon
-    
+    [image setHighlighted:NO];
     //2. Change Background
     selectedView.backgroundColor = [self colorWithRed:108 green:170 blue:202 alpha:1.0f];
     //3. Change Font Color
@@ -246,5 +263,96 @@
     [VJNYUtilities showAlertWithNoTitle:error.localizedDescription];
 }
 
+#pragma mark - Slider Delegate
+
+-(void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state {
+    
+    if (_sliderHide == NO) {
+        return;
+    }
+    
+    if (state == UIGestureRecognizerStateBegan) {
+        
+        self.sliderView.center = CGPointMake(-self.sliderView.bounds.size.width/2 - 20, self.sliderView.center.y);
+        //NSLog(@"slider Center Rearrange!");
+        
+    } else if (state == UIGestureRecognizerStateChanged) {
+        
+        CGPoint originCenter = self.sliderView.center;
+        originCenter.x += translation.x;
+        
+        if (originCenter.x > self.sliderView.bounds.size.width/2) {
+            originCenter.x -= translation.x;
+        }
+        
+        self.sliderView.center = originCenter;
+        
+        
+    } else if (state == UIGestureRecognizerStateEnded) {
+        
+        if (self.sliderView.center.x < -self.sliderView.bounds.size.width/4) {
+            [self dismissSliderViewAction:nil];
+        } else {
+            [self subViewDidTriggerSliderAction];
+        }
+        
+    }
+    
+}
+
+- (IBAction)panToDismissSliderAction:(UIPanGestureRecognizer *)sender {
+    
+    UIPanGestureRecognizer* gesture = sender;
+    CGPoint translation = [gesture translationInView:self.view];
+    [gesture setTranslation:CGPointZero inView:self.view];
+    
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        
+        /*
+         [self.rightSlider setAlpha:1.0f];
+         [_topMaskView setAlpha:1.0f];
+         [_bottomMaskView setAlpha:1.0f];
+         */
+    } else if (gesture.state == UIGestureRecognizerStateChanged) {
+        
+        CGPoint originCenter = self.sliderView.center;
+        originCenter.x += translation.x;
+        
+        if (originCenter.x > self.sliderView.bounds.size.width/2) {
+            originCenter.x -= translation.x;
+        }
+        
+        self.sliderView.center = originCenter;
+        
+        
+    } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        
+        if (self.sliderView.center.x < self.sliderView.bounds.size.width/4) {
+            [self dismissSliderViewAction:nil];
+        } else {
+            [self subViewDidTriggerSliderAction];
+        }
+        
+    }
+    
+}
+
+- (void)subViewDidTriggerSliderAction {
+    _sliderHide = false;
+    [UIView animateWithDuration:0.3f animations:^{
+        [self showSliderView];
+    }];
+}
+
+- (void)subViewDidTapOutsideSlider {
+    if (!_sliderHide) {
+        [self dismissSliderViewAction:nil];
+    }
+    
+}
+
+-(BOOL)isSliderOff {
+    return _sliderHide;
+}
 
 @end

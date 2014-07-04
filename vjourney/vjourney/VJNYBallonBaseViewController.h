@@ -12,6 +12,7 @@
 #import "VJNYInboxViewController.h"
 
 @interface VJNYBallonBaseViewController : UIViewController<ASIHTTPRequestDelegate, VJNYVideoUploadDelegate>
+@property (weak, nonatomic) IBOutlet UIImageView *ballonAnimationImageView;
 
 - (IBAction)catchBallonAction:(id)sender;
 - (IBAction)ballonStorageAction:(id)sender;

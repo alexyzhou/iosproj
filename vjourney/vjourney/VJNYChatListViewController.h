@@ -11,7 +11,7 @@
 #import "ASIHTTPRequest.h"
 #import "VJNYInboxViewController.h"
 
-@interface VJNYChatListViewController : UIViewController<UITableViewDataSource, UITableViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate>
+@interface VJNYChatListViewController : UIViewController<UITableViewDataSource, UITableViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,UIGestureRecognizerDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) id<VJNYInboxSlideDelegate> slideDelegate;

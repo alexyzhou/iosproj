@@ -214,6 +214,7 @@
     VJDMMessage* message = ((VJDMMessageFrame*)_allMessagesFrame[indexPath.row]).message;
     if (message.type == MessageTypeOther) {
         cell.iconImage = _target_avatar;
+        cell.iconView.image = _target_avatar;
     } else {
         [VJNYDataCache loadImage:cell.iconView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     }
