@@ -1248,8 +1248,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bg_main.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="bQY-ui-YcZ">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                             <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4i7-hj-Hik">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+                                <rect key="frame" x="0.0" y="65" width="320" height="320"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="video_play_button.png" translatesAutoresizingMaskIntoConstraints="NO" id="r5h-Pb-To3">
@@ -1261,114 +1265,154 @@
                                         </constraints>
                                     </imageView>
                                 </subviews>
-                                <color key="backgroundColor" red="1" green="0.0" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="centerX" secondItem="r5h-Pb-To3" secondAttribute="centerX" id="LtM-ZZ-XRh"/>
                                     <constraint firstAttribute="centerY" secondItem="r5h-Pb-To3" secondAttribute="centerY" id="lhF-my-v0Z"/>
                                 </constraints>
                             </view>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n2y-H7-7Xo">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ac-uS-rva">
+                                <rect key="frame" x="0.0" y="65" width="320" height="320"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ac-uS-rva">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <gestureRecognizers/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="320" id="MK1-ga-EwC"/>
-                                        </constraints>
-                                        <connections>
-                                            <outletCollection property="gestureRecognizers" destination="YBK-Es-6NR" appends="YES" id="Q1C-fO-uWY"/>
-                                        </connections>
-                                    </view>
-                                    <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3dM-Fq-4ag">
-                                        <rect key="frame" x="0.0" y="320" width="320" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="XYi-bm-HTI"/>
-                                        </constraints>
-                                    </view>
-                                    <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="cgg-mj-KmT">
-                                        <rect key="frame" x="0.0" y="350" width="320" height="154"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <gestureRecognizers/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="154" id="f4L-TH-MWr"/>
-                                        </constraints>
-                                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="KTg-Of-6YW">
-                                            <size key="itemSize" width="120" height="154"/>
-                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        </collectionViewFlowLayout>
-                                        <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ballonCardCell" id="w4R-Ei-5DP" customClass="VJNYVideoThumbnailViewCell">
-                                                <rect key="frame" x="0.0" y="0.0" width="120" height="154"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="154"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="K9Y-98-WGA">
-                                                            <rect key="frame" x="0.0" y="0.0" width="120" height="154"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                        </imageView>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_play_button.png" translatesAutoresizingMaskIntoConstraints="NO" id="nnl-7C-4Gk">
-                                                            <rect key="frame" x="35" y="52" width="50" height="50"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="50" id="23c-OS-KoV"/>
-                                                                <constraint firstAttribute="height" constant="50" id="Kmt-dh-Pnp"/>
-                                                            </constraints>
-                                                        </imageView>
-                                                    </subviews>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                </view>
-                                                <constraints>
-                                                    <constraint firstAttribute="centerY" secondItem="nnl-7C-4Gk" secondAttribute="centerY" id="4Vo-85-EPs"/>
-                                                    <constraint firstAttribute="centerX" secondItem="nnl-7C-4Gk" secondAttribute="centerX" id="5zF-ng-rqe"/>
-                                                    <constraint firstAttribute="bottom" secondItem="K9Y-98-WGA" secondAttribute="bottom" id="T1w-AE-me8"/>
-                                                    <constraint firstItem="K9Y-98-WGA" firstAttribute="leading" secondItem="w4R-Ei-5DP" secondAttribute="leading" id="Tvk-lL-kax"/>
-                                                    <constraint firstItem="K9Y-98-WGA" firstAttribute="top" secondItem="w4R-Ei-5DP" secondAttribute="top" id="eXd-Tv-3xp"/>
-                                                    <constraint firstAttribute="trailing" secondItem="K9Y-98-WGA" secondAttribute="trailing" id="wag-yE-BPw"/>
-                                                </constraints>
-                                                <connections>
-                                                    <outlet property="imageView" destination="K9Y-98-WGA" id="qPw-XB-O8u"/>
-                                                </connections>
-                                            </collectionViewCell>
-                                        </cells>
-                                        <connections>
-                                            <outlet property="dataSource" destination="mvB-b8-Mug" id="aPB-c6-RrJ"/>
-                                            <outlet property="delegate" destination="mvB-b8-Mug" id="cEc-XC-h1b"/>
-                                            <outletCollection property="gestureRecognizers" destination="2E9-Pk-lyf" appends="YES" id="m6A-9i-mEf"/>
-                                        </connections>
-                                    </collectionView>
-                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="3dM-Fq-4ag" firstAttribute="top" secondItem="3Ac-uS-rva" secondAttribute="bottom" id="0jc-fd-Ngo"/>
-                                    <constraint firstItem="3Ac-uS-rva" firstAttribute="top" secondItem="n2y-H7-7Xo" secondAttribute="top" id="Kao-lZ-Usf"/>
-                                    <constraint firstAttribute="bottom" secondItem="cgg-mj-KmT" secondAttribute="bottom" id="OIF-zq-Hat"/>
-                                    <constraint firstItem="cgg-mj-KmT" firstAttribute="top" secondItem="3dM-Fq-4ag" secondAttribute="bottom" id="PLU-mN-fI8"/>
+                                    <constraint firstAttribute="height" constant="320" id="MK1-ga-EwC"/>
                                 </constraints>
-                            </scrollView>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="YBK-Es-6NR" appends="YES" id="Q1C-fO-uWY"/>
+                                </connections>
+                            </view>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRM-y9-86O">
+                                <rect key="frame" x="0.0" y="385" width="320" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bBi-Ud-GOi">
+                                        <rect key="frame" x="14" y="2" width="25" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="14N-7Z-pGi"/>
+                                            <constraint firstAttribute="width" constant="25" id="w4R-gP-gfi"/>
+                                        </constraints>
+                                        <state key="normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tapToViewUserInfoAction:" destination="mvB-b8-Mug" eventType="touchUpInside" id="48n-mg-V2Z"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QVR-aV-LDU">
+                                        <rect key="frame" x="49" y="2" width="25" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="8cQ-ql-5Gq"/>
+                                            <constraint firstAttribute="width" constant="25" id="HdA-pm-sK2"/>
+                                        </constraints>
+                                        <state key="normal" image="button_chat.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tapToChatAction:" destination="mvB-b8-Mug" eventType="touchUpInside" id="DRz-3O-zuF"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E3B-qj-4Y6">
+                                        <rect key="frame" x="281" y="2" width="25" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="WVw-4u-luh"/>
+                                            <constraint firstAttribute="width" constant="25" id="WuU-t1-ysb"/>
+                                        </constraints>
+                                        <state key="normal" image="button_back.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tapToSendbackVoodooAction:" destination="mvB-b8-Mug" eventType="touchUpInside" id="YyV-Y1-1Pl"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="E3B-qj-4Y6" secondAttribute="centerY" id="Dpa-Od-Cww"/>
+                                    <constraint firstAttribute="centerY" secondItem="bBi-Ud-GOi" secondAttribute="centerY" id="SAd-LW-e7j"/>
+                                    <constraint firstAttribute="centerY" secondItem="QVR-aV-LDU" secondAttribute="centerY" id="cn4-ds-w7b"/>
+                                    <constraint firstAttribute="width" constant="320" id="jwE-1z-O9A"/>
+                                    <constraint firstAttribute="height" constant="30" id="saV-pq-0fh"/>
+                                </constraints>
+                            </view>
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="cgg-mj-KmT">
+                                <rect key="frame" x="0.0" y="415" width="320" height="153"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="153" id="6oD-Ba-9fd"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="3" minimumInteritemSpacing="3" id="KTg-Of-6YW">
+                                    <size key="itemSize" width="120" height="153"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ballonCardCell" id="w4R-Ei-5DP" customClass="VJNYVideoThumbnailViewCell">
+                                        <rect key="frame" x="0.0" y="0.0" width="120" height="153"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="120" height="153"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="K9Y-98-WGA">
+                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="153"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </imageView>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_play_button.png" translatesAutoresizingMaskIntoConstraints="NO" id="nnl-7C-4Gk">
+                                                    <rect key="frame" x="35" y="52" width="50" height="50"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="50" id="23c-OS-KoV"/>
+                                                        <constraint firstAttribute="height" constant="50" id="Kmt-dh-Pnp"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="centerY" secondItem="nnl-7C-4Gk" secondAttribute="centerY" id="4Vo-85-EPs"/>
+                                            <constraint firstAttribute="centerX" secondItem="nnl-7C-4Gk" secondAttribute="centerX" id="5zF-ng-rqe"/>
+                                            <constraint firstAttribute="bottom" secondItem="K9Y-98-WGA" secondAttribute="bottom" id="T1w-AE-me8"/>
+                                            <constraint firstItem="K9Y-98-WGA" firstAttribute="leading" secondItem="w4R-Ei-5DP" secondAttribute="leading" id="Tvk-lL-kax"/>
+                                            <constraint firstItem="K9Y-98-WGA" firstAttribute="top" secondItem="w4R-Ei-5DP" secondAttribute="top" id="eXd-Tv-3xp"/>
+                                            <constraint firstAttribute="trailing" secondItem="K9Y-98-WGA" secondAttribute="trailing" id="wag-yE-BPw"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="imageView" destination="K9Y-98-WGA" id="qPw-XB-O8u"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="mvB-b8-Mug" id="aPB-c6-RrJ"/>
+                                    <outlet property="delegate" destination="mvB-b8-Mug" id="cEc-XC-h1b"/>
+                                    <outletCollection property="gestureRecognizers" destination="2E9-Pk-lyf" appends="YES" id="m6A-9i-mEf"/>
+                                    <outletCollection property="gestureRecognizers" destination="uVg-Ke-37P" appends="YES" id="71S-SC-Kv1"/>
+                                </connections>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="n2y-H7-7Xo" firstAttribute="leading" secondItem="cIR-Ka-g6l" secondAttribute="leading" id="LbJ-av-BAn"/>
-                            <constraint firstItem="4i7-hj-Hik" firstAttribute="top" secondItem="cIR-Ka-g6l" secondAttribute="top" id="QNZ-Fp-TDL"/>
-                            <constraint firstItem="n2y-H7-7Xo" firstAttribute="top" secondItem="cIR-Ka-g6l" secondAttribute="top" id="RqL-Zz-zUP"/>
-                            <constraint firstAttribute="bottom" secondItem="n2y-H7-7Xo" secondAttribute="bottom" id="ySm-iB-io2"/>
-                            <constraint firstAttribute="trailing" secondItem="n2y-H7-7Xo" secondAttribute="trailing" id="zwy-Z4-qz8"/>
+                            <constraint firstItem="4i7-hj-Hik" firstAttribute="top" secondItem="cIR-Ka-g6l" secondAttribute="top" constant="65" id="QNZ-Fp-TDL"/>
+                            <constraint firstItem="3Ac-uS-rva" firstAttribute="top" secondItem="cIR-Ka-g6l" secondAttribute="top" constant="65" id="hzG-Qj-a7l"/>
+                            <constraint firstItem="bRM-y9-86O" firstAttribute="top" secondItem="4i7-hj-Hik" secondAttribute="bottom" id="y08-Pr-DVS"/>
+                            <constraint firstItem="cgg-mj-KmT" firstAttribute="top" secondItem="bRM-y9-86O" secondAttribute="bottom" id="zcR-Ol-mwQ"/>
                         </constraints>
                     </view>
-                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <navigationItem key="navigationItem" id="xv3-vG-a8r"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="cardContainerView" destination="cgg-mj-KmT" id="kd9-02-z8c"/>
+                        <outlet property="chatButtonView" destination="QVR-aV-LDU" id="aYQ-WE-eKU"/>
+                        <outlet property="sendBackButtonView" destination="E3B-qj-4Y6" id="euo-X8-dN1"/>
+                        <outlet property="userAvatarButtonView" destination="bBi-Ud-GOi" id="mig-zm-nLe"/>
                         <outlet property="videoMaskView" destination="3Ac-uS-rva" id="BXS-qr-4OT"/>
                         <outlet property="videoPlayButton" destination="r5h-Pb-To3" id="Ggg-VJ-gFM"/>
                         <outlet property="videoPlayerContainerView" destination="4i7-hj-Hik" id="EH0-ew-7va"/>
@@ -1385,6 +1429,12 @@
                         <action selector="tapToPlayAction:" destination="mvB-b8-Mug" id="bnc-mW-0Mw"/>
                     </connections>
                 </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="uVg-Ke-37P">
+                    <connections>
+                        <action selector="panToDragVideoCardAction:" destination="mvB-b8-Mug" id="k0q-uJ-5D5"/>
+                        <outlet property="delegate" destination="mvB-b8-Mug" id="F0d-xp-NyS"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4786" y="1309"/>
         </scene>
@@ -3014,6 +3064,7 @@
         <image name="bg_main.jpg" width="640" height="1136"/>
         <image name="bg_sign_in.jpg" width="640" height="1136"/>
         <image name="bg_welcome.jpg" width="640" height="1136"/>
+        <image name="button_back.png" width="206" height="208"/>
         <image name="button_chat.png" width="1200" height="1200"/>
         <image name="button_like.png" width="200" height="200"/>
         <image name="button_like_red.png" width="200" height="200"/>
@@ -3038,9 +3089,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="LEJ-G5-mWt"/>
         <segue reference="F2M-68-DPF"/>
-        <segue reference="rbI-zs-2pg"/>
+        <segue reference="LEJ-G5-mWt"/>
+        <segue reference="zCl-o2-lqB"/>
         <segue reference="Vdc-U6-0r7"/>
     </inferredMetricsTieBreakers>
 </document>

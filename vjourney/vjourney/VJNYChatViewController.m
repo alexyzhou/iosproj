@@ -12,6 +12,7 @@
 #import "VJDMMessageCell.h"
 #import "VJNYUtilities.h"
 #import "VJDMModel.h"
+#import "VJDMUserAvatar.h"
 #import "VJDMThread.h"
 #import "VJNYPOJOUser.h"
 #import "VJNYHTTPHelper.h"
@@ -28,7 +29,6 @@
 @synthesize target_avatar=_target_avatar;
 @synthesize target_id=_target_id;
 @synthesize target_name=_target_name;
-@synthesize target_avatar_url=_target_avatar_url;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -147,7 +147,7 @@
         thread = (VJDMThread*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMThread"];
         thread.target_id = _target_id;
         thread.target_name = _target_name;
-        thread.avatar_url = _target_avatar_url;
+        
     }
     thread.last_message = self.inputTextField.text;
     thread.last_time = [NSDate date];
@@ -213,8 +213,10 @@
     cell.messageFrame = _allMessagesFrame[indexPath.row];
     VJDMMessage* message = ((VJDMMessageFrame*)_allMessagesFrame[indexPath.row]).message;
     if (message.type == MessageTypeOther) {
+        
         cell.iconImage = _target_avatar;
         cell.iconView.image = _target_avatar;
+        
     } else {
         [VJNYDataCache loadImage:cell.iconView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     }

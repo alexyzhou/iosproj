@@ -51,6 +51,8 @@
         NSLog(@"After Init: %f,%f",self.sliderView.frame.size.height,self.sliderView.frame.origin.y);
         _sliderHide = true;
         [self dismissSliderView];
+    } else {
+        [self.tabBarController.view bringSubviewToFront:self.sliderScrollView];
     }
     
     _previousSelectedView = [NSMutableDictionary dictionary];

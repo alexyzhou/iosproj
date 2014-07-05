@@ -8,21 +8,32 @@
     </entity>
     <entity name="VJDMNotification" representedClassName="VJDMNotification" syncable="YES">
         <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="sender_avatar_url" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="sender_id" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="sender_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
     </entity>
     <entity name="VJDMThread" representedClassName="VJDMThread" syncable="YES">
-        <attribute name="avatar_url" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="last_message" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="last_time" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="target_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="target_name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="VJDMUserAvatar" representedClassName="VJDMUserAvatar" syncable="YES">
+        <attribute name="avatarUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <entity name="VJDMVoodoo" representedClassName="VJDMVoodoo" syncable="YES">
+        <attribute name="coverUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="vid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
     <elements>
         <element name="VJDMMessage" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="VJDMThread" positionX="-63" positionY="18" width="128" height="118"/>
-        <element name="VJDMNotification" positionX="-63" positionY="36" width="128" height="118"/>
+        <element name="VJDMNotification" positionX="-63" positionY="36" width="128" height="103"/>
+        <element name="VJDMThread" positionX="-63" positionY="18" width="128" height="103"/>
+        <element name="VJDMVoodoo" positionX="-63" positionY="45" width="128" height="118"/>
+        <element name="VJDMUserAvatar" positionX="-54" positionY="63" width="128" height="75"/>
     </elements>
 </model>

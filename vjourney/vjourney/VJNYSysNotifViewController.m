@@ -12,6 +12,7 @@
 #import "VJNYPOJOHttpResult.h"
 #import "VJDMNotification.h"
 #import "VJDMModel.h"
+#import "VJDMUserAvatar.h"
 #import "VJNYSysNotifTableViewCell.h"
 
 @interface VJNYSysNotifViewController () {
@@ -131,7 +132,16 @@
     VJDMNotification* notif = [_notifArray objectAtIndex:indexPath.row];
     
     // 设置数据
-    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:notif.sender_avatar_url] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    
+    if ([notif.sender_id longValue] >= 0) {
+        VJDMUserAvatar* avatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:notif.sender_id];
+        if (avatar != nil) {
+            [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+        } else {
+            [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[notif.sender_id stringValue]] WithParameters:nil AndDelegate:self];
+        }
+    }
+    
     cell.contentLabel.text = [notif contentStringByType];
     cell.contentLabel.font = [VJNYUtilities customFontWithSize:14.0];
     //NSLog(@"%@",cell.contentLabel.text);
@@ -169,6 +179,18 @@
             _notifArray = [[[VJDMModel sharedInstance] getNotifList] mutableCopy];
             [self initHeightArrayForNotification];
             [self.sysNotifTableView reloadData];
+        }
+    } else if ([result.action isEqualToString:@"user/AvatarUrl"]) {
+        if (result.result == Success) {
+            VJDMUserAvatar* avatar = result.response;
+            for (NSIndexPath* path in [self.sysNotifTableView indexPathsForVisibleRows]) {
+                VJDMNotification* notif = [_notifArray objectAtIndex:path.row];
+                if ([notif.sender_id isEqualToNumber:avatar.userId]) {
+                    VJNYSysNotifTableViewCell* cell = (VJNYSysNotifTableViewCell*)[self.sysNotifTableView cellForRowAtIndexPath:path];
+                    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:path AndDelegate:self];
+                    break;
+                }
+            }
         }
     }
 }

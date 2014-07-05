@@ -90,8 +90,8 @@
         videoController.delegate = sender;
         videoController.captureMode = WhisperMode;
     } else if ([segue.identifier isEqual:[VJNYUtilities segueBallonStoragePage]]) {
-        VJNYBallonListViewController* controller = segue.destinationViewController;
-        controller.whisper = sender;
+        //VJNYBallonListViewController* controller = segue.destinationViewController;
+        //controller.whisper = sender;
     }
 }
 
@@ -227,8 +227,8 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [VJNYUtilities dismissProgressAlertViewFromView:self.view];
             if (result.result == Success) {
-                VJNYPOJOWhisper* whisper = result.response;
-                [self performSegueWithIdentifier:[VJNYUtilities segueBallonStoragePage] sender:whisper];
+                //VJNYPOJOWhisper* whisper = result.response;
+                [self performSegueWithIdentifier:[VJNYUtilities segueBallonStoragePage] sender:nil];
             }
         });
     }

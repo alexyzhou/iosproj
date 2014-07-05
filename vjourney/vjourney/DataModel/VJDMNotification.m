@@ -15,7 +15,6 @@
 @dynamic content;
 @dynamic type;
 @dynamic sender_id;
-@dynamic sender_avatar_url;
 
 - (NSString*)contentStringByType {
     if (self.type == VJNYNotificationTypeGeneral) {

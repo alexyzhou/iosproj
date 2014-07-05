@@ -12,6 +12,7 @@
 #import "VJNYUtilities.h"
 #import "VJDMThread.h"
 #import "VJDMModel.h"
+#import "VJDMUserAvatar.h"
 #import "VJNYPOJOUser.h"
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOHttpResult.h"
@@ -53,8 +54,8 @@
     tapGesture.delegate = self;
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     // Network Stuff
     NSMutableDictionary* dic = [NSMutableDictionary dictionary];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
@@ -85,7 +86,6 @@
     controller.target_avatar = cell.avatarImageView.image;
     controller.target_id = thread.target_id;
     controller.target_name = cell.nameLabelView.text;
-    controller.target_avatar_url = thread.avatar_url;
 }
 
 
@@ -116,7 +116,14 @@
     VJDMThread* thread = [_threadArray objectAtIndex:indexPath.row];
     
     // 设置数据
-    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:thread.avatar_url] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    
+    VJDMUserAvatar* avatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:thread.target_id];
+    if (avatar != nil) {
+        [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    } else {
+        [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[thread.target_id stringValue]] WithParameters:nil AndDelegate:self];
+    }
+    
     cell.nameLabelView.text = thread.target_name;
     cell.lastMessageLabelView.text = thread.last_message;
     cell.lastTimeLabelView.text = [VJNYUtilities formatDataString:thread.last_time];
@@ -158,6 +165,18 @@
     if ([result.action isEqualToString:@"notif/Chat/Get"]) {
         _threadArray = [[[VJDMModel sharedInstance] getThreadList] mutableCopy];
         [self.tableView reloadData];
+    } else if ([result.action isEqualToString:@"user/AvatarUrl"]) {
+        if (result.result == Success) {
+            VJDMUserAvatar* avatar = result.response;
+            for (NSIndexPath* path in [self.tableView indexPathsForVisibleRows]) {
+                VJDMThread* thread = [_threadArray objectAtIndex:path.row];
+                if ([thread.target_id isEqualToNumber:avatar.userId]) {
+                    VJNYChatThreadTableViewCell* cell = (VJNYChatThreadTableViewCell*)[self.tableView cellForRowAtIndexPath:path];
+                    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:path AndDelegate:self];
+                    break;
+                }
+            }
+        }
     }
 }
 

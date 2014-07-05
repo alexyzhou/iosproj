@@ -12,7 +12,6 @@
 @implementation VJDMThread
 
 @dynamic target_id;
-@dynamic avatar_url;
 @dynamic target_name;
 @dynamic last_message;
 @dynamic last_time;

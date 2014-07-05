@@ -23,7 +23,6 @@ typedef enum {
 @property (nonatomic, retain) NSString * content;
 @property (nonatomic) int16_t type;
 @property (nonatomic, retain) NSNumber * sender_id;
-@property (nonatomic, retain) NSString * sender_avatar_url;
 
 - (NSString*)contentStringByType;
 

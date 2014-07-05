@@ -19,6 +19,5 @@
 @property (nonatomic, strong) UIImage* target_avatar;
 @property (nonatomic, strong) NSNumber* target_id;
 @property (nonatomic, strong) NSString* target_name;
-@property (nonatomic, strong) NSString* target_avatar_url;
 
 @end

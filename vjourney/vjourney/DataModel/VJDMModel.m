@@ -202,9 +202,44 @@ static VJDMModel * _sharedInstance=nil;
     return fetchedObjects[0];
 }
 
+-(NSManagedObject*)getUserAvatarByUserID:(NSNumber*)user_id {
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"VJDMUserAvatar"
+                                              inManagedObjectContext:[VJDMModel sharedInstance].managedObjectContext];
+    [fetchRequest setEntity:entity];
+    
+    // Where
+    NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"userId == %ld",[user_id longValue]];
+    [fetchRequest setPredicate:predicateID];
+    
+    NSError* error;
+    NSArray *fetchedObjects = [[VJDMModel sharedInstance].managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if ([fetchedObjects count] == 0) {
+        return NULL;
+    }
+    return fetchedObjects[0];
+}
+
 -(NSArray*)getNotifList {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"VJDMNotification"
+                                              inManagedObjectContext:[VJDMModel sharedInstance].managedObjectContext];
+    [fetchRequest setEntity:entity];
+    
+    // Sort
+    NSSortDescriptor *sortByTime = [[NSSortDescriptor alloc] initWithKey:@"time"
+                                                               ascending:YES];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortByTime, nil];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    
+    NSError* error;
+    NSArray *fetchedObjects = [[VJDMModel sharedInstance].managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    return fetchedObjects;
+}
+
+-(NSArray*)getVoodooList {
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"VJDMVoodoo"
                                               inManagedObjectContext:[VJDMModel sharedInstance].managedObjectContext];
     [fetchRequest setEntity:entity];
     

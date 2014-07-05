@@ -168,10 +168,11 @@
         //[self.videoPlayerView bringSubviewToFront:_videoPlayButton];
     }
     
-    if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
+    if (![[_videoPlayer.contentURL absoluteString] isEqual:url]) {
         [_videoPlayer stop];
         _videoPlayer.contentURL = [NSURL URLWithString:url];
     }
+    _videoPlayButton.alpha = 0.0f;
     
     [_videoPlayer play];
     
@@ -557,7 +558,6 @@
         controller.target_avatar = cell.avatarView.image;
         controller.target_id = user.uid;
         controller.target_name = user.name;
-        controller.target_avatar_url = [VJNYHTTPHelper pathUrlByRemovePrefix:user.avatarUrl];
         
         [self.navigationController pushViewController:controller animated:YES];
     }

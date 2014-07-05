@@ -28,7 +28,9 @@
 -(NSArray*)getMessageListByTargetID:(NSNumber*)target_id;
 -(NSArray*)getThreadList;
 -(NSManagedObject*)getThreadByTargetID:(NSNumber*)target_id;
+-(NSManagedObject*)getUserAvatarByUserID:(NSNumber*)user_id;
 -(NSArray*)getNotifList;
+-(NSArray*)getVoodooList;
 // Remove
 -(void)removeManagedObject:(NSManagedObject*)obj;
 -(void)removeThreadAndMessageByID:(NSNumber*)thread_id;

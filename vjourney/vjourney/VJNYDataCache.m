@@ -56,6 +56,11 @@ static const int maxCacheCount = 20;
 
 + (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate {
     
+    if (url == nil) {
+        cell.image = nil;
+        return;
+    }
+    
     UIImage* imageData = [[VJNYDataCache instance] dataByURL:url];
     if (imageData == nil) {
         [[VJNYDataCache instance] requestDataByURL:url WithDelegate:delegate AndIdentifier:identifier AndMode:mode];
@@ -64,8 +69,29 @@ static const int maxCacheCount = 20;
         cell.image = imageData;
     }
 }
++ (void)loadImageForButton:(UIButton*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate {
+    
+    if (url == nil) {
+        [cell setImage:nil forState:UIControlStateNormal];
+        return;
+    }
+    
+    UIImage* imageData = [[VJNYDataCache instance] dataByURL:url];
+    if (imageData == nil) {
+        [[VJNYDataCache instance] requestDataByURL:url WithDelegate:delegate AndIdentifier:identifier AndMode:mode];
+        [cell setImage:nil forState:UIControlStateNormal];
+    } else {
+        [cell setImage:[imageData imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    }
+    
+}
 
 -(UIImage*)loadImageInBackground:(NSString *)url {
+    
+    if (url == nil || [url isEqual:@""]) {
+        return nil;
+    }
+    
     //NSLog(@"VJNYCache load image:%@",url);
     NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
     UIImage* imageData = [UIImage imageWithData:data];

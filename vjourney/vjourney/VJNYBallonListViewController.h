@@ -8,19 +8,27 @@
 
 #import <UIKit/UIKit.h>
 #import "VJNYDataCache.h"
+#import "VJNYDataCache.h"
+#import "ASIHTTPRequest.h"
 
-@class VJNYPOJOWhisper;
-
-@interface VJNYBallonListViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate>
+@interface VJNYBallonListViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,UIGestureRecognizerDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate>
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
 @property (weak, nonatomic) IBOutlet UIView *videoMaskView;
 @property (weak, nonatomic) IBOutlet UICollectionView *cardContainerView;
 @property (weak, nonatomic) IBOutlet UIImageView *videoPlayButton;
 
-
-@property (nonatomic, strong) VJNYPOJOWhisper* whisper;
+@property (weak, nonatomic) IBOutlet UIButton *userAvatarButtonView;
+@property (weak, nonatomic) IBOutlet UIButton *chatButtonView;
+@property (weak, nonatomic) IBOutlet UIButton *sendBackButtonView;
 
 - (IBAction)longPressHandler:(UILongPressGestureRecognizer*)sender;
 - (IBAction)tapToPlayAction:(UITapGestureRecognizer *)sender;
+- (IBAction)panToDragVideoCardAction:(UIPanGestureRecognizer *)sender;
+
+- (IBAction)tapToViewUserInfoAction:(id)sender;
+- (IBAction)tapToChatAction:(id)sender;
+- (IBAction)tapToSendbackVoodooAction:(id)sender;
+
+
 
 @end

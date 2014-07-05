@@ -11,6 +11,8 @@
 #import "VJDMMessage.h"
 #import "VJDMNotification.h"
 #import "VJDMThread.h"
+#import "VJDMVoodoo.h"
+#import "VJDMUserAvatar.h"
 
 @implementation VJNYPOJOHttpResult
 
@@ -62,6 +64,21 @@
             user.age = [userDic objectForKey:@"age"];
             
             resultObj.response = user;
+        }
+    } else if ([resultObj.action isEqualToString:@"user/AvatarUrl"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            VJDMUserAvatar* userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:[userDic objectForKey:@"id"]];
+            if (userAvatar == nil) {
+                userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUserAvatar"];
+                userAvatar.userId = [userDic objectForKey:@"id"];
+            }
+            userAvatar.avatarUrl = [userDic objectForKey:@"avatarUrl"];
+            
+            [[VJDMModel sharedInstance] saveChanges];
+            resultObj.response = userAvatar;
         }
     } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/LatestByUser"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"]) {
         if (result==Success) {
@@ -195,7 +212,14 @@
                     thread = (VJDMThread*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMThread"];
                     thread.target_id = message.target_id;
                     thread.target_name = userDic[@"name"];
-                    thread.avatar_url = userDic[@"avatarUrl"];
+                    
+                    VJDMUserAvatar* userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:thread.target_id];
+                    if (userAvatar == nil) {
+                        userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUserAvatar"];
+                        userAvatar.userId = thread.target_id;
+                    }
+                    userAvatar.avatarUrl = userDic[@"avatarUrl"];
+            
                     thread.last_message = message.content;
                     thread.last_time = message.time;
                 } else {
@@ -238,7 +262,13 @@
                 notif.content = notifDic[@"content"];
                 notif.type = [notifDic[@"type"] intValue];
                 notif.sender_id = notifDic[@"senderId"];
-                notif.sender_avatar_url = userDic[@"avatarUrl"];
+                
+                VJDMUserAvatar* userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:notif.sender_id];
+                if (userAvatar == nil) {
+                    userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUserAvatar"];
+                    userAvatar.userId = notif.sender_id;
+                }
+                userAvatar.avatarUrl = userDic[@"avatarUrl"];
                 
             }
             [[VJDMModel sharedInstance] saveChanges];
@@ -279,13 +309,17 @@
             
             NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
             
-            VJNYPOJOWhisper* whisper = [[VJNYPOJOWhisper alloc] init];
-            whisper.wid = [userDic objectForKey:@"id"];
-            whisper.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"url"]];
-            whisper.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"coverUrl"]];
+            //VJNYPOJOWhisper* whisper = [[VJNYPOJOWhisper alloc] init];
+            
+            VJDMVoodoo* whisper = (VJDMVoodoo*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMVoodoo"];
+            
+            whisper.vid = [userDic objectForKey:@"id"];
+            whisper.url = [userDic objectForKey:@"url"];
+            whisper.coverUrl = [userDic objectForKey:@"coverUrl"];
             whisper.userId = [userDic objectForKey:@"userId"];
-            whisper.receiverId = [userDic objectForKey:@"receiverId"];
             whisper.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[userDic objectForKey:@"time"] intValue]];
+            
+            [[VJDMModel sharedInstance] saveChanges];
             
             resultObj.response = whisper;
         }
