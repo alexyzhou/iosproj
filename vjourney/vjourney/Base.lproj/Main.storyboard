@@ -2498,13 +2498,33 @@
                                                     <action selector="selectFilterModeAction:" destination="Smf-jz-NC8" eventType="valueChanged" id="S3E-Zo-rXE"/>
                                                 </connections>
                                             </segmentedControl>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5WX-yN-nZV">
+                                                <rect key="frame" x="251" y="4" width="51" height="31"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <connections>
+                                                    <action selector="changeMuteSettingAction:" destination="Smf-jz-NC8" eventType="valueChanged" id="dtR-IU-9vA"/>
+                                                </connections>
+                                            </switch>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Original Sound" textAlignment="right" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="74" translatesAutoresizingMaskIntoConstraints="NO" id="w72-fN-juf">
+                                                <rect key="frame" x="164" y="0.0" width="74" height="40"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="Uuy-6f-Bgc"/>
+                                                    <constraint firstAttribute="width" constant="74" id="ysR-pR-ilt"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="6Qk-th-cus"/>
+                                            <constraint firstAttribute="centerY" secondItem="5WX-yN-nZV" secondAttribute="centerY" id="DbD-Dl-OF4"/>
                                             <constraint firstItem="bcf-dz-i37" firstAttribute="leading" secondItem="1mi-SJ-B17" secondAttribute="leading" constant="20" id="Gaz-6V-s9j"/>
                                             <constraint firstAttribute="centerY" secondItem="bcf-dz-i37" secondAttribute="centerY" id="XbH-h2-WeK"/>
+                                            <constraint firstAttribute="trailing" secondItem="5WX-yN-nZV" secondAttribute="trailing" constant="20" id="jsU-9Z-KiN"/>
                                         </constraints>
                                     </view>
                                     <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HZ0-V8-136">
@@ -2599,6 +2619,8 @@
                         <outlet property="contentScrollView" destination="Kbx-rf-kDR" id="Qgo-zt-zDP"/>
                         <outlet property="dragReceiverView" destination="hgU-j7-vkN" id="9RL-T1-AwD"/>
                         <outlet property="filterCardCollectionView" destination="HZ0-V8-136" id="9fh-ga-wFV"/>
+                        <outlet property="muteOriginalSoundSwitch" destination="5WX-yN-nZV" id="j6g-mm-XbG"/>
+                        <outlet property="originalSoundLabel" destination="w72-fN-juf" id="i2J-XX-480"/>
                         <outlet property="playLogoView" destination="lza-ZI-JV9" id="EkQ-qB-vXL"/>
                         <outlet property="videoPlayerContainerView" destination="pxy-tj-MVy" id="D92-Ll-rSj"/>
                         <segue destination="UfR-FN-tXw" kind="push" identifier="segueVideoSharePage" id="Uun-24-QNU"/>

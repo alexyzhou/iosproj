@@ -71,6 +71,7 @@
 +(NSString*)videoCaptureTmpFolderPath;
 +(NSString*)videoFilterInputPath;
 +(NSString*)videoFilterTempPath;
++(NSString*)videoFilterOutputPath;
 +(NSString*)videoCutOutputPath;
 +(NSString*)videoShareTmpFolderPath;
 

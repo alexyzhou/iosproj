@@ -14,6 +14,9 @@
 @property (weak, nonatomic) IBOutlet UIImageView *playLogoView;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *filterCardCollectionView;
+@property (weak, nonatomic) IBOutlet UISwitch *muteOriginalSoundSwitch;
+- (IBAction)changeMuteSettingAction:(id)sender;
+@property (weak, nonatomic) IBOutlet UILabel *originalSoundLabel;
 
 - (IBAction)selectFilterModeAction:(id)sender;
 

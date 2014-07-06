@@ -308,6 +308,11 @@ static UIAlertView* _progressAlert = NULL;
     [self checkAndCreateFolderForPath:cutPath];
     return [cutPath stringByAppendingString:@"/tmp.mp4"];
 }
++(NSString*)videoFilterOutputPath {
+    NSString* cutPath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Filter"];
+    [self checkAndCreateFolderForPath:cutPath];
+    return [cutPath stringByAppendingString:@"/out.mp4"];
+}
 +(NSString*)videoCutOutputPath {
     NSString* cutPath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Cut"];
     [self checkAndCreateFolderForPath:cutPath];

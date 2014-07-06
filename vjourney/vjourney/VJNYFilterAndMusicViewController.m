@@ -11,7 +11,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "VJNYFilterCardCell.h"
 #import "VJNYUtilities.h"
-#import "VJNYPOJOFilter.h"
+#import "VJNYPOJOFilterOrMusic.h"
 #import "GPUImage.h"
 
 typedef NS_ENUM(NSInteger, VJNYFilterMode) {
@@ -22,7 +22,9 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
 
 @interface VJNYFilterAndMusicViewController () {
-    MPMoviePlayerController* _videoPlayer;
+    AVPlayer* _videoPlayer;
+    AVAudioPlayer* _musicPlayer;
+    
     NSMutableArray* _filterArray;
     NSMutableArray* _musicArray;
     
@@ -40,6 +42,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     float _lastProcess;
     
     BOOL _hasFilter;
+    int _currentMusicIndex;
 }
 
 - (void)generateVideoRotation;
@@ -66,14 +69,22 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     // Do any additional setup after loading the view.
     _isDragging = false;
     _hasFilter = false;
+    _currentMusicIndex = 0;
     
     // Parameters
     [self generateVideoRotation];
     
     // Set up VideoPlayer
     //_videoPlayerContainerView.backgroundColor = [UIColor clearColor];
-    _videoPlayer = [[MPMoviePlayerController alloc] init];
+    _musicPlayer = nil;
+    _videoPlayer = [[AVPlayer alloc] initWithURL:_inputPath];
+    AVPlayerLayer* videoPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_videoPlayer];
     
+    videoPlayerLayer.frame = self.videoPlayerContainerView.layer.bounds;
+    [self.videoPlayerContainerView.layer addSublayer:videoPlayerLayer];
+    
+    //_videoPlayer = [[MPMoviePlayerController alloc] init];
+    /*
     _videoPlayer.contentURL = _inputPath;
     _videoPlayer.view.frame = self.videoPlayerContainerView.bounds;
     _videoPlayer.controlStyle = MPMovieControlStyleNone;
@@ -82,11 +93,20 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     [self.videoPlayerContainerView addSubview:_videoPlayer.view];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myMovieFinishedCallback:)
                                                  name:MPMoviePlayerPlaybackDidFinishNotification object:_videoPlayer];
+     */
+    
+    _videoPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(myMovieFinishedCallback:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:[_videoPlayer currentItem]];
+    
     // Set up VideoPlayer Play Button
     _playLogoView.alpha = 0.0f;
     [self.videoPlayerContainerView bringSubviewToFront:_playLogoView];
     
-    [_videoPlayer play];
+    [self startMoviePlayer];
     
     // Set up Filter And Music Arrays
     _filterMode = VJNYFilterModeFilter;
@@ -94,10 +114,17 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     _musicArray = [NSMutableArray array];
     
     // Prepare Filter
-    [_filterArray addObject:[[VJNYPOJOFilter alloc] initWithTitle:@"crossprocess" AndCoverPath:@"logo"]];
-    [_filterArray addObject:[[VJNYPOJOFilter alloc] initWithTitle:@"02" AndCoverPath:@"logo"]];
-    [_filterArray addObject:[[VJNYPOJOFilter alloc] initWithTitle:@"17" AndCoverPath:@"logo"]];
-    [_filterArray addObject:[[VJNYPOJOFilter alloc] initWithTitle:@"aqua" AndCoverPath:@"logo"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"crossprocess" AndCoverPath:@"logo" AndFileName:@"crossprocess"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"02" AndCoverPath:@"logo" AndFileName:@"02"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"17" AndCoverPath:@"logo" AndFileName:@"17"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"aqua" AndCoverPath:@"logo" AndFileName:@"aqua"]];
+    
+    // Prepare Music
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"original" AndCoverPath:@"logo" AndFileName:@""]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"rock" AndCoverPath:@"logo" AndFileName:@"bgm_rock_sample"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"orchestra" AndCoverPath:@"logo" AndFileName:@"bgm_orchestra_sample"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"piano" AndCoverPath:@"logo" AndFileName:@"bgm_piano_sample"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"village" AndCoverPath:@"logo" AndFileName:@"bgm_village_sample"]];
     
     // Set up Collection View
     _filterCardCollectionView.layer.shadowOffset = CGSizeMake(1.0f, -4.0f);
@@ -105,20 +132,23 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     _filterCardCollectionView.layer.shadowOpacity = 0.5f;
     _filterCardCollectionView.layer.masksToBounds = NO;
     
+    // Set up Sound Stuff
+    _muteOriginalSoundSwitch.hidden = YES;
+    _originalSoundLabel.hidden = YES;
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (_videoPlayer.contentURL != nil) {
-        [_videoPlayer play];
-        _playLogoView.alpha = 0.0f;
-    }
+    //if (_videoPlayer. != nil) {
+    [self startMoviePlayer];
+    //}
 }
 
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [_videoPlayer stop];
+    [_videoPlayer pause];
 }
 
 - (void)didReceiveMemoryWarning
@@ -160,7 +190,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 - (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     VJNYFilterCardCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:[VJNYUtilities filterCardCellIdentifier] forIndexPath:indexPath];
     
-    VJNYPOJOFilter* filter;
+    VJNYPOJOFilterOrMusic* filter;
     
     if (_filterMode == VJNYFilterModeFilter) {
         filter = [_filterArray objectAtIndex:indexPath.row];
@@ -175,9 +205,60 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     return cell;
 }
 
+#pragma mark - Video Player Helper
+
+-(void)stopMoviePlayer {
+    self.playLogoView.alpha = 1.0f;
+    [_videoPlayer pause];
+    [[_videoPlayer currentItem] seekToTime:kCMTimeZero];
+    [self stopMusicPlayer];
+}
+
+-(void)startMoviePlayer {
+    self.playLogoView.alpha = 0.0f;
+    [_videoPlayer play];
+    if (_musicPlayer != nil) {
+        [_musicPlayer play];
+    }
+}
+
+-(void)stopMusicPlayer {
+    if (_musicPlayer != nil) {
+        [_musicPlayer stop];
+        _musicPlayer.currentTime = 0;
+    }
+}
+
+-(void)changeMoviePlayerWithMute:(BOOL)mute {
+    
+    AVAsset *asset = [[_videoPlayer currentItem] asset];
+    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+    
+    // Mute all the audio tracks
+    NSMutableArray *allAudioParams = [NSMutableArray array];
+    for (AVAssetTrack *track in audioTracks) {
+        AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
+        if (mute) {
+            [audioInputParams setVolume:0.0 atTime:kCMTimeZero];
+        } else {
+            [audioInputParams setVolume:1.0 atTime:kCMTimeZero];
+        }
+        [audioInputParams setTrackID:[track trackID]];
+        [allAudioParams addObject:audioInputParams];
+    }
+    AVMutableAudioMix *audioZeroMix = [AVMutableAudioMix audioMix];
+    [audioZeroMix setInputParameters:allAudioParams];
+    
+    [[_videoPlayer currentItem] setAudioMix:audioZeroMix];
+
+}
+
 #pragma mark - Video Playback Handler
 -(void)myMovieFinishedCallback:(NSNotification*)aNotification {
     _playLogoView.alpha = 1.0f;
+    [_videoPlayer pause];
+    [[_videoPlayer currentItem] seekToTime:kCMTimeZero];
+    [self stopMusicPlayer];
     /*MPMoviePlayerController* theMovie = [aNotification object];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:MPMoviePlayerPlaybackDidFinishNotification object:theMovie];*/
@@ -189,10 +270,11 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 #pragma mark - Video Filter handler
 -(void)applyFilter:(int)filterIndex {
     [VJNYUtilities showProgressAlertViewToView:self.view];
-    [_videoPlayer stop];
+    //[_videoPlayer pause];
+    [self stopMoviePlayer];
     _playLogoView.alpha = 0.0f;
     
-    VJNYPOJOFilter* filter = [_filterArray objectAtIndex:filterIndex];
+    VJNYPOJOFilterOrMusic* filter = [_filterArray objectAtIndex:filterIndex];
     
     NSURL *sampleURL = _inputPath;
     
@@ -204,6 +286,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     [_filter setInputRotation:_movieRotation atIndex:0];
     
     [_movieFile addTarget:_filter];
+    
     
     // Only rotate the video for display, leave orientation the same for recording
     //GPUImageView *filterView = (GPUImageView *)self.view;
@@ -238,8 +321,9 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
         //weakSelf->_movieFile.audioEncodingTarget = nil;
         [weakSelf->_movieWriter finishRecording];
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf->_videoPlayer.contentURL = [NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]];
-            [weakSelf->_videoPlayer play];
+            [weakSelf->_videoPlayer replaceCurrentItemWithPlayerItem:[[AVPlayerItem alloc] initWithURL:[NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]]]];
+            //weakSelf->_videoPlayer.contentURL = ];
+            [weakSelf startMoviePlayer];
             weakSelf->_hasFilter = true;
             [VJNYUtilities dismissProgressAlertViewFromView:weakSelfView];
             //[timer invalidate];
@@ -280,22 +364,149 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     }
 }
 
+#pragma mark - Video Music Handler
+
+- (void)selectMusic:(int)musicIndex {
+    
+    if (_currentMusicIndex == musicIndex) {
+        return;
+    }
+    
+    //[_videoPlayer stop];
+    [self stopMoviePlayer];
+    
+    if (musicIndex == 0) {
+        // remove any sound
+        _musicPlayer = nil;
+        [self startMoviePlayer];
+    } else {
+        VJNYPOJOFilterOrMusic* filter = [_musicArray objectAtIndex:musicIndex];
+        
+        NSURL* soundUrl = [[NSBundle mainBundle] URLForResource:filter.fileName withExtension:@"m4a"];
+        _musicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:soundUrl error:nil];
+        //audioPlayer.delegate = self;
+        //audioPlayer.volume = 1.0;
+        
+        [self startMoviePlayer];
+    }
+    
+    _currentMusicIndex = musicIndex;
+}
+
+- (void)applyMusicAndExport {
+    
+    if (_currentMusicIndex == 0 && _muteOriginalSoundSwitch.on) {
+        // didn't select any music
+        if (_hasFilter == false) {
+            [self performSegueWithIdentifier:[VJNYUtilities segueVideoSharePage] sender:_inputPath];
+        } else {
+            [self performSegueWithIdentifier:[VJNYUtilities segueVideoSharePage] sender:[NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]]];
+        }
+    } else {
+        
+        [VJNYUtilities showProgressAlertViewToView:self.view];
+        //[_videoPlayer stop];
+        [self stopMoviePlayer];
+        _playLogoView.alpha = 0.0f;
+        
+        NSURL *sampleURL;
+        
+        if (_hasFilter == false) {
+            sampleURL = _inputPath;
+        } else {
+            sampleURL = [NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]];
+        }
+        
+        // 1. Original Video
+        AVAsset *videoAsset = [[AVURLAsset alloc] initWithURL:sampleURL options:nil];
+        
+        // 2. Music Asset
+        
+        // 3.1 - Create AVMutableComposition object. This object will hold your AVMutableCompositionTrack instances.
+        AVMutableComposition *mixComposition = [[AVMutableComposition alloc] init];
+        // 3.2 - Video track
+        AVMutableCompositionTrack *firstTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
+                                                                            preferredTrackID:kCMPersistentTrackID_Invalid];
+        
+        // 3.3 - Insert Video part
+        CMTime interval = kCMTimeZero;
+        
+        [firstTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+        
+        if (_muteOriginalSoundSwitch.on) {
+            AVMutableCompositionTrack *secondTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                                 preferredTrackID:kCMPersistentTrackID_Invalid];
+            [secondTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration)
+                                 ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:interval error:nil];
+        }
+        
+        if (_currentMusicIndex != 0) {
+            AVMutableCompositionTrack *thirdTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                                 preferredTrackID:kCMPersistentTrackID_Invalid];
+            
+            int musicIndex = _currentMusicIndex;
+            VJNYPOJOFilterOrMusic* filter = [_musicArray objectAtIndex:musicIndex];
+            AVURLAsset *songAsset = [AVURLAsset URLAssetWithURL:[[NSBundle mainBundle] URLForResource:filter.fileName withExtension:@"m4a"] options:nil];
+            AVAssetTrack* songTrack = [songAsset.tracks objectAtIndex:0];
+            [thirdTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:songTrack atTime:kCMTimeZero error:nil];
+        }
+        
+        // 4 - Get path
+        NSString *paths = [VJNYUtilities videoFilterOutputPath];
+        [VJNYUtilities checkAndDeleteFileForPath:paths];
+        NSURL *url = [NSURL fileURLWithPath:paths];
+        // 5 - Create exporter
+        AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition
+                                                                          presetName:AVAssetExportPresetHighestQuality];
+        exporter.outputURL=url;
+        exporter.outputFileType = AVFileTypeQuickTimeMovie;
+        exporter.shouldOptimizeForNetworkUse = NO;
+        [exporter exportAsynchronouslyWithCompletionHandler:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self exportDidFinish:exporter];
+            });
+        }];
+        
+    }
+}
+
+-(void)exportDidFinish:(AVAssetExportSession*)session {
+    [VJNYUtilities dismissProgressAlertViewFromView:self.view];
+    if (session.status == AVAssetExportSessionStatusCompleted) {
+        [self performSegueWithIdentifier:[VJNYUtilities segueVideoSharePage] sender:session.outputURL];
+    } else {
+        NSLog(@"%@",session.error.localizedDescription);
+    }
+    
+}
+
+
 #pragma mark - Custom Button Handler
 
 - (IBAction)selectFilterModeAction:(id)sender {
     
     _filterMode = [(UISegmentedControl*)sender selectedSegmentIndex];
+    [self.filterCardCollectionView reloadData];
+    
+    _muteOriginalSoundSwitch.hidden = (_filterMode != VJNYFilterModeMusic);
+    _originalSoundLabel.hidden = (_filterMode != VJNYFilterModeMusic);
     
 }
 
 - (IBAction)tapToPlayOrPauseAction:(id)sender {
-    
+    /*
     if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
+     
+     */
+    
+    if ([_videoPlayer rate] != 0.0) {
         [_videoPlayer pause];
+        if (_musicPlayer != nil) {
+            [_musicPlayer pause];
+        }
         _playLogoView.alpha = 1.0f;
     } else {
-        [_videoPlayer play];
-        _playLogoView.alpha = 0.0f;
+        [self startMoviePlayer];
     }
     
 }
@@ -353,7 +564,13 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
         //else do cleanup
         _isDragging = false;
         if ([self.dragReceiverView pointInside:[_longPressRecognizer locationInView:self.view] withEvent:nil]) {
-            [self applyFilter:(int)_dragVideoIndex];
+            
+            if (_filterMode == VJNYFilterModeFilter) {
+                [self applyFilter:(int)_dragVideoIndex];
+            } else {
+                [self selectMusic:(int)_dragVideoIndex];
+            }
+            
             self.dragReceiverView.backgroundColor = [UIColor clearColor];
             self.dragReceiverView.alpha = 1.0f;
         }
@@ -369,11 +586,9 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 }
 
 - (IBAction)doneFilterAction:(id)sender {
-    if (_hasFilter == false) {
-        [self performSegueWithIdentifier:[VJNYUtilities segueVideoSharePage] sender:_inputPath];
-    } else {
-        [self performSegueWithIdentifier:[VJNYUtilities segueVideoSharePage] sender:[NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]]];
-    }
-    
+    [self applyMusicAndExport];
+}
+- (IBAction)changeMuteSettingAction:(id)sender {
+    [self changeMoviePlayerWithMute:!(_muteOriginalSoundSwitch.on)];
 }
 @end
