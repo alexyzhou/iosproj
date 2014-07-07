@@ -94,7 +94,13 @@ static const int maxCacheCount = 20;
     
     //NSLog(@"VJNYCache load image:%@",url);
     NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+    
+    if (data == nil) {
+        return nil;
+    }
+    
     UIImage* imageData = [UIImage imageWithData:data];
+    
     [_dataCache setObject:imageData forKey:url];
     [_visitQueue addObject:url];
     if ([_dataCache count] > maxCacheCount) {
@@ -135,8 +141,17 @@ static const int maxCacheCount = 20;
 }
 
 -(void)respondToDelegate:(NSArray*)params {
+    
+    if ([params count] < 2) {
+        return;
+    }
+    
     UIImage* data = [params objectAtIndex:0];
     NSString* url = [params objectAtIndex:1];
+    
+    if (data == nil || url == nil) {
+        return;
+    }
     
     NSMutableArray *delegateArr = [_dataDelegateQueue objectForKey:url];
     NSMutableArray *identifierArr = [_dataIdentifierQueue objectForKey:url];

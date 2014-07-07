@@ -21,11 +21,12 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *videoCollectionView;
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerView;
 @property (weak, nonatomic) IBOutlet UIImageView *videoPlayButton;
-@property (weak, nonatomic) IBOutlet UIImageView *videoUserAvatarView;
-@property (weak, nonatomic) IBOutlet UILabel *videoUserNameView;
+@property (weak, nonatomic) IBOutlet UIButton *videoUserAvatarButton;
 @property (weak, nonatomic) IBOutlet UIView *videoMaskView;
 @property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressRecognizer;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
+@property (weak, nonatomic) IBOutlet UIButton *chatButton;
+@property (weak, nonatomic) IBOutlet UIButton *seeLikedButton;
 
 - (IBAction)tapToPlayOrPauseVideoAction:(UITapGestureRecognizer *)sender;
 
@@ -35,6 +36,7 @@
 - (IBAction)clickToLikeVideoAction:(UIButton*)sender;
 - (IBAction)clickToChatAction:(id)sender;
 - (IBAction)clickToSeeWatchedAction:(id)sender;
+- (IBAction)clickToSeeUserProfileAction:(id)sender;
 
 
 -(void)initWithChannelID:(NSNumber*)channelID andName:(NSString*)name andIsFollow:(int)follow;

@@ -48,8 +48,6 @@
         NSLog(@"%d",[msg.target_id intValue]);
     }
     
-    [self.navigationController setTitle:_target_name];
-    
     // Do any additional setup after loading the view.
     self.messageTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.messageTableView.allowsSelection = NO;
@@ -71,9 +69,14 @@
     
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self setTitle:_target_name];
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.navigationController setTitle:nil];
+    [self setTitle:nil];
 }
 
 

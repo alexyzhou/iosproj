@@ -82,15 +82,15 @@
     UIImage *normal , *focused;
     if (message.type == MessageTypeMe) {
     
-        normal = [UIImage imageNamed:@"chatto_bg_normal.png"];
+        normal = [UIImage imageNamed:@"bb_to_normal.png"];
         normal = [normal stretchableImageWithLeftCapWidth:normal.size.width * 0.5 topCapHeight:normal.size.height * 0.7];
-        focused = [UIImage imageNamed:@"chatto_bg_focused.png"];
+        focused = [UIImage imageNamed:@"bb_to_focused.png"];
         focused = [focused stretchableImageWithLeftCapWidth:focused.size.width * 0.5 topCapHeight:focused.size.height * 0.7];
     }else{
         
-        normal = [UIImage imageNamed:@"chatfrom_bg_normal.png"];
+        normal = [UIImage imageNamed:@"bb_from_normal.png"];
         normal = [normal stretchableImageWithLeftCapWidth:normal.size.width * 0.5 topCapHeight:normal.size.height * 0.7];
-        focused = [UIImage imageNamed:@"chatfrom_bg_focused.png"];
+        focused = [UIImage imageNamed:@"bb_from_focused.png"];
         focused = [focused stretchableImageWithLeftCapWidth:focused.size.width * 0.5 topCapHeight:focused.size.height * 0.7];
         
     }

@@ -43,10 +43,12 @@
             [VJNYPOJOUser sharedInstance].uid = [userDic objectForKey:@"id"];
             [VJNYPOJOUser sharedInstance].name = [userDic objectForKey:@"name"];
             [VJNYPOJOUser sharedInstance].username = [userDic objectForKey:@"userName"];
-            [VJNYPOJOUser sharedInstance].avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
+            [VJNYPOJOUser sharedInstance].avatarUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"avatarUrl"]];
             [VJNYPOJOUser sharedInstance].token = [userDic objectForKey:@"token"];
             [VJNYPOJOUser sharedInstance].gender = [userDic objectForKey:@"gender"];
             [VJNYPOJOUser sharedInstance].age = [userDic objectForKey:@"age"];
+            [VJNYPOJOUser sharedInstance].coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"coverUrl"]];
+            [VJNYPOJOUser sharedInstance].description = [userDic objectForKey:@"description"];
             
             resultObj.response = [VJNYPOJOUser sharedInstance];
             
@@ -59,9 +61,13 @@
             VJNYPOJOUser* user = [[VJNYPOJOUser alloc] init];
             user.uid = [userDic objectForKey:@"id"];
             user.name = [userDic objectForKey:@"name"];
-            user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
+            
+            user.avatarUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"avatarUrl"]];
+            
             user.gender = [userDic objectForKey:@"gender"];
             user.age = [userDic objectForKey:@"age"];
+            user.coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"coverUrl"]];
+            user.description = [userDic objectForKey:@"description"];
             
             resultObj.response = user;
         }
@@ -171,6 +177,21 @@
                 video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
                 
                 [resultObj.response addObject:video];
+            }
+        }
+    } else if ([resultObj.action isEqualToString:@"video/LikeList"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            
+            NSArray * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            resultObj.response = [[NSMutableArray alloc] init];
+            
+            for (NSString* objStr in userDic) {
+                
+                NSDictionary * videoDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                [resultObj.response addObject:videoDic];
             }
         }
     } else if ([resultObj.action isEqualToString:@"notif/Chat/Get"]) {

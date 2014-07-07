@@ -8,10 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "VJNYDataCache.h"
-#import "ASIHttpRequest.h"
+#import "ASIFormDataRequest.h"
 
-@interface VJNYUserProfileViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,UIScrollViewDelegate>
+@interface VJNYUserProfileViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,UIScrollViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
 @property (strong, nonatomic) NSNumber* userId;
+@property (nonatomic) BOOL pushed;
+
+- (IBAction)tapToChangeUserCoverAction:(UITapGestureRecognizer *)sender;
+
+- (IBAction)tapToChangeUserAvatarAction:(UITapGestureRecognizer *)sender;
+- (IBAction)tapToBackAction:(id)sender;
+
 @end

@@ -19,6 +19,8 @@ static VJNYPOJOUser* _instance;
 @synthesize token=_token;
 @synthesize gender=_gender;
 @synthesize age=_age;
+@synthesize coverUrl=_coverUrl;
+@synthesize description=_description;
 
 +(VJNYPOJOUser*)sharedInstance {
     if (_instance == NULL) {

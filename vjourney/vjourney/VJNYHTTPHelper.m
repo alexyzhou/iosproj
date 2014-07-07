@@ -30,6 +30,13 @@ static NSString* _remoteIpAddr = @"192.168.1.108:8080";
         return nil;
     }
 }
++(NSString*)checkAndSetPathUrlByAppendPrefixWithValue:(NSString*)value {
+    if (!value || [value isKindOfClass:[NSNull class]]) {
+        return nil;
+    } else {
+        return [[self pathUrlPrefix] stringByAppendingString:value];
+    }
+}
 
 +(NSString*)mediaPlayCodeWithURL:(NSString*)url andWidth:(NSInteger)width andHeight:(NSInteger)height {
     

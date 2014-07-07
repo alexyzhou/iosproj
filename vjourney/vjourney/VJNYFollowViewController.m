@@ -42,6 +42,8 @@
     // 1.初始化数据
     _channelData = [NSMutableArray array];
     
+    self.searchDisplayController.searchResultsTableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_main.jpg"]];
+    
     // 2.集成刷新控件
     /*MJRefreshFooterView *footer = [MJRefreshFooterView footer];
     footer.scrollView = self.channelView;

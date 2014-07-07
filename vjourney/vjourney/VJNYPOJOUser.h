@@ -17,6 +17,8 @@
 @property(nonatomic, strong) NSString* token;
 @property(nonatomic, strong) NSString* gender;
 @property(nonatomic, strong) NSNumber* age;
+@property(nonatomic, strong) NSString* coverUrl;
+@property(nonatomic, strong) NSString* description;
 
 +(VJNYPOJOUser*)sharedInstance;
 

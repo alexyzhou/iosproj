@@ -20,6 +20,7 @@
 
 #define kTimeFont [UIFont systemFontOfSize:12] //时间字体
 #define kContentFont [UIFont systemFontOfSize:16] //内容字体
+#define kFrameContentFont [UIFont systemFontOfSize:20] //内容字体
 
 #import <Foundation/Foundation.h>
 

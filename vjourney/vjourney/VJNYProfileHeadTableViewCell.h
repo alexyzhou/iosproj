@@ -18,6 +18,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *storyCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *likeCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *topicCountLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *chatImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *backButtonImageView;
 
 @property (strong, nonatomic) MPMoviePlayerController* videoPlayer;
 

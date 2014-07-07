@@ -7,6 +7,8 @@
 //
 
 #import "VJNYVideoViewController.h"
+#import "VJNYUserProfileViewController.h"
+#import "VJNYLikedListViewController.h"
 #import "VJNYChatViewController.h"
 #import "VJNYVideoCardViewCell.h"
 #import "VJNYUtilities.h"
@@ -116,12 +118,12 @@
             VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
             [self playVideo:video.url];
             
-            _videoUserAvatarView.alpha = 1.0f;
-            _videoUserNameView.alpha = 1.0f;
             
             VJNYPOJOUser* user = [_userData objectForKey:video.userId];
-            [VJNYDataCache loadImage:_videoUserAvatarView WithUrl:user.avatarUrl AndMode:2 AndIdentifier:[NSNumber numberWithLong:_dragVideoIndex] AndDelegate:self];
-            _videoUserNameView.text = user.name;
+            [VJNYDataCache loadImageForButton:_videoUserAvatarButton WithUrl:user.avatarUrl AndMode:2 AndIdentifier:[NSNumber numberWithLong:_dragVideoIndex] AndDelegate:self];
+            [_videoUserAvatarButton setEnabled:YES];
+            [_chatButton setEnabled:YES];
+            [_seeLikedButton setEnabled:YES];
             
             // Http Request
             NSMutableDictionary* dic = [self genUserVideoRequestDic];
@@ -199,6 +201,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    _videoUserAvatarButton.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:0.5];
+    [VJNYUtilities addRoundMaskForUIView:_videoUserAvatarButton];
+    [_videoUserAvatarButton setEnabled:NO];
+    [_chatButton setEnabled:NO];
+    [_seeLikedButton setEnabled:NO];
     
     _uploadBannerView = nil;
     
@@ -210,8 +217,6 @@
     
     _activityIndicatorView = nil;
     _videoPlayButton.alpha = 0.0f;
-    _videoUserAvatarView.alpha = 0.0f;
-    _videoUserNameView.alpha = 0.0f;
     _videoCollectionView.backgroundColor = [UIColor clearColor];
     _videoMaskView.alpha = 0.4f;
     [VJNYUtilities addShadowForUIView:_videoCollectionView];
@@ -294,6 +299,9 @@
         VJNYVideoCaptureViewController* videoController = [controller.viewControllers objectAtIndex:0];
         videoController.delegate = sender;
         videoController.captureMode = GeneralMode;
+    } else if ([segue.identifier isEqual:[VJNYUtilities segueLikedListPage]]) {
+        VJNYLikedListViewController* controller = segue.destinationViewController;
+        controller.videoId = sender;
     }
 }
 
@@ -367,7 +375,7 @@
         long originIndex = [identifier longValue];
         if (originIndex == _dragVideoIndex) {
             // we are still in the same video
-            _videoUserAvatarView.image = data;
+            [_videoUserAvatarButton setBackgroundImage:data forState:UIControlStateNormal];
         }
     }
 }
@@ -481,7 +489,7 @@
                 [_userData removeAllObjects];
                 [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
             } else {
-                [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Login Failed!, Reason:%d",result.result]];
+                [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Upload Failed!, Reason:%d",result.result]];
             }
         });
     } else if ([result.action isEqualToString:@"video/IsLike"]) {
@@ -565,6 +573,30 @@
 }
 
 - (IBAction)clickToSeeWatchedAction:(id)sender {
+    
+    if (_dragVideoIndex != -1) {
+        VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
+        [self performSegueWithIdentifier:[VJNYUtilities segueLikedListPage] sender:video.vid];
+    }
+    
+}
+
+- (IBAction)clickToSeeUserProfileAction:(id)sender {
+    
+    if (_dragVideoIndex != -1) {
+        VJNYPOJOVideo* video = [_videoData objectAtIndex:_dragVideoIndex];
+        VJNYPOJOUser* user = [_userData objectForKey:video.userId];
+        
+        UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardUserProfilePage]];
+        
+        VJNYUserProfileViewController* profileController = [controller.viewControllers  objectAtIndex:0];
+        profileController.userId = user.uid;
+        profileController.pushed = YES;
+        
+        [self presentViewController:controller animated:YES completion:nil];
+        //[self.navigationController pushViewController:controller animated:YES];
+    }
+
 }
 
 @end

@@ -59,15 +59,18 @@
     _subViewControllers = [NSMutableDictionary dictionaryWithCapacity:4];
     
     // UI Configuration
-    self.userAvatarView.layer.cornerRadius = self.userAvatarView.bounds.size.height/2;
-    self.userAvatarView.layer.masksToBounds = YES;
+    [VJNYUtilities addRoundMaskForUIView:self.userAvatarView];
+    //self.userAvatarView.layer.cornerRadius = self.userAvatarView.bounds.size.height/2;
+    //self.userAvatarView.layer.masksToBounds = YES;
     [VJNYDataCache loadImage:self.userAvatarView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:0 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
+    [VJNYDataCache loadImage:self.userCoverView WithUrl:[VJNYPOJOUser sharedInstance].coverUrl AndMode:1 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
     self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
     
     // Network Stuff
     [VJNYHTTPHelper getJSONRequest:[@"video/countByUser/" stringByAppendingString:[[VJNYPOJOUser sharedInstance].uid stringValue]] WithParameters:nil AndDelegate:self];
     
     // Default Page
+    
     VJNYSysNotifViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardSysNotifPage]];
     controller.slideDelegate = self;
     [self addChildViewController:controller];

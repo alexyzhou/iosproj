@@ -30,8 +30,13 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    VJNYUserProfileViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardUserProfilePage]];
-    controller.userId = [VJNYPOJOUser sharedInstance].uid;
+    
+    
+    UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardUserProfilePage]];
+    
+    VJNYUserProfileViewController* profileController = [controller.viewControllers  objectAtIndex:0];
+    profileController.userId = [VJNYPOJOUser sharedInstance].uid;
+    profileController.pushed = false;
     [self addChildViewController:controller];
     [self.view addSubview:controller.view];
 }

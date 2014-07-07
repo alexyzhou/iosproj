@@ -22,7 +22,9 @@ static UIAlertView* _progressAlert = NULL;
     user.name = @"userName0";
     user.uid = [NSNumber numberWithLong:1];
     user.token = @"bdd4bc5d3e058f8242e9ebdd1bff7f73";
-    user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"avatar/12.png"];
+    user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"avatar/11.png"];
+    user.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"cover/user/1404738299542.jpg"];
+    user.description = @"static Description";
 }
 
 +(void)initBgImageForTabView:(UIView*)view {
@@ -33,6 +35,11 @@ static UIAlertView* _progressAlert = NULL;
 
 +(void)initBgImageForNaviBarWithTabView:(UINavigationController*)controller {
     [controller.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_main_head.jpg"] forBarMetrics:UIBarMetricsDefault];
+    [controller.navigationBar setTintColor:[UIColor whiteColor]];
+    [controller.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
+}
++(void)initEditingBgImageForNaviBarWithTabView:(UINavigationController*)controller {
+    [controller.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_editing_head.jpg"] forBarMetrics:UIBarMetricsDefault];
     [controller.navigationBar setTintColor:[UIColor whiteColor]];
     [controller.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
 }
@@ -161,6 +168,10 @@ static UIAlertView* _progressAlert = NULL;
     view.layer.shadowOpacity = 0.5f;
     view.layer.masksToBounds = NO;
 }
++ (void) addRoundMaskForUIView:(UIView*)view {
+    view.layer.cornerRadius = view.bounds.size.height/2;
+    view.layer.masksToBounds = YES;
+}
 +(BOOL)isRetina{
     return ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale == 2.0));
 }
@@ -236,6 +247,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)sysNotifCellIdentifier {
     return @"sysNotifCell";
 }
++(NSString*)likedUserCellIdentifier {
+    return @"likedUserCell";
+}
 
 
 #pragma mark - Segue
@@ -267,6 +281,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)segueChatDetailpage {
     return @"segueChatDetailPage";
 }
++(NSString*)segueLikedListPage {
+    return @"segueLikedListPage";
+}
 
 #pragma mark - Storyboard IDs
 
@@ -276,6 +293,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)storyboardUserProfilePage {
     return @"sUserProfilePage";
 }
++(NSString*)storyboardUserProfileDetailPage {
+    return @"sUserProfileDetailPage";
+}
 +(NSString*)storyboardChatListPage {
     return @"sChatListPage";
 }
@@ -284,6 +304,9 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)storyboardSysNotifPage {
     return @"sSysNotifPage";
+}
++(NSString*)storyboardVideoListPage {
+    return @"videoListPage";
 }
 
 #pragma mark - Const Values

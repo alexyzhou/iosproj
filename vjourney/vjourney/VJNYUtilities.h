@@ -14,6 +14,7 @@
 +(void)initTestParameters;
 +(void)initBgImageForTabView:(UIView*)view;
 +(void)initBgImageForNaviBarWithTabView:(UINavigationController*)controller;
++(void)initEditingBgImageForNaviBarWithTabView:(UINavigationController*)controller;
 +(void)voidBgImageForTabBarWithController:(UITabBarController*)controller;
 
 
@@ -46,6 +47,7 @@
 +(NSString*)chatMessageCellIdentifier;
 +(NSString*)chatThreadCellIdentifier;
 +(NSString*)sysNotifCellIdentifier;
++(NSString*)likedUserCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 
@@ -58,12 +60,15 @@
 +(NSString*)segueVideoCoverSelectPage;
 +(NSString*)segueBallonStoragePage;
 +(NSString*)segueChatDetailpage;
++(NSString*)segueLikedListPage;
 
 +(NSString*)storyboardBallonBasePage;
 +(NSString*)storyboardUserProfilePage;
++(NSString*)storyboardUserProfileDetailPage;
 +(NSString*)storyboardChatListPage;
 +(NSString*)storyboardChatDetailPage;
 +(NSString*)storyboardSysNotifPage;
++(NSString*)storyboardVideoListPage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;
@@ -80,5 +85,6 @@
 
 + (void) addShadowForUIView:(UIView *)view;
 + (void) addShadowForUIView:(UIView *)view WithOffset:(CGSize)size AndRadius:(CGFloat)radius;
++ (void) addRoundMaskForUIView:(UIView*)view;
 @end
 
