@@ -43,7 +43,7 @@
     _addNewChannelLabel2.font = [VJNYUtilities customFontWithSize:ADD_NEW_CHANNEL_FONTSIZE];
     _addNewChannelLabel3.font = [VJNYUtilities customFontWithSize:ADD_NEW_CHANNEL_FONTSIZE];
     
-    [_addNewChannelView setHidden:NO];
+    [_addNewChannelView setHidden:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
