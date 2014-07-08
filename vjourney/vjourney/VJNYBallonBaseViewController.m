@@ -52,6 +52,29 @@
     
     [VJNYUtilities addShadowForUIView:self.ballonAnimationImageView WithOffset:CGSizeMake(2.0f, 2.0f) AndRadius:3.0f];
     
+    self.addVoodooButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.addVoodooButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [self.addVoodooButton setTitle: @"send\nVOODOO" forState: UIControlStateNormal];
+    self.addVoodooButton.titleLabel.font = [VJNYUtilities customFontWithSize:13.0f];
+    
+    [VJNYUtilities addShadowForUIView:self.addVoodooButton WithOffset:CGSizeMake(3.0f, 3.0f) AndRadius:5.0f];
+    
+    self.addVoodooButton.layer.cornerRadius = 5.0f;
+    //self.addVoodooButton.layer.masksToBounds = YES;
+    
+    self.acceptVoodooButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.acceptVoodooButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [self.acceptVoodooButton setTitle: @"accept\nVOODOO" forState: UIControlStateNormal];
+    self.acceptVoodooButton.titleLabel.font = [VJNYUtilities customFontWithSize:13.0f];
+    
+    self.acceptVoodooButton.layer.cornerRadius = 5.0f;
+    self.acceptVoodooButton.layer.masksToBounds = YES;
+    
+    self.storageVoodooButton.titleLabel.font = [VJNYUtilities customFontWithSize:13.0f];
+    
+    self.storageVoodooButton.layer.cornerRadius = 5.0f;
+    self.storageVoodooButton.layer.masksToBounds = YES;
+    
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 //        
 //    });

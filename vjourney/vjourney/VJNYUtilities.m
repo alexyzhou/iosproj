@@ -211,6 +211,35 @@ static UIAlertView* _progressAlert = NULL;
             break;
     }    
 }
++ (UIImage *)scaleImage:(UIImage*)image toResolution:(int)resolution {
+    CGImageRef imgRef = [image CGImage];
+    CGFloat width = CGImageGetWidth(imgRef);
+    CGFloat height = CGImageGetHeight(imgRef);
+    CGRect bounds = CGRectMake(0, 0, width, height);
+    
+    //if already at the minimum resolution, return the orginal image, otherwise scale
+    if (width <= resolution && height <= resolution) {
+        return image;
+        
+    } else {
+        CGFloat ratio = width/height;
+        
+        if (ratio > 1) {
+            bounds.size.width = resolution;
+            bounds.size.height = bounds.size.width / ratio;
+        } else {
+            bounds.size.height = resolution;
+            bounds.size.width = bounds.size.height * ratio;
+        }
+    }
+    
+    UIGraphicsBeginImageContext(bounds.size);
+    [image drawInRect:CGRectMake(0.0, 0.0, bounds.size.width, bounds.size.height)];
+    UIImage *imageCopy = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return imageCopy;
+}
 
 #pragma mark - Cell Identifiers
 
@@ -255,6 +284,12 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)likedUserCellIdentifier {
     return @"likedUserCell";
+}
++(NSString*)settingGeneralCellIdentifier {
+    return @"settingGeneralCell";
+}
++(NSString*)settingLogoutCellIdentifier {
+    return @"settingLogoutCell";
 }
 
 
@@ -317,6 +352,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)storyboardVideoListPage {
     return @"videoListPage";
 }
++(NSString*)storyboardSettingPage {
+    return @"sSettingPage";
+}
 
 #pragma mark - Const Values
 
@@ -352,6 +390,11 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)videoShareTmpFolderPath {
     NSString* sharePath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Share"];
+    [self checkAndCreateFolderForPath:sharePath];
+    return [sharePath stringByAppendingString:@"/"];
+}
++(NSString*)dataCacheFolderPath {
+    NSString* sharePath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Cache"];
     [self checkAndCreateFolderForPath:sharePath];
     return [sharePath stringByAppendingString:@"/"];
 }

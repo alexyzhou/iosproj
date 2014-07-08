@@ -14,6 +14,8 @@
 @interface VJNYBallonBaseViewController : UIViewController<ASIHTTPRequestDelegate, VJNYVideoUploadDelegate,ASIProgressDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ballonAnimationImageView;
 @property (weak, nonatomic) IBOutlet UIButton *addVoodooButton;
+@property (weak, nonatomic) IBOutlet UIButton *acceptVoodooButton;
+@property (weak, nonatomic) IBOutlet UIButton *storageVoodooButton;
 
 - (IBAction)catchBallonAction:(id)sender;
 - (IBAction)ballonStorageAction:(id)sender;

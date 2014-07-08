@@ -19,7 +19,10 @@
 
 @interface VJNYChatListViewController () {
     NSMutableArray* _threadArray;
+    NSMutableArray* _filteredThreadArray;
     UIActivityIndicatorView* _activityIndicator;
+    
+    BOOL _isSearchMode;
 }
 
 @end
@@ -41,8 +44,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    _isSearchMode = false;
+    [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];
     
     _threadArray = [[[VJDMModel sharedInstance] getThreadList] mutableCopy];
+    _filteredThreadArray = [NSMutableArray array];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     
     UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panToShowSliderAction:)];
@@ -52,18 +58,29 @@
     UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToDismissSliderAction:)];
     [self.tableView addGestureRecognizer:tapGesture];
     tapGesture.delegate = self;
+    
+    [self.tableView setContentInset:UIEdgeInsetsMake(0, 0, 49.0f, 0)];
+    [self.tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 49.0f, 0)];
+    
+    self.searchBarCancelButton.alpha = 0.0f;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.navigationController.navigationBar setHidden:YES];
     // Network Stuff
     NSMutableDictionary* dic = [NSMutableDictionary dictionary];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
     dic[@"userId"]=[[VJNYPOJOUser sharedInstance].uid stringValue];
     [VJNYHTTPHelper sendJSONRequest:@"notif/chat/get" WithParameters:dic AndDelegate:self];
     
-    self.navigationItem.titleView = _activityIndicator;
-    [_activityIndicator startAnimating];
+    //self.navigationItem.titleView = _activityIndicator;
+    //[_activityIndicator startAnimating];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController.navigationBar setHidden:NO];
 }
 
 - (void)didReceiveMemoryWarning
@@ -105,15 +122,25 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _threadArray.count;
+    if (_isSearchMode) {
+        return _filteredThreadArray.count;
+    } else {
+        return _threadArray.count;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
     VJNYChatThreadTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[VJNYUtilities chatThreadCellIdentifier]];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    VJDMThread* thread = [_threadArray objectAtIndex:indexPath.row];
+    VJDMThread* thread;
+    if (_isSearchMode) {
+        thread = [_filteredThreadArray objectAtIndex:indexPath.row];
+    } else {
+        thread = [_threadArray objectAtIndex:indexPath.row];
+    }
     
     // 设置数据
     
@@ -123,7 +150,7 @@
     } else {
         [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[thread.target_id stringValue]] WithParameters:nil AndDelegate:self];
     }
-    
+    [VJNYUtilities addRoundMaskForUIView:cell.avatarImageView];
     cell.nameLabelView.text = thread.target_name;
     cell.lastMessageLabelView.text = thread.last_message;
     cell.lastTimeLabelView.text = [VJNYUtilities formatDataString:thread.last_time];
@@ -132,7 +159,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 61;
+    return 81;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -145,10 +172,29 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         //add code here for when you hit delete
         
-        VJDMThread* thread = [_threadArray objectAtIndex:indexPath.row];
+        VJDMThread* thread;
+        if (_isSearchMode) {
+            thread = [_filteredThreadArray objectAtIndex:indexPath.row];
+            [_filteredThreadArray removeObjectAtIndex:indexPath.row];
+            
+            int i = 0;
+            for (; i < _threadArray.count; i++) {
+                VJDMThread* threadToTest = [_threadArray objectAtIndex:i];
+                if ([threadToTest.target_id isEqualToNumber:thread.target_id]) {
+                    break;
+                }
+            }
+            if (i < _threadArray.count) {
+                [_threadArray removeObjectAtIndex:i];
+            }
+            
+        } else {
+            thread = [_threadArray objectAtIndex:indexPath.row];
+            [_threadArray removeObjectAtIndex:indexPath.row];
+        }
+        
         [[VJDMModel sharedInstance] removeThreadAndMessageByID:thread.target_id];
         
-        [_threadArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
     
@@ -190,6 +236,13 @@
     if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction)]) {
         [_slideDelegate subViewDidTriggerSliderAction];
     }
+}
+
+- (IBAction)cancelSearchAction:(id)sender {
+    _isSearchMode = false;
+    self.searchBar.text = @"";
+    [self.searchBar resignFirstResponder];
+    [self.tableView reloadData];
 }
 
 #pragma mark - Gesture Delegate
@@ -242,5 +295,43 @@
     
 }
 
+#pragma mark - UISearchBar Delegate
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        self.searchBarCancelButton.alpha = 1.0f;
+    }];
+    _isSearchMode = true;
+    //return YES;
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    [UIView animateWithDuration:0.1f animations:^{
+        self.searchBarCancelButton.alpha = 0.0f;
+    }];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    [self updateSearchResult];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [self.searchBar resignFirstResponder];
+}
+
+- (void)updateSearchResult {
+    
+    [_filteredThreadArray removeAllObjects];
+    
+    for (int i = 0; i < _threadArray.count; i++) {
+        VJDMThread* thread = [_threadArray objectAtIndex:i];
+        if ([thread.target_name rangeOfString:self.searchBar.text options:0].location != NSNotFound) {
+            [_filteredThreadArray addObject:thread];
+        }
+    }
+    
+    [self.tableView reloadData];
+}
 
 @end

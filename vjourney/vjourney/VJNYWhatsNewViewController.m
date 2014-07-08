@@ -341,7 +341,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
 #pragma mark - Button Event Handler
 
 - (IBAction)searchChannelAction:(id)sender {
-    
+    NSLog(@"%@",[VJNYDataCache cacheTotalSize]);
     [self performSegueWithIdentifier:[VJNYUtilities segueChannelSearchPage] sender:nil];
     
 }

@@ -7,6 +7,8 @@
 //
 
 #import "VJNYDataCache.h"
+#import "VJNYHTTPHelper.h"
+#import "VJNYUtilities.h"
 
 @interface VJNYDataCache ()
 {
@@ -49,7 +51,17 @@ static const int maxCacheCount = 20;
 -(UIImage*)dataByURL:(NSString*)url {
     [_visitQueue removeObject:url];
     [_visitQueue addObject:url];
-    return [_dataCache objectForKey:url];
+    
+    if ([_dataCache objectForKey:url] != nil) {
+        return [_dataCache objectForKey:url];
+    } else {
+        UIImage* readFromFile = [[VJNYDataCache instance] readCacheForURL:url];
+        if (readFromFile != nil) {
+            NSLog(@"Cache Hit!");
+            [_dataCache setObject:readFromFile forKey:url];
+        }
+        return readFromFile;
+    }
 }
 
 #pragma mark - Image Load
@@ -153,6 +165,8 @@ static const int maxCacheCount = 20;
         return;
     }
     
+    [self writeCacheForURL:url WithImage:data];
+    
     NSMutableArray *delegateArr = [_dataDelegateQueue objectForKey:url];
     NSMutableArray *identifierArr = [_dataIdentifierQueue objectForKey:url];
     NSMutableArray *isPromoArr = [_requestIsPromo objectForKey:url];
@@ -169,6 +183,50 @@ static const int maxCacheCount = 20;
     
     [_dataDelegateQueue removeObjectForKey:url];
     [_dataIdentifierQueue removeObjectForKey:url];
+}
+
+#pragma mark - Cache FileSystem Helpers
+
++ (NSString*)cacheTotalSize {
+    
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[VJNYUtilities dataCacheFolderPath] error:nil];
+    NSEnumerator *contentsEnumurator = [contents objectEnumerator];
+    
+    NSString *file;
+    unsigned long long int folderSize = 0;
+    
+    while (file = [contentsEnumurator nextObject]) {
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[[VJNYUtilities dataCacheFolderPath] stringByAppendingString:file] error:nil];
+        folderSize += [[fileAttributes objectForKey:NSFileSize] intValue];
+    }
+    
+    //This line will give you formatted size from bytes ....
+    NSString *folderSizeStr = [NSByteCountFormatter stringFromByteCount:folderSize countStyle:NSByteCountFormatterCountStyleFile];
+    return folderSizeStr;
+}
+
+- (NSString*)changeUrlToCacheName:(NSString*)url {
+    return [[[[VJNYHTTPHelper pathUrlByRemovePrefix:url] stringByReplacingOccurrencesOfString:@"/" withString:@"_"] stringByReplacingOccurrencesOfString:@"." withString:@"_"] stringByAppendingString:@".png"];
+}
+
+- (UIImage*)readCacheForURL:(NSString*)url {
+    
+    NSString* filePath = [[VJNYUtilities dataCacheFolderPath] stringByAppendingString:[self changeUrlToCacheName:url]];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        return [UIImage imageWithContentsOfFile:filePath];
+    } else {
+        return nil;
+    }
+    
+}
+
+- (void)writeCacheForURL:(NSString*)url WithImage:(UIImage*)imageToSave {
+    
+    NSData * binaryImageData = UIImagePNGRepresentation(imageToSave);
+    NSString* pathToWrite = [[VJNYUtilities dataCacheFolderPath] stringByAppendingString:[self changeUrlToCacheName:url]];
+    [binaryImageData writeToFile:pathToWrite atomically:YES];
+    
 }
 
 @end

@@ -66,8 +66,11 @@
 +(NSString*)chatThreadCellIdentifier;
 +(NSString*)sysNotifCellIdentifier;
 +(NSString*)likedUserCellIdentifier;
++(NSString*)settingGeneralCellIdentifier;
++(NSString*)settingLogoutCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
++ (UIImage *)scaleImage:(UIImage*)image toResolution:(int)resolution;
 
 +(NSString*)segueShowVideoPageByChannel;
 +(NSString*)segueLoginShowMainPage;
@@ -88,6 +91,7 @@
 +(NSString*)storyboardChatDetailPage;
 +(NSString*)storyboardSysNotifPage;
 +(NSString*)storyboardVideoListPage;
++(NSString*)storyboardSettingPage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;
@@ -98,6 +102,7 @@
 +(NSString*)videoFilterOutputPath;
 +(NSString*)videoCutOutputPath;
 +(NSString*)videoShareTmpFolderPath;
++(NSString*)dataCacheFolderPath;
 
 + (UIImage *) imageWithView:(UIView *)view;
 + (UIImage *) imageWithView7:(UIView *)view;

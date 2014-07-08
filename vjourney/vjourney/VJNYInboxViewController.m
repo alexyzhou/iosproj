@@ -11,6 +11,7 @@
 #import "VJNYBallonBaseViewController.h"
 #import "VJNYChatListViewController.h"
 #import "VJNYSysNotifViewController.h"
+#import "VJNYSettingViewController.h"
 #import "VJNYAppDelegate.h"
 #import "VJNYPOJOUser.h"
 #import "VJNYPOJOHttpResult.h"
@@ -65,6 +66,7 @@
     [VJNYDataCache loadImage:self.userAvatarView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:0 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
     [VJNYDataCache loadImage:self.userCoverView WithUrl:[VJNYPOJOUser sharedInstance].coverUrl AndMode:1 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
     self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
+    self.userDescriptionLabel.text = [VJNYPOJOUser sharedInstance].description;
     
     // Network Stuff
     [VJNYHTTPHelper getJSONRequest:[@"video/countByUser/" stringByAppendingString:[[VJNYPOJOUser sharedInstance].uid stringValue]] WithParameters:nil AndDelegate:self];
@@ -118,6 +120,13 @@
             [_subViewControllers setObject:controller forKey:numberKey];
         } else if (number == 3) {
             // Setting
+            UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardSettingPage]];
+            //controller.delegate = self;
+            VJNYSettingViewController* chatController = controller.viewControllers[0];
+            chatController.slideDelegate = self;
+            [self addChildViewController:controller];
+            [self.view insertSubview:controller.view belowSubview:self.sliderView];
+            [_subViewControllers setObject:controller forKey:numberKey];
         } else if (number == 4) {
             // Voodoo
             UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardBallonBasePage]];
@@ -192,7 +201,7 @@
         [self switchToViewController:2];
     } else if (sender.view == _settingsSelectionView) {
         [self setUIForSelectedView:_settingsSelectionView WithIconView:_settingIconView AndLabel:_settingLabelView];
-        //[self switchToViewController:3];
+        [self switchToViewController:3];
     } else {
         [self setUIForSelectedView:_vooDooSelectionView WithIconView:_vooDooIconView AndLabel:_vooDooLabelView];
         [self switchToViewController:4];

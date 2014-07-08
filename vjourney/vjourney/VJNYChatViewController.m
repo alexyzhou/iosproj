@@ -7,6 +7,7 @@
 //
 
 #import "VJNYChatViewController.h"
+#import "VJNYUserProfileViewController.h"
 #import "VJDMMessageFrame.h"
 #import "VJDMMessage.h"
 #import "VJDMMessageCell.h"
@@ -67,6 +68,8 @@
     
     self.inputTextField.delegate = self;
     
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[[VJNYUtilities scaleImage:_target_avatar toResolution:25] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStylePlain target:self action:@selector(showTargetInfoAction)];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -118,6 +121,7 @@
     
     CGRect rect = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat ty = - rect.size.height;
+    //ty -= 65.0f;
     [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
         self.view.transform = CGAffineTransformMakeTranslation(0, ty);
     }];
@@ -128,6 +132,7 @@
     
     [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
         self.view.transform = CGAffineTransformIdentity;
+        
     }];
 }
 #pragma mark - 文本框代理方法
@@ -263,6 +268,18 @@
 - (IBAction)sendButtonAction:(id)sender {
     
     [self insertNewMessage];
+    
+}
+
+- (void)showTargetInfoAction {
+    
+    UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardUserProfilePage]];
+    
+    VJNYUserProfileViewController* profileController = [controller.viewControllers  objectAtIndex:0];
+    profileController.userId = _target_id;
+    profileController.pushed = YES;
+    
+    [self presentViewController:controller animated:YES completion:nil];
     
 }
 @end
