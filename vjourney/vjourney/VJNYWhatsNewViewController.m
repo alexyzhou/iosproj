@@ -341,6 +341,9 @@ static VJNYWhatsNewViewController* _instance = NULL;
 #pragma mark - Button Event Handler
 
 - (IBAction)searchChannelAction:(id)sender {
+    
+    [self performSegueWithIdentifier:[VJNYUtilities segueChannelSearchPage] sender:nil];
+    
 }
 
 - (IBAction)segmentedFilterClickAction:(id)sender {

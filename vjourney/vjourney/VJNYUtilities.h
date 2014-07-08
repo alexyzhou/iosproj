@@ -20,6 +20,7 @@
 
 // Helper
 +(NSString*)formatDataString:(NSDate*)param;
++(NSString*)filterToAlphabetFromString:(NSString*)input;
 //+(UIAlertView*)alertViewWithProgress;
 +(void)showProgressAlertViewToView:(UIView*)view;
 +(void)dismissProgressAlertViewFromView:(UIView*)view;
@@ -27,6 +28,23 @@
 +(void)showAlertWithNoTitle:(NSString*)content;
 +(BOOL)isRetina;
 +(UIFont*)customFontWithSize:(CGFloat)size;
+
+// Camera Helper
+#pragma mark camera utility
++ (BOOL) isCameraAvailable;
+
++ (BOOL) isRearCameraAvailable;
+
++ (BOOL) isFrontCameraAvailable;
+
++ (BOOL) doesCameraSupportTakingPhotos;
+
++ (BOOL) isPhotoLibraryAvailable;
++ (BOOL) canUserPickVideosFromPhotoLibrary;
++ (BOOL) canUserPickPhotosFromPhotoLibrary;
+
++ (BOOL) cameraSupportsMedia:(NSString *)paramMediaType sourceType:(UIImagePickerControllerSourceType)paramSourceType;
+
 
 // FileSystem Helpers
 +(NSString *)documentsDirectory;
@@ -61,6 +79,7 @@
 +(NSString*)segueBallonStoragePage;
 +(NSString*)segueChatDetailpage;
 +(NSString*)segueLikedListPage;
++(NSString*)segueChannelSearchPage;
 
 +(NSString*)storyboardBallonBasePage;
 +(NSString*)storyboardUserProfilePage;

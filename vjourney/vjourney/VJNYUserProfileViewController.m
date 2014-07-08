@@ -390,6 +390,12 @@
 {
     NSError *error = [request error];
     NSLog(@"%@",error.localizedDescription);
+    [UIView animateWithDuration:0.5f animations:^{
+        [_uploadBannerView setAlpha:0.0f];
+    } completion:^(BOOL finished) {
+        [_uploadBannerView removeFromSuperview];
+        _uploadBannerView = nil;
+    }];
     [VJNYUtilities showAlertWithNoTitle:error.localizedDescription];
 }
 
@@ -505,10 +511,10 @@
     
     if (buttonIndex == 0) {
         // 拍照
-        if ([self isCameraAvailable] && [self doesCameraSupportTakingPhotos]) {
+        if ([VJNYUtilities isCameraAvailable] && [VJNYUtilities doesCameraSupportTakingPhotos]) {
             UIImagePickerController *controller = [[UIImagePickerController alloc] init];
             controller.sourceType = UIImagePickerControllerSourceTypeCamera;
-            if ([self isFrontCameraAvailable]) {
+            if ([VJNYUtilities isFrontCameraAvailable]) {
                 controller.cameraDevice = UIImagePickerControllerCameraDeviceFront;
             }
             NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
@@ -522,7 +528,7 @@
         
     } else if (buttonIndex == 1) {
         // 从相册中选取
-        if ([self isPhotoLibraryAvailable]) {
+        if ([VJNYUtilities isPhotoLibraryAvailable]) {
             UIImagePickerController *controller = [[UIImagePickerController alloc] init];
             controller.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
             NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
@@ -535,7 +541,7 @@
         }
     }
     
-    NSLog(@"Index = %d - Title = %@", buttonIndex, [actionSheet buttonTitleAtIndex:buttonIndex]);
+    NSLog(@"Index = %ld - Title = %@", buttonIndex, [actionSheet buttonTitleAtIndex:buttonIndex]);
 }
 
 #pragma mark VPImageCropperDelegate
@@ -635,53 +641,6 @@
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [picker dismissViewControllerAnimated:YES completion:^(){
     }];
-}
-
-
-#pragma mark camera utility
-- (BOOL) isCameraAvailable{
-    return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
-}
-
-- (BOOL) isRearCameraAvailable{
-    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
-}
-
-- (BOOL) isFrontCameraAvailable {
-    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
-}
-
-- (BOOL) doesCameraSupportTakingPhotos {
-    return [self cameraSupportsMedia:(__bridge NSString *)kUTTypeImage sourceType:UIImagePickerControllerSourceTypeCamera];
-}
-
-- (BOOL) isPhotoLibraryAvailable{
-    return [UIImagePickerController isSourceTypeAvailable:
-            UIImagePickerControllerSourceTypePhotoLibrary];
-}
-- (BOOL) canUserPickVideosFromPhotoLibrary{
-    return [self
-            cameraSupportsMedia:(__bridge NSString *)kUTTypeMovie sourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-}
-- (BOOL) canUserPickPhotosFromPhotoLibrary{
-    return [self
-            cameraSupportsMedia:(__bridge NSString *)kUTTypeImage sourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-}
-
-- (BOOL) cameraSupportsMedia:(NSString *)paramMediaType sourceType:(UIImagePickerControllerSourceType)paramSourceType{
-    __block BOOL result = NO;
-    if ([paramMediaType length] == 0) {
-        return NO;
-    }
-    NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:paramSourceType];
-    [availableMediaTypes enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *mediaType = (NSString *)obj;
-        if ([mediaType isEqualToString:paramMediaType]){
-            result = YES;
-            *stop= YES;
-        }
-    }];
-    return result;
 }
 
 #pragma mark image scale utility

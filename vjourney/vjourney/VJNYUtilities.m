@@ -12,6 +12,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "MBProgressHUD.h"
 
+#import <MobileCoreServices/MobileCoreServices.h>
+
 @implementation VJNYUtilities
 
 static UIAlertView* _progressAlert = NULL;
@@ -49,6 +51,7 @@ static UIAlertView* _progressAlert = NULL;
     [controller.tabBar setBarStyle:UIBarStyleBlack];
 }
 
+#pragma mark - String Helper
 
 +(NSString*)formatDataString:(NSDate*)param {
     
@@ -66,6 +69,9 @@ static UIAlertView* _progressAlert = NULL;
         fmt.dateFormat = @"yyyy-MM-dd";
     }
     return [fmt stringFromDate:param];
+}
++(NSString*)filterToAlphabetFromString:(NSString*)input {
+    return [[input componentsSeparatedByCharactersInSet:[[NSCharacterSet letterCharacterSet] invertedSet]] componentsJoinedByString:@""];
 }
 
 #pragma mark - UI Helper
@@ -284,6 +290,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)segueLikedListPage {
     return @"segueLikedListPage";
 }
++(NSString*)segueChannelSearchPage {
+    return @"segueChannelSearchPage";
+}
 
 #pragma mark - Storyboard IDs
 
@@ -345,6 +354,54 @@ static UIAlertView* _progressAlert = NULL;
     NSString* sharePath = [[VJNYUtilities documentsDirectory] stringByAppendingPathComponent:@"/Share"];
     [self checkAndCreateFolderForPath:sharePath];
     return [sharePath stringByAppendingString:@"/"];
+}
+
+#pragma mark - Camera Utility
+
+#pragma mark camera utility
++ (BOOL) isCameraAvailable{
+    return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+}
+
++ (BOOL) isRearCameraAvailable{
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+}
+
++ (BOOL) isFrontCameraAvailable {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
+}
+
++ (BOOL) doesCameraSupportTakingPhotos {
+    return [self cameraSupportsMedia:(__bridge NSString *)kUTTypeImage sourceType:UIImagePickerControllerSourceTypeCamera];
+}
+
++ (BOOL) isPhotoLibraryAvailable{
+    return [UIImagePickerController isSourceTypeAvailable:
+            UIImagePickerControllerSourceTypePhotoLibrary];
+}
++ (BOOL) canUserPickVideosFromPhotoLibrary{
+    return [self
+            cameraSupportsMedia:(__bridge NSString *)kUTTypeMovie sourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+}
++ (BOOL) canUserPickPhotosFromPhotoLibrary{
+    return [self
+            cameraSupportsMedia:(__bridge NSString *)kUTTypeImage sourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+}
+
++ (BOOL) cameraSupportsMedia:(NSString *)paramMediaType sourceType:(UIImagePickerControllerSourceType)paramSourceType{
+    __block BOOL result = NO;
+    if ([paramMediaType length] == 0) {
+        return NO;
+    }
+    NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:paramSourceType];
+    [availableMediaTypes enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *mediaType = (NSString *)obj;
+        if ([mediaType isEqualToString:paramMediaType]){
+            result = YES;
+            *stop= YES;
+        }
+    }];
+    return result;
 }
 
 @end

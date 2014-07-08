@@ -15,6 +15,7 @@
 {
     // Override point for customization after application launch.
     [VJNYUtilities initTestParameters];
+    
     return YES;
 }
 							
