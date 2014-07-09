@@ -8,6 +8,7 @@
 
 #import "VJNYAppDelegate.h"
 #import "VJNYUtilities.h"
+#import <ShareSDK/ShareSDK.h>
 
 @implementation VJNYAppDelegate
 
@@ -15,6 +16,13 @@
 {
     // Override point for customization after application launch.
     [VJNYUtilities initTestParameters];
+    [ShareSDK registerApp:@"244c039ef6f6"];
+    
+    [ShareSDK connectSinaWeiboWithAppKey:@"155618031"
+                               appSecret:@"b0e1249e98acd5f640d2c6c652023be8"
+                             redirectUri:@"http://localhost.vjourney.com/success"];
+    
+    [ShareSDK connectFacebookWithAppKey:@"747628921926240" appSecret:@"23189d1ba02c0f743f95add68eb3f24a"];
     
     return YES;
 }

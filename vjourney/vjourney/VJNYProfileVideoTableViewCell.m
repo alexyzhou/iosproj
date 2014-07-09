@@ -11,6 +11,9 @@
 @implementation VJNYProfileVideoTableViewCell
 
 @synthesize videoPlayer=_videoPlayer;
+@synthesize videoId=_videoId;
+@synthesize channelId=_channelId;
+@synthesize delegate=_delegate;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -84,4 +87,26 @@
     }
 }
 
+- (IBAction)videoLikeAction:(id)sender {
+    
+    if ([_delegate respondsToSelector:@selector(videoCell:DidSelectToLikeVideo:)]) {
+        [_delegate videoCell:self DidSelectToLikeVideo:_videoId];
+    }
+    
+}
+
+- (IBAction)deleteVideoAction:(id)sender {
+    
+    if ([_delegate respondsToSelector:@selector(videoCell:DidSelectToDeleteVideo:)]) {
+        [_delegate videoCell:self DidSelectToDeleteVideo:_videoId];
+    }
+    
+}
+- (IBAction)enterChannelAction:(id)sender {
+    
+    if ([_delegate respondsToSelector:@selector(videoCell:DidSelectToEnterChannel:)]) {
+        [_delegate videoCell:self DidSelectToEnterChannel:_channelId];
+    }
+    
+}
 @end

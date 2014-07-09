@@ -19,6 +19,9 @@
 
 @interface VJNYVideoShareViewController () {
     NSMutableArray* _socialNetworkArray;
+    
+    BOOL _isShareOnWeibo;
+    BOOL _isShareOnFb;
 }
 
 -(void)generateFirstCover;
@@ -42,6 +45,14 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    self.weiboShareContainerView.layer.cornerRadius = 5.0f;
+    self.weiboShareContainerView.layer.masksToBounds = YES;
+    self.facebookShareContainerView.layer.cornerRadius = 5.0f;
+    [self.facebookShareContainerView.layer setMasksToBounds:YES];
+    
+    _isShareOnFb = false;
+    _isShareOnWeibo = false;
     
     // UI Customization
     _textContainerView.layer.cornerRadius = 15;
@@ -219,8 +230,12 @@
     
     [self dismissViewControllerAnimated:(rootController.captureMode != WhisperMode) completion:^{
         
-        if ([rootController.delegate respondsToSelector:@selector(videoReadyForUploadWithVideoData:AndCoverData:AndPostValue:)]) {
-            [rootController.delegate videoReadyForUploadWithVideoData:filedata AndCoverData:coverdata AndPostValue:dic];
+        NSMutableDictionary* shareDic = [NSMutableDictionary dictionary];
+        [shareDic setObject:[NSNumber numberWithBool:_isShareOnWeibo] forKey:@"weibo"];
+        [shareDic setObject:[NSNumber numberWithBool:_isShareOnFb] forKey:@"fb"];
+        
+        if ([rootController.delegate respondsToSelector:@selector(videoReadyForUploadWithVideoData:AndCoverData:AndPostValue: AndShareOptions:)]) {
+            [rootController.delegate videoReadyForUploadWithVideoData:filedata AndCoverData:coverdata AndPostValue:dic AndShareOptions:shareDic];
         }
         
     }];
@@ -228,4 +243,59 @@
     
 }
 
+- (IBAction)shareOnWeiboAction:(id)sender {
+    
+    _isShareOnWeibo = !_isShareOnWeibo;
+    if (_isShareOnWeibo) {
+        
+        if ([ShareSDK hasAuthorizedWithType:ShareTypeSinaWeibo]) {
+            _weiboShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.5f];
+        } else {
+            [ShareSDK authWithType:ShareTypeSinaWeibo                                              //需要授权的平台类型
+                           options:nil                                          //授权选项，包括视图定制，自动授权
+                            result:^(SSAuthState state, id<ICMErrorInfo> error) {       //授权返回后的回调方法
+                                if (state == SSAuthStateSuccess)
+                                {
+                                    _weiboShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.5f];
+                                }
+                                else if (state == SSAuthStateFail)
+                                {
+                                    _weiboShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.3f];
+                                    _isShareOnWeibo = false;
+                                }
+                            }];
+        }
+    } else {
+        _weiboShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.3f];
+    }
+    
+}
+
+- (IBAction)shareOnFbAction:(id)sender {
+    
+    _isShareOnFb = !_isShareOnFb;
+    if (_isShareOnFb) {
+        
+        if ([ShareSDK hasAuthorizedWithType:ShareTypeFacebook]) {
+            _facebookShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.5f];
+        } else {
+            [ShareSDK authWithType:ShareTypeFacebook                                              //需要授权的平台类型
+                           options:nil                                          //授权选项，包括视图定制，自动授权
+                            result:^(SSAuthState state, id<ICMErrorInfo> error) {       //授权返回后的回调方法
+                                if (state == SSAuthStateSuccess)
+                                {
+                                    _facebookShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.5f];
+                                }
+                                else if (state == SSAuthStateFail)
+                                {
+                                    _facebookShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.3f];
+                                    _isShareOnFb = false;
+                                }
+                            }];
+        }
+    } else {
+        _facebookShareContainerView.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.3f];
+    }
+    
+}
 @end

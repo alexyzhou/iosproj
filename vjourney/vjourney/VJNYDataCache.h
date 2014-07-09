@@ -19,6 +19,7 @@
 + (void)loadImageForButton:(UIButton*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate;
 
 + (NSString*)cacheTotalSize;
++ (void)removeAllCache;
 @end
 
 @protocol VJNYDataCacheDelegate <NSObject>

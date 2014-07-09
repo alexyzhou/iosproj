@@ -10,7 +10,15 @@
 #import "VJNYDataCache.h"
 #import "ASIFormDataRequest.h"
 
-@interface VJNYUserProfileViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,UIScrollViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate>
+@protocol VJNYUserProfileVideoHandleDelegate <NSObject>
+
+- (void)videoCell:(UITableViewCell*)cell DidSelectToLikeVideo:(NSNumber*)videoId;
+- (void)videoCell:(UITableViewCell*)cell DidSelectToDeleteVideo:(NSNumber*)videoId;
+- (void)videoCell:(UITableViewCell *)cell DidSelectToEnterChannel:(NSNumber *)channelId;
+
+@end
+
+@interface VJNYUserProfileViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,UIScrollViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate,VJNYUserProfileVideoHandleDelegate,UIAlertViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
 @property (strong, nonatomic) NSNumber* userId;

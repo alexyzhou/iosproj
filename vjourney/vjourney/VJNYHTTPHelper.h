@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ShareSDK/ShareSDK.h>
 #import "ASIHTTPRequest.h"
 #import "ASIHTTPRequestDelegate.h"
 
@@ -19,5 +20,10 @@
 +(void)sendJSONRequest:(NSString*)target WithParameters:(NSMutableDictionary*)parameters AndDelegate:(id<ASIHTTPRequestDelegate>) delegate;
 +(void)getJSONRequest:(NSString*)target WithParameters:(NSMutableDictionary*)parameters AndDelegate:(id<ASIHTTPRequestDelegate>) delegate;
 +(void)setIPAddr:(NSString*)ip;
+
++(BOOL)sendShareToSocialPlatformWithContent:(NSString*)content andImage:(NSData*)image AndType:(ShareType)type;
+
+
+
 
 @end

@@ -21,7 +21,7 @@ typedef enum {
 
 @protocol VJNYVideoUploadDelegate <NSObject>
 @required
-- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic;
+- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic AndShareOptions:(NSMutableDictionary*)options;
 @end
 
 @interface VJNYVideoCaptureViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate,PBJVisionDelegate>
@@ -31,8 +31,11 @@ typedef enum {
 - (IBAction)endCaptureInSideAction:(id)sender;
 - (IBAction)endCaptureOutSideAction:(id)sender;
 
+@property (weak, nonatomic) IBOutlet UIButton *flashButton;
 
 - (IBAction)cancelCaptureAction:(id)sender;
+- (IBAction)changeFlashAction:(id)sender;
+- (IBAction)changeCameraDeviceAction:(id)sender;
 @property (weak, nonatomic) IBOutlet UIView *previewView;
 @property (weak, nonatomic) IBOutlet UIButton *videoSelectionOrDoneButton;
 @property (weak, nonatomic) IBOutlet UIButton *videoCaptureButton;

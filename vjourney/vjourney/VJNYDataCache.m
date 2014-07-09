@@ -205,6 +205,21 @@ static const int maxCacheCount = 20;
     return folderSizeStr;
 }
 
++ (void)removeAllCache {
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[VJNYUtilities dataCacheFolderPath] error:nil];
+    NSEnumerator *contentsEnumurator = [contents objectEnumerator];
+    
+    NSString *file;
+    NSError *error = nil;
+    while (file = [contentsEnumurator nextObject]) {
+        
+        BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[[VJNYUtilities dataCacheFolderPath] stringByAppendingString:file] error:&error];
+        if (!success || error) {
+            // it failed.
+        }
+    }
+}
+
 - (NSString*)changeUrlToCacheName:(NSString*)url {
     return [[[[VJNYHTTPHelper pathUrlByRemovePrefix:url] stringByReplacingOccurrencesOfString:@"/" withString:@"_"] stringByReplacingOccurrencesOfString:@"." withString:@"_"] stringByAppendingString:@".png"];
 }

@@ -55,13 +55,16 @@ static UIAlertView* _progressAlert = NULL;
 
 +(NSString*)formatDataString:(NSDate*)param {
     
-    NSTimeInterval intervals = param.timeIntervalSinceNow;
+    NSTimeInterval intervals = abs(param.timeIntervalSinceNow);
     
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
     
     if (intervals < 3600*24) {
         // less than a day
         fmt.dateFormat = @"HH:mm:ss";
+    } else if (intervals < 3600*24*2){
+        // less than 2 days
+        return @"yesterday";
     } else if (intervals < 3600*24*365){
         // less than a year
         fmt.dateFormat = @"MM-dd";
@@ -290,6 +293,12 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)settingLogoutCellIdentifier {
     return @"settingLogoutCell";
+}
++(NSString*)settingCellWithLabelIdentifier {
+    return @"settingLabelCell";
+}
++(NSString*)settingCellWithSwitchIdentifier {
+    return @"settingSwitchCell";
 }
 
 

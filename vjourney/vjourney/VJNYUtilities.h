@@ -68,6 +68,8 @@
 +(NSString*)likedUserCellIdentifier;
 +(NSString*)settingGeneralCellIdentifier;
 +(NSString*)settingLogoutCellIdentifier;
++(NSString*)settingCellWithLabelIdentifier;
++(NSString*)settingCellWithSwitchIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 + (UIImage *)scaleImage:(UIImage*)image toResolution:(int)resolution;

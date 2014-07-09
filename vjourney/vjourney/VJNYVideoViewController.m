@@ -382,7 +382,20 @@
 
 #pragma mark - Video Upload Delegate
 
-- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
+- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic AndShareOptions:(NSMutableDictionary *)options {
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if ([[options objectForKey:@"weibo"] boolValue]) {
+            [VJNYHTTPHelper sendShareToSocialPlatformWithContent:[dic objectForKey:@"description"] andImage:coverData AndType:ShareTypeSinaWeibo];
+        }
+    });
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if ([[options objectForKey:@"fb"] boolValue]) {
+            [VJNYHTTPHelper sendShareToSocialPlatformWithContent:[dic objectForKey:@"description"] andImage:coverData AndType:ShareTypeFacebook];
+        }
+    });
+    
     
     //[VJNYUtilities showProgressAlertViewToView:self.view];
     

@@ -163,8 +163,14 @@
             for (NSString* objStr in userDic) {
                 
                 VJNYPOJOVideo* video = [[VJNYPOJOVideo alloc] init];
+                VJNYPOJOChannel* channel = [[VJNYPOJOChannel alloc] init];
                 
-                NSDictionary * videoDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                NSString* userStr = [objDic objectForKey:@"channel"];
+                NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                NSString* videoStr = [objDic objectForKey:@"video"];
+                NSDictionary * videoDic = [NSJSONSerialization JSONObjectWithData:[videoStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
                 
                 video.vid = [videoDic objectForKey:@"id"];
                 video.description = [videoDic objectForKey:@"description"];
@@ -176,7 +182,13 @@
                 video.channelId= [videoDic objectForKey:@"channelId"];
                 video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
                 
-                [resultObj.response addObject:video];
+                channel.cid = [userDic objectForKey:@"id"];
+                channel.name = [userDic objectForKey:@"name"];
+                channel.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"coverUrl"]];
+                
+                NSArray* array = [NSArray arrayWithObjects:video, channel, nil];
+                
+                [resultObj.response addObject:array];
             }
         }
     } else if ([resultObj.action isEqualToString:@"video/LikeList"]) {

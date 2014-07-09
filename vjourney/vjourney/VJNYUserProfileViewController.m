@@ -26,11 +26,15 @@
 
 @interface VJNYUserProfileViewController () <UINavigationControllerDelegate,UIImagePickerControllerDelegate,VPImageCropperDelegate> {
     NSMutableArray* _videoData;
+    NSMutableDictionary* _channelInfoForVideo;
+    NSMutableDictionary* _likeVideoDic;
     NSMutableArray* _channelData;
     VJNYPOJOUser* _myUser;
     NSNumber* _storyCount;
     NSNumber* _channelCount;
     NSNumber* _totalLike;
+    
+    NSNumber* _videoIdToDelete;
     
     NSMutableArray* _cellPlayingToStop;
     
@@ -79,6 +83,8 @@
     _channelCount = nil;
     _videoData = [NSMutableArray array];
     _channelData = [NSMutableArray array];
+    _channelInfoForVideo = [NSMutableDictionary dictionary];
+    _likeVideoDic = [NSMutableDictionary dictionary];
     
     // Fetch Data
     // User Info
@@ -219,10 +225,35 @@
             VJNYProfileVideoTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:[VJNYUtilities profileVideoCellIdentifier]];
             
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
             
             cell.videoPlayer = nil;
             VJNYPOJOVideo* video = [_videoData objectAtIndex:indexPath.row-1];
             [VJNYDataCache loadImage:cell.videoCoverImageView WithUrl:video.coverUrl AndMode:1 AndIdentifier:indexPath AndDelegate:self];
+            
+            cell.videoDescriptionLabel.text = video.description;
+            cell.videoTimeLabel.text = [VJNYUtilities formatDataString:video.time];
+            
+            cell.videoId = video.vid;
+            
+            VJNYPOJOChannel* channel = [_channelInfoForVideo objectForKey:video.channelId];
+            //cell.channelNameLabel.titleLabel.text = channel.name;
+            [cell.channelNameLabel setTitle:channel.name forState:UIControlStateNormal];
+            [VJNYDataCache loadImage:cell.channelCoverImageView WithUrl:channel.coverUrl AndMode:3 AndIdentifier:indexPath AndDelegate:self];
+            
+            cell.channelId = channel.cid;
+            
+            [cell.videoDeleteButton setHidden:![_userId isEqualToNumber:[VJNYPOJOUser sharedInstance].uid]];
+            
+            NSNumber* likedValue = [_likeVideoDic objectForKey:video.vid];
+            
+            if (likedValue == nil) {
+                [cell.videoLikeButton setEnabled:NO];
+                [VJNYHTTPHelper sendJSONRequest:@"video/isLike" WithParameters:[self genUserVideoRequestDicWithVideoID:video.vid] AndDelegate:self];
+            } else {
+                [cell.videoLikeButton setEnabled:YES];
+                [cell.videoLikeButton setSelected:[likedValue boolValue]];
+            }
             
             return cell;
             
@@ -275,7 +306,7 @@
         return 360;
     } else {
         if (_isVideoListMode) {
-            return 321;
+            return 421;
         } else {
             return 61;
         }
@@ -326,6 +357,10 @@
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         VJNYProfileHeadTableViewCell* cell = (VJNYProfileHeadTableViewCell*)[self.tableView cellForRowAtIndexPath:indexPath];
         cell.userCoverImageView.image = data;
+    } else if (mode == 3) {
+        NSIndexPath* indexPath = identifier;
+        VJNYProfileVideoTableViewCell* cell = (VJNYProfileVideoTableViewCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+        cell.channelCoverImageView.image = data;
     }
 }
 
@@ -350,10 +385,17 @@
             }
         } else if ([result.action isEqualToString:@"video/Latest/User"]) {
             if (result.result == Success) {
-                _videoData = result.response;
-                if (_isVideoListMode == true) {
-                    [self.tableView reloadData];
+                [_videoData removeAllObjects];
+                [_channelInfoForVideo removeAllObjects];
+                for (NSArray* arr in result.response) {
+                    VJNYPOJOVideo* video = [arr objectAtIndex:0];
+                    [_videoData addObject:video];
+                    VJNYPOJOChannel* channel = [arr objectAtIndex:1];
+                    if ([_channelInfoForVideo objectForKey:channel.cid]==nil) {
+                        [_channelInfoForVideo setObject:channel forKey:channel.cid];
+                    }
                 }
+                [self.tableView reloadData];
             }
         } else if ([result.action isEqualToString:@"channel/CountByUser"]) {
             if (result.result == Success) {
@@ -378,6 +420,26 @@
                 _channelData = result.response;
                 if (_isVideoListMode == false) {
                     [self.tableView reloadData];
+                }
+            }
+        } else if ([result.action isEqualToString:@"video/IsLike"]) {
+            if (result.result == Success) {
+                NSNumber* video_id = [result.response objectForKey:@"videoId"];
+                NSNumber* likedResult = [result.response objectForKey:@"result"];
+                [_likeVideoDic setObject:likedResult forKey:video_id];
+                
+                if (_isVideoListMode) {
+                    for (NSIndexPath* path in [self.tableView indexPathsForVisibleRows]) {
+                        if (path.row > 0) {
+                            VJNYPOJOVideo* video = [_videoData objectAtIndex:path.row-1];
+                            VJNYProfileVideoTableViewCell* cell = (VJNYProfileVideoTableViewCell*)[self.tableView cellForRowAtIndexPath:path];
+                            if ([video.vid isEqualToNumber:video_id]) {
+                                [cell.videoLikeButton setEnabled:YES];
+                                [cell.videoLikeButton setSelected:[likedResult boolValue]];
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -541,7 +603,7 @@
         }
     }
     
-    NSLog(@"Index = %ld - Title = %@", buttonIndex, [actionSheet buttonTitleAtIndex:buttonIndex]);
+    //NSLog(@"Index = %ld - Title = %@", buttonIndex, [actionSheet buttonTitleAtIndex:buttonIndex]);
 }
 
 #pragma mark VPImageCropperDelegate
@@ -707,6 +769,81 @@
     //pop the context to get back to the default
     UIGraphicsEndImageContext();
     return newImage;
+}
+
+#pragma mark - VJNYUserProfileVideo Delegate
+
+- (NSMutableDictionary*)genUserVideoRequestDicWithVideoID:(NSNumber*)videoId {
+    NSMutableDictionary* dic = [NSMutableDictionary dictionary];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    
+    [dic setObject:[videoId stringValue] forKey:@"videoId"];
+    [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+    return dic;
+}
+
+- (void)videoCell:(UITableViewCell*)cell DidSelectToLikeVideo:(NSNumber*)videoId {
+    VJNYProfileVideoTableViewCell* vCell = (VJNYProfileVideoTableViewCell*)cell;
+    
+    if (vCell.videoLikeButton.selected == NO) {
+        [vCell.videoLikeButton setSelected:YES];
+    } else {
+        [vCell.videoLikeButton setSelected:NO];
+    }
+    
+    NSMutableDictionary* dic = [self genUserVideoRequestDicWithVideoID:videoId];
+    
+    [dic setObject:[[NSNumber numberWithBool:vCell.videoLikeButton.selected] stringValue] forKey:@"like"];
+    [VJNYHTTPHelper sendJSONRequest:@"video/like" WithParameters:dic AndDelegate:self];
+    [_likeVideoDic setObject:[NSNumber numberWithBool:vCell.videoLikeButton.selected] forKey:videoId];
+    
+}
+- (void)videoCell:(UITableViewCell*)cell DidSelectToDeleteVideo:(NSNumber*)videoId {
+    
+    UIAlertView* view = [[UIAlertView alloc] initWithTitle:nil message:@"Are you sure to delete the video?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"YES", nil];
+    view.tag = 100;
+    [view show];
+    _videoIdToDelete = videoId;
+    
+}
+- (void)videoCell:(UITableViewCell *)cell DidSelectToEnterChannel:(NSNumber *)channelId {
+    
+    VJNYPOJOChannel* channel = [_channelInfoForVideo objectForKey:channelId];
+    
+    VJNYVideoViewController *videoViewController = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardVideoListPage]];
+    [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:-1];
+    
+    [self.navigationController pushViewController:videoViewController animated:YES];
+    
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    
+    if (buttonIndex == 0) {
+        //Cancel
+        return;
+    }
+    
+    if (alertView.tag == 100) {
+        // delete video
+        NSMutableDictionary* dic = [self genUserVideoRequestDicWithVideoID:_videoIdToDelete];
+        [VJNYHTTPHelper sendJSONRequest:@"video/delete" WithParameters:dic AndDelegate:self];
+        if (_isVideoListMode) {
+            for (NSIndexPath* path in [self.tableView indexPathsForVisibleRows]) {
+                if (path.row > 0) {
+                    VJNYPOJOVideo* video = [_videoData objectAtIndex:path.row-1];
+                    [_videoData removeObjectAtIndex:path.row-1];
+                    [_likeVideoDic removeObjectForKey:video.vid];
+                    if ([video.vid isEqualToNumber:_videoIdToDelete]) {
+                        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 

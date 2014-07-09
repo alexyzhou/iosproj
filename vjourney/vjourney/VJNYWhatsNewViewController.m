@@ -7,6 +7,7 @@
 //
 
 #import "VJNYWhatsNewViewController.h"
+#import <ShareSDK/ShareSDK.h>
 
 @interface VJNYWhatsNewViewController ()
 {
@@ -319,11 +320,13 @@ static VJNYWhatsNewViewController* _instance = NULL;
 	VJNYChannelCoverFlowCellView *cover = [coverflowView coverAtIndex:index];
 	if(cover == nil) return;
 	
-	
-	NSLog(@"Index: %d",index);
-    NSLog(@"Frame:%f:%f",cover.frame.origin.x,cover.frame.origin.y);
-    NSLog(@"Size:%f:%f",cover.frame.size.width,cover.frame.size.height);
-	
+    VJNYPOJOChannel* channel = (VJNYPOJOChannel*)[_promoChannelData objectAtIndex:index];
+    
+    VJNYVideoViewController *videoViewController = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardVideoListPage]];
+    [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:-1];
+    
+    [self.navigationController pushViewController:videoViewController animated:YES];
+    
 }
 
 - (void) flipCoverFlowView {
@@ -341,9 +344,8 @@ static VJNYWhatsNewViewController* _instance = NULL;
 #pragma mark - Button Event Handler
 
 - (IBAction)searchChannelAction:(id)sender {
-    NSLog(@"%@",[VJNYDataCache cacheTotalSize]);
+    //NSLog(@"%@",[VJNYDataCache cacheTotalSize]);
     [self performSegueWithIdentifier:[VJNYUtilities segueChannelSearchPage] sender:nil];
-    
 }
 
 - (IBAction)segmentedFilterClickAction:(id)sender {

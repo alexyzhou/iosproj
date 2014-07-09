@@ -10,7 +10,7 @@
 
 @implementation VJNYHTTPHelper
 
-static NSString* _remoteIpAddr = @"192.168.1.108:8080";
+static NSString* _remoteIpAddr = @"175.159.8.246:8080";
 
 +(void)setIPAddr:(NSString*)ip {
     _remoteIpAddr = [NSString stringWithFormat:@"%@:8080",ip];
@@ -128,6 +128,26 @@ static NSString* _remoteIpAddr = @"192.168.1.108:8080";
     
     
     [request startAsynchronous];
+}
+
+#pragma mark - Social Platform Delegate
+
++ (BOOL)sendShareToSocialPlatformWithContent:(NSString *)content andImage:(NSData *)image AndType:(ShareType)st {
+    
+    id<ISSContent> issContent = [ShareSDK content:content defaultContent:@"" image:[ShareSDK imageWithData:image fileName:@"videoCover.jpg" mimeType:@"image/jpeg"] title:nil url:@"http://vjourneypolyu.wix.com/vjourneypolyu" description:@"test Description" mediaType:SSPublishContentMediaTypeNews];
+    
+    __block BOOL execResult;
+    
+    [ShareSDK shareContent:issContent type:st authOptions:nil statusBarTips:NO result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
+        if (state == SSResponseStateSuccess) {
+            execResult = true;
+        } else if (state == SSResponseStateFail) {
+            NSLog(@"分享失败,错误码:%d,错误描述:%@", [error errorCode], [error errorDescription]);
+            execResult = false;
+        }
+    }];
+    
+    return execResult;
 }
 
 @end

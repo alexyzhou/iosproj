@@ -27,6 +27,12 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *shareCardCollectionView;
 @property (weak, nonatomic) IBOutlet UIImageView *bgImageView;
 
+@property (weak, nonatomic) IBOutlet UIView *weiboShareContainerView;
+@property (weak, nonatomic) IBOutlet UIView *facebookShareContainerView;
+
+- (IBAction)shareOnWeiboAction:(id)sender;
+- (IBAction)shareOnFbAction:(id)sender;
+
 // Custom Properties
 @property (strong, nonatomic) NSURL* inputPath;
 

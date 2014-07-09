@@ -10,7 +10,7 @@
 
 #import "VJNYInboxViewController.h"
 
-@interface VJNYSettingViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UIGestureRecognizerDelegate>
+@interface VJNYSettingViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UIGestureRecognizerDelegate,UIAlertViewDelegate>
 - (IBAction)showSliderAction:(id)sender;
 @property (weak, nonatomic) IBOutlet UILabel *settingLabel;
 @property (weak, nonatomic) IBOutlet UILabel *settingOtherLabel;

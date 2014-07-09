@@ -75,9 +75,6 @@
     [_videoPickerController setMediaTypes:[NSArray arrayWithObjects:@"public.movie", nil]];
     
     // Setup Navigation Bar
-    UIBarButtonItem *rightFlashButton = [[UIBarButtonItem alloc] initWithTitle:@"Flash" style:UIBarButtonItemStylePlain target:self action:@selector(changeFlashAction:)];
-    UIBarButtonItem *rightFlipButton = [[UIBarButtonItem alloc] initWithTitle:@"Flip" style:UIBarButtonItemStyleBordered target:self action:@selector(changeCameraDeviceAction:)];
-    self.navigationItem.rightBarButtonItems = @[rightFlipButton,rightFlashButton];
     
     _isDeleteInConfirm = false;
     
@@ -90,20 +87,17 @@
     //[self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
     
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    [self.navigationController.navigationBar setHidden:YES];
     
     [self _resetCapture];
     [[PBJVision sharedInstance] startPreview];
     //[[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    //[self.navigationController.navigationBar setHidden:NO];
-    //[self.navigationController.navigationBar setBarStyle:UIBarStyleDefault];
-    //[self.navigationController.navigationBar setTintColor:[UIColor blueColor]];
-    
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController.navigationBar setHidden:NO];
     [[PBJVision sharedInstance] stopPreview];
-    //[[UIApplication sharedApplication] setStatusBarHidden:NO];
 }
 
 - (void)didReceiveMemoryWarning
@@ -355,11 +349,11 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)changeFlashAction:(id)sender {
+- (IBAction)changeFlashAction:(id)sender {
     [[PBJVision sharedInstance] switchFlashLight];
 }
 
-- (void)changeCameraDeviceAction:(id)sender {
+- (IBAction)changeCameraDeviceAction:(id)sender {
     PBJVision *vision = [PBJVision sharedInstance];
     if (vision.cameraDevice == PBJCameraDeviceBack) {
         [vision setCameraDevice:PBJCameraDeviceFront];
