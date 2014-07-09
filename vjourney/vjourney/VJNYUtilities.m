@@ -51,6 +51,14 @@ static UIAlertView* _progressAlert = NULL;
     [controller.tabBar setBarStyle:UIBarStyleBlack];
 }
 
++(NSObject*)filterNSNullForObject:(NSObject *)obj {
+    if (!obj || [obj isKindOfClass:[NSNull class]]) {
+        return nil;
+    } else {
+        return obj;
+    }
+}
+
 #pragma mark - String Helper
 
 +(NSString*)formatDataString:(NSDate*)param {
@@ -366,6 +374,9 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)storyboardSettingPage {
     return @"sSettingPage";
+}
++(NSString*)storyboardWelcomePage {
+    return @"sWelcomePage";
 }
 
 #pragma mark - Const Values

@@ -24,6 +24,7 @@
 // Insert
 -(NSManagedObject*)getNewEntity:(NSString*)entityName;
 // Query
+-(NSManagedObject*)getCurrentUser;
 -(NSArray*)getEntityList:(NSString*)entityName;
 -(NSArray*)getMessageListByTargetID:(NSNumber*)target_id;
 -(NSArray*)getThreadList;
@@ -34,4 +35,6 @@
 // Remove
 -(void)removeManagedObject:(NSManagedObject*)obj;
 -(void)removeThreadAndMessageByID:(NSNumber*)thread_id;
+
+-(void)clearDatabase;
 @end

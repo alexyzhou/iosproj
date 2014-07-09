@@ -8,6 +8,7 @@
 
 #import "VJNYAppDelegate.h"
 #import "VJNYUtilities.h"
+#import "VJDMModel.h"
 #import <ShareSDK/ShareSDK.h>
 
 @implementation VJNYAppDelegate
@@ -15,7 +16,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [VJNYUtilities initTestParameters];
+    //[VJNYUtilities initTestParameters];
     [ShareSDK registerApp:@"244c039ef6f6"];
     
     [ShareSDK connectSinaWeiboWithAppKey:@"155618031"
@@ -23,6 +24,8 @@
                              redirectUri:@"http://localhost.vjourney.com/success"];
     
     [ShareSDK connectFacebookWithAppKey:@"747628921926240" appSecret:@"23189d1ba02c0f743f95add68eb3f24a"];
+    
+    //[[VJDMModel sharedInstance] clearDatabase];
     
     return YES;
 }

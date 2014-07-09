@@ -21,6 +21,8 @@
         return self.content;
     } else if (self.type == VJNYNotificationTypeLike) {
         return [self.content stringByAppendingString:@" Liked your Vjourney"];
+    } else if (self.type == VJNYNotificationTypeChat) {
+        return [self.content stringByAppendingString:@" Sent you a Message"];
     } else {
         return @"";
     }

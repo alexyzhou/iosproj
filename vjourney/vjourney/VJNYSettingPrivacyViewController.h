@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ASIHTTPRequest.h"
 
-@interface VJNYSettingPrivacyViewController : UITableViewController
+@interface VJNYSettingPrivacyViewController : UITableViewController<ASIHTTPRequestDelegate>
 
 - (IBAction)topicPrivacyChangedAction:(UISwitch *)sender;
 

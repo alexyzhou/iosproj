@@ -7,9 +7,11 @@
 //
 
 #import "VJNYSettingViewController.h"
+#import "VJNYWelcomeViewController.h"
 #import "VJNYSettingWithLabelTableViewCell.h"
 #import "VJNYSettingWithSwitchTableViewCell.h"
 #import "VJNYUtilities.h"
+#import "VJDMModel.h"
 #import "VJNYDataCache.h"
 #import <ShareSDK/ShareSDK.h>
 
@@ -141,11 +143,11 @@
             if (indexPath.row == 0) {
                 cell.titleView.text = @"SINA Weibo";
                 cell.imageView.image = _weiboImage;
-                cell.detailView.text = [ShareSDK hasAuthorizedWithType:ShareTypeSinaWeibo] ? @"connected" : @"unconnected";
+                cell.detailView.text = [ShareSDK hasAuthorizedWithType:ShareTypeSinaWeibo] ? @"connected" : @"disconnected";
             } else if (indexPath.row == 1) {
                 cell.titleView.text = @"Facebook";
                 cell.imageView.image = _facebookImage;
-                cell.detailView.text = [ShareSDK hasAuthorizedWithType:ShareTypeFacebook] ? @"connected" : @"unconnected";
+                cell.detailView.text = [ShareSDK hasAuthorizedWithType:ShareTypeFacebook] ? @"connected" : @"disconnected";
             }
             break;
         case 3:
@@ -218,7 +220,7 @@
             
             platformName = cell.titleView.text;
             if ([cell.detailView.text isEqual:@"connected"]) {
-                actionName = @"unconnect";
+                actionName = @"disconnect";
                 _actionMode = 0;
             } else {
                 actionName = @"connect";
@@ -254,6 +256,11 @@
         case 5:
         {
             //Logout
+            if (indexPath.row == 0) {
+                /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to Log out?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"YES", nil];
+                alert.tag = 300;
+                [alert show];*/
+            }
         }
         break;
     }
@@ -274,7 +281,7 @@
             ShareType actionType = _socialMode == 0? ShareTypeSinaWeibo : ShareTypeFacebook;
             if (_actionMode == 0) {
                 [ShareSDK cancelAuthWithType:actionType];
-                cell.detailView.text = @"unconnected";
+                cell.detailView.text = @"disconnected";
             } else {
                 //connect
                 [ShareSDK authWithType:actionType                                              //需要授权的平台类型
@@ -298,6 +305,13 @@
             [VJNYDataCache removeAllCache];
             VJNYSettingWithLabelTableViewCell* cell = (VJNYSettingWithLabelTableViewCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:4]];
             cell.detailView.text = @"0 KB";
+        }
+            break;
+        case 300:
+        {
+            [[VJDMModel sharedInstance] clearDatabase];
+            VJNYWelcomeViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardWelcomePage]];
+            [self presentViewController:controller animated:NO completion:nil];
         }
             break;
         default:

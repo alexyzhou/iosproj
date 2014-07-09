@@ -9,7 +9,7 @@
         <!--Welcome View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController storyboardIdentifier="welcomePage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vXZ-lx-hvc" customClass="VJNYWelcomeViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="sWelcomePage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vXZ-lx-hvc" customClass="VJNYWelcomeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -553,6 +553,7 @@
                                                     <outlet property="avatarView" destination="EjM-Mv-Hle" id="li0-Cs-iT1"/>
                                                     <outlet property="coverView" destination="5zm-LX-7gO" id="gop-Ko-wYn"/>
                                                     <outlet property="descriptionView" destination="gFj-xx-xK1" id="0zJ-HG-sDK"/>
+                                                    <outlet property="likeAndWatchView" destination="1Wh-5a-4dP" id="IvB-OL-tqJ"/>
                                                     <outlet property="nameView" destination="eC2-30-wFd" id="CgK-6k-kDT"/>
                                                     <outlet property="timeView" destination="84Y-yL-TnL" id="tyE-fV-W97"/>
                                                 </connections>
@@ -2289,13 +2290,12 @@
                                                         <constraint firstAttribute="width" constant="30" id="uov-em-dAx"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="192" translatesAutoresizingMaskIntoConstraints="NO" id="vjH-Fo-XDO">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="192" translatesAutoresizingMaskIntoConstraints="NO" id="vjH-Fo-XDO">
                                                     <rect key="frame" x="54" y="7" width="192" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.20000000000000001" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="192" id="POW-ZN-adm"/>
-                                                        <constraint firstAttribute="height" constant="30" id="msR-xi-f8i"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -4169,9 +4169,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="rbI-zs-2pg"/>
         <segue reference="lZP-E9-5tc"/>
-        <segue reference="F2M-68-DPF"/>
+        <segue reference="zCl-o2-lqB"/>
         <segue reference="Gn1-wb-KzW"/>
+        <segue reference="F2M-68-DPF"/>
     </inferredMetricsTieBreakers>
 </document>

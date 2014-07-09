@@ -43,7 +43,11 @@
     
     //self.signInBgImageView.image = [self.bgImageView.image applyLightEffect];
     
-    [self performSelector:@selector(beginAnimation) withObject:nil afterDelay:0.5];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self performSelector:@selector(beginAnimation) withObject:nil afterDelay:0];
 }
 
 - (void)didReceiveMemoryWarning
@@ -145,8 +149,8 @@
     if ([result.action isEqualToString:@"login"]) {
         if (result.result == Success) {
             [NSThread detachNewThreadSelector: @selector(actIndicatorEnd) toTarget:self withObject:nil];
-            
-            [self performSegueWithIdentifier:[VJNYUtilities segueLoginShowMainPage] sender:self];
+            [self dismissViewControllerAnimated:YES completion:nil];
+            //[self performSegueWithIdentifier:[VJNYUtilities segueLoginShowMainPage] sender:self];
             //[self presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"mainPage"] animated:YES completion:nil];
         } else {
             [VJNYUtilities showAlertWithNoTitle:@"Login Failed!"];

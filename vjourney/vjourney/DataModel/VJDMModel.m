@@ -7,6 +7,7 @@
 //
 
 #import "VJDMModel.h"
+#import <ShareSDK/ShareSDK.h>
 #import "VJNYUtilities.h"
 
 @implementation VJDMModel
@@ -135,6 +136,14 @@ static VJDMModel * _sharedInstance=nil;
 }
 
 #pragma mark - Query
+-(NSManagedObject*)getCurrentUser {
+    NSArray* array = [self getEntityList:@"VJDMUser"];
+    if (array.count == 0) {
+        return nil;
+    } else {
+        return array[0];
+    }
+}
 -(NSArray*)getEntityList:(NSString*)entityName {
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -271,6 +280,22 @@ static VJDMModel * _sharedInstance=nil;
     }
     
     [self saveChanges];
+}
+
+-(void)clearDatabase {
+    [[self managedObjectContext] lock];
+    NSArray *stores = [[self persistentStoreCoordinator] persistentStores];
+    for(NSPersistentStore *store in stores) {
+        [[self persistentStoreCoordinator] removePersistentStore:store error:nil];
+        [[NSFileManager defaultManager] removeItemAtPath:store.URL.path error:nil];
+    }
+    [[self managedObjectContext] unlock];
+    _managedObjectModel    = nil;
+    _managedObjectContext  = nil;
+    _persistentStoreCoordinator = nil;
+    
+    [ShareSDK cancelAuthWithType:ShareTypeSinaWeibo];
+    [ShareSDK cancelAuthWithType:ShareTypeFacebook];
 }
 
 @end

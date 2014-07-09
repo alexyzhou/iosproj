@@ -7,6 +7,9 @@
 //
 
 #import "VJNYWhatsNewViewController.h"
+#import "VJNYWelcomeViewController.h"
+#import "VJDMModel.h"
+#import "VJDMUser.h"
 #import <ShareSDK/ShareSDK.h>
 
 @interface VJNYWhatsNewViewController ()
@@ -42,6 +45,24 @@ static VJNYWhatsNewViewController* _instance = NULL;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
+    if (user == nil) {
+        VJNYWelcomeViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardWelcomePage]];
+        [self presentViewController:controller animated:NO completion:nil];
+    } else {
+        [VJNYPOJOUser sharedInstance].uid = user.uid;
+        [VJNYPOJOUser sharedInstance].name = user.name;
+        [VJNYPOJOUser sharedInstance].username = user.username;
+        [VJNYPOJOUser sharedInstance].avatarUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:user.avatars_url];
+        
+        [VJNYPOJOUser sharedInstance].token = user.token;
+        [VJNYPOJOUser sharedInstance].gender = user.gender;
+        [VJNYPOJOUser sharedInstance].age = user.age;
+        [VJNYPOJOUser sharedInstance].coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:user.cover_url];
+        
+        [VJNYPOJOUser sharedInstance].description = user.user_description;
+    }
 
     // Set up Background
     [VJNYUtilities initBgImageForTabView:self.view];

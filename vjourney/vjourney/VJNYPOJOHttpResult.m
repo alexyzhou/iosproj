@@ -8,6 +8,7 @@
 
 #import "VJNYPOJOHttpResult.h"
 #import "VJDMModel.h"
+#import "VJDMUser.h"
 #import "VJDMMessage.h"
 #import "VJDMNotification.h"
 #import "VJDMThread.h"
@@ -49,6 +50,22 @@
             [VJNYPOJOUser sharedInstance].age = [userDic objectForKey:@"age"];
             [VJNYPOJOUser sharedInstance].coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"coverUrl"]];
             [VJNYPOJOUser sharedInstance].description = [userDic objectForKey:@"description"];
+            
+            VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
+            if (user == nil) {
+                user = (VJDMUser*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUser"];
+            }
+            user.uid = [VJNYPOJOUser sharedInstance].uid;
+            user.name = [VJNYPOJOUser sharedInstance].name;
+            user.username = [VJNYPOJOUser sharedInstance].username;
+            user.avatars_url = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"avatarUrl"]];
+            user.token = [VJNYPOJOUser sharedInstance].token;
+            user.gender = (NSString*)[VJNYUtilities filterNSNullForObject:[VJNYPOJOUser sharedInstance].gender];
+            user.age = (NSNumber*)[VJNYUtilities filterNSNullForObject:[VJNYPOJOUser sharedInstance].age];
+            user.cover_url = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"coverUrl"]];
+            user.user_description = [VJNYPOJOUser sharedInstance].description;
+            
+            [[VJDMModel sharedInstance] saveChanges];
             
             resultObj.response = [VJNYPOJOUser sharedInstance];
             
@@ -212,7 +229,7 @@
             
             NSArray * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
             
-            resultObj.response = [[NSMutableArray alloc] init];
+            //resultObj.response = [[NSMutableArray alloc] init];
             
             NSNumber* hasNewEntry = [NSNumber numberWithBool:NO];
             
@@ -237,7 +254,7 @@
                 message.target_id = chatDic[@"fromUserId"];
                 message.type = MessageTypeOther;
                 
-                [resultObj.response addObject:message];
+                //[resultObj.response addObject:message];
                 
                 VJDMThread* thread = (VJDMThread*)[[VJDMModel sharedInstance] getThreadByTargetID:message.target_id];
                 

@@ -12,7 +12,8 @@
 typedef enum {
     
     VJNYNotificationTypeGeneral = 0, // Other
-    VJNYNotificationTypeLike = 1 //{name} like your vjourney
+    VJNYNotificationTypeLike = 1, //{name} liked your vjourney
+    VJNYNotificationTypeChat = 2 //{name} sent you a message
     
 } VJNYNotificationType;
 

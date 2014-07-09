@@ -149,8 +149,15 @@
         }
     }
     
+    CGRect rect = cell.contentLabel.frame;
+    rect.size.height = [_notifHeightArray[indexPath.row] doubleValue] - 14.0f;
+    [cell.contentLabel setFrame:rect];
+    
     cell.contentLabel.text = [notif contentStringByType];
     cell.contentLabel.font = [VJNYUtilities customFontWithSize:14.0];
+    
+    
+    
     //NSLog(@"%@",cell.contentLabel.text);
     return cell;
 }

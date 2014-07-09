@@ -17,7 +17,7 @@
 +(void)initEditingBgImageForNaviBarWithTabView:(UINavigationController*)controller;
 +(void)voidBgImageForTabBarWithController:(UITabBarController*)controller;
 
-
++(NSObject*)filterNSNullForObject:(NSObject*)obj;
 // Helper
 +(NSString*)formatDataString:(NSDate*)param;
 +(NSString*)filterToAlphabetFromString:(NSString*)input;
@@ -95,6 +95,7 @@
 +(NSString*)storyboardSysNotifPage;
 +(NSString*)storyboardVideoListPage;
 +(NSString*)storyboardSettingPage;
++(NSString*)storyboardWelcomePage;
 
 +(CGFloat)minCaptureTime;
 +(CGFloat)maxCaptureTime;

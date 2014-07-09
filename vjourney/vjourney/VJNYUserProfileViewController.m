@@ -18,6 +18,9 @@
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOHttpResult.h"
 
+#import "VJDMModel.h"
+#import "VJDMUser.h"
+
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "VPImageCropperViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -436,6 +439,22 @@
                 if (_isVideoListMode == false) {
                     [self.tableView reloadData];
                 }
+            }
+        } else if ([result.action isEqualToString:@"user/Avatar/Update"]) {
+            if (result.result == Success) {
+                NSString* url = [result.response objectForKey:@"url"];
+                [VJNYPOJOUser sharedInstance].avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:url];
+                VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
+                user.avatars_url = url;
+                [[VJDMModel sharedInstance] saveChanges];
+            }
+        } else if ([result.action isEqualToString:@"user/Cover/Update"]) {
+            if (result.result == Success) {
+                NSString* url = [result.response objectForKey:@"url"];
+                [VJNYPOJOUser sharedInstance].coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:url];
+                VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
+                user.cover_url = url;
+                [[VJDMModel sharedInstance] saveChanges];
             }
         } else if ([result.action isEqualToString:@"video/IsLike"]) {
             if (result.result == Success) {

@@ -324,8 +324,10 @@
     VJNYPOJOUser* ownerUser = [_userData objectForKey:[video userId]];
     
     cell.nameView.text = ownerUser.name;
-    cell.timeView.text = [_dateFormatter stringFromDate:video.time];
+    cell.timeView.text = [VJNYUtilities formatDataString:video.time];
     cell.descriptionView.text = video.description;
+    
+    cell.likeAndWatchView.text = [NSString stringWithFormat:@"%@/%@",[video.like stringValue],[video.watched stringValue]];
     
     [VJNYDataCache loadImage:cell.avatarView WithUrl:ownerUser.avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     [VJNYDataCache loadImage:cell.coverView WithUrl:video.coverUrl AndMode:1 AndIdentifier:indexPath AndDelegate:self];
