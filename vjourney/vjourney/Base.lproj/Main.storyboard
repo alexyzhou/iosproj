@@ -2089,11 +2089,108 @@
                         <outlet property="settingLabel" destination="RHa-P5-LX8" id="lWr-Qx-vNZ"/>
                         <outlet property="settingOtherLabel" destination="YIr-VA-k5g" id="ynZ-vN-EBC"/>
                         <outlet property="tableView" destination="Hd2-o9-LCa" id="rnf-Aq-gBo"/>
+                        <segue destination="bzX-zW-orG" kind="push" identifier="seguePrivacySettingPage" id="OPX-Oz-szO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S08-4e-Hww" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3750" y="2778"/>
+        </scene>
+        <!--Setting Privacy View Controller-->
+        <scene sceneID="BTW-Ge-EZk">
+            <objects>
+                <tableViewController id="bzX-zW-orG" customClass="VJNYSettingPrivacyViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="AZH-Ax-ZXL">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="separatorColor" red="0.42352941630000002" green="0.66666668650000005" blue="0.83137255909999996" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="sectionIndexTrackingBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <sections>
+                            <tableViewSection headerTitle="Allow others to View" id="l0i-pr-NxV">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="oad-Od-1wE">
+                                        <rect key="frame" x="0.0" y="55" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oad-Od-1wE" id="hrb-aO-hlz">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Published Video" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O3n-wF-MSX">
+                                                    <rect key="frame" x="20" y="11" width="201" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="201" id="2qW-h2-Z38"/>
+                                                        <constraint firstAttribute="height" constant="21" id="7kJ-n7-msb"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.058823529409999999" green="0.17254901959999999" blue="0.30196078430000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qF2-FE-aqF">
+                                                    <rect key="frame" x="251" y="6" width="51" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="onTintColor" red="0.42352941630000002" green="0.66666668650000005" blue="0.83137255909999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <connections>
+                                                        <action selector="videoPrivacyChangedAction:" destination="bzX-zW-orG" eventType="valueChanged" id="bUV-lz-4GZ"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="1" alpha="0.29999999999999999" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="XYa-XW-3IK">
+                                        <rect key="frame" x="0.0" y="99" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XYa-XW-3IK" id="xD4-RE-TAf">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Followed Topics" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Zs-sr-I75">
+                                                    <rect key="frame" x="20" y="11" width="201" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="201" id="Clh-KH-GN3"/>
+                                                        <constraint firstAttribute="height" constant="21" id="nLF-jM-km4"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.058823529409999999" green="0.17254901959999999" blue="0.30196078430000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E3Z-MY-zOl">
+                                                    <rect key="frame" x="251" y="6" width="51" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="onTintColor" red="0.42352941630000002" green="0.66666668650000005" blue="0.83137255909999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <connections>
+                                                        <action selector="topicPrivacyChangedAction:" destination="bzX-zW-orG" eventType="valueChanged" id="8Ck-C4-IfD"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="1" alpha="0.29999999999999999" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="bzX-zW-orG" id="qHu-Mb-Cgs"/>
+                            <outlet property="delegate" destination="bzX-zW-orG" id="0Zi-jj-b9n"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="bhy-Pz-j4z"/>
+                    <connections>
+                        <outlet property="topicPrivacySwitch" destination="E3Z-MY-zOl" id="DOe-Ci-87w"/>
+                        <outlet property="videoPrivacySwitch" destination="qF2-FE-aqF" id="Qmo-9D-TkN"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lli-yl-3iG" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4643" y="2782"/>
         </scene>
         <!--Sys Notif View Controller-->
         <scene sceneID="7Ae-zA-Fgp">
@@ -2245,7 +2342,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rhc-28-XdS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4838" y="2696"/>
+            <point key="canvasLocation" x="5398" y="2726"/>
         </scene>
         <!--Chat List View Controller-->
         <scene sceneID="VaU-Rx-wHd">
@@ -2637,6 +2734,7 @@
                                             <constraint firstAttribute="height" constant="50" id="udJ-iP-w0c"/>
                                         </constraints>
                                         <state key="normal" image="button_drafts.png"/>
+                                        <state key="selected" image="button_done.png"/>
                                         <connections>
                                             <action selector="videoSelectAction:" destination="2nw-By-S94" eventType="touchUpInside" id="b9m-yH-QIj"/>
                                         </connections>
@@ -2650,19 +2748,20 @@
                                             <constraint firstAttribute="width" constant="50" id="YUt-FQ-XdB"/>
                                         </constraints>
                                         <state key="normal" title="Delete" image="button_delete_black.png"/>
+                                        <state key="selected" image="button_delete_red.png"/>
                                         <connections>
                                             <action selector="videoDeleteAction:" destination="2nw-By-S94" eventType="touchUpInside" id="zEt-0Y-ovb"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLG-KA-6dq">
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLG-KA-6dq">
                                         <rect key="frame" x="125" y="52" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" red="0.49019607840000001" green="0.72549019609999998" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="70" id="OXP-6b-6Q7"/>
                                             <constraint firstAttribute="height" constant="70" id="p7s-4t-0PF"/>
                                         </constraints>
-                                        <state key="normal" title="Capture"/>
+                                        <state key="normal" image="button_capture.png"/>
                                         <connections>
                                             <action selector="endCaptureInSideAction:" destination="2nw-By-S94" eventType="touchUpInside" id="pSN-58-tmL"/>
                                             <action selector="endCaptureOutSideAction:" destination="2nw-By-S94" eventType="touchUpOutside" id="ThA-nc-Ni3"/>
@@ -4035,9 +4134,12 @@
         <image name="bg_welcome.jpg" width="640" height="1136"/>
         <image name="button_back.png" width="206" height="208"/>
         <image name="button_back_black.png" width="206" height="208"/>
+        <image name="button_capture.png" width="532" height="532"/>
         <image name="button_chat.png" width="1200" height="1200"/>
         <image name="button_delete.png" width="208" height="208"/>
         <image name="button_delete_black.png" width="208" height="208"/>
+        <image name="button_delete_red.png" width="105" height="104"/>
+        <image name="button_done.png" width="473" height="473"/>
         <image name="button_drafts.png" width="208" height="208"/>
         <image name="button_flash_black.png" width="208" height="208"/>
         <image name="button_follow.png" width="25" height="25"/>

@@ -14,7 +14,8 @@ typedef enum {
     FailedWithGeneralError,
     FailedWithSQLError,
     FailedWithParamError,
-    FailedWithTokenError
+    FailedWithTokenError,
+    FailedWithPrivacyError
 } VJNYHTTPResultCode;
 
 #endif

@@ -140,6 +140,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.navigationController.navigationBar setHidden:NO];
     //if (_videoPlayer. != nil) {
     [self startMoviePlayer];
     //}

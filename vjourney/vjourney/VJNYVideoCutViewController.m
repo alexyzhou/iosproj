@@ -62,7 +62,7 @@ static CGFloat MIN_TIME_RANGE = 2.0f;
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+    [self.navigationController.navigationBar setHidden:NO];
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }

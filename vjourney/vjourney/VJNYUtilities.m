@@ -337,6 +337,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)segueChannelSearchPage {
     return @"segueChannelSearchPage";
 }
++(NSString*)seguePrivacySettingPage {
+    return @"seguePrivacySettingPage";
+}
 
 #pragma mark - Storyboard IDs
 

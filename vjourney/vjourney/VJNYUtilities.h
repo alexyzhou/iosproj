@@ -85,6 +85,7 @@
 +(NSString*)segueChatDetailpage;
 +(NSString*)segueLikedListPage;
 +(NSString*)segueChannelSearchPage;
++(NSString*)seguePrivacySettingPage;
 
 +(NSString*)storyboardBallonBasePage;
 +(NSString*)storyboardUserProfilePage;

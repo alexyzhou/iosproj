@@ -40,6 +40,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];
+    
     self.settingLabel.font = [VJNYUtilities customFontWithSize:18.0f];
     self.settingOtherLabel.font = [VJNYUtilities customFontWithSize:18.0f];
     _socialMode = -1;
@@ -149,6 +152,7 @@
             ;
             if (indexPath.row == 0) {
                 cell.titleView.text = @"Privacy";
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             } else {
                 cell.titleView.text = @"Tutorial";
             }
@@ -229,7 +233,10 @@
         case 3:
             //Privacy and Tutorial
         {
-            
+            if (indexPath.row == 0) {
+                //Privacy
+                [self performSegueWithIdentifier:[VJNYUtilities seguePrivacySettingPage] sender:nil];
+            }
         }
     
         break;

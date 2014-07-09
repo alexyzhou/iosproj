@@ -91,10 +91,25 @@
     [VJNYHTTPHelper getJSONRequest:[@"user/info/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
     // Video Count
     [VJNYHTTPHelper getJSONRequest:[@"video/countByUser/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
-    // Videos
-    [VJNYHTTPHelper getJSONRequest:[@"video/latest/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
-    // Channels
-    [VJNYHTTPHelper getJSONRequest:[@"channel/latest/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
+    
+    
+    if ([_userId isEqualToNumber:[VJNYPOJOUser sharedInstance].uid]) {
+        // myself
+        NSLog(@"myself!");
+        NSMutableDictionary* dic = [NSMutableDictionary dictionary];
+        [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+        
+        [VJNYHTTPHelper sendJSONRequest:@"video/latest/user" WithParameters:dic AndDelegate:self];
+        [VJNYHTTPHelper sendJSONRequest:@"channel/latest/user" WithParameters:dic AndDelegate:self];
+    } else {
+        NSLog(@"other:%d",[_userId intValue]);
+        // Videos
+        [VJNYHTTPHelper getJSONRequest:[@"video/latest/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
+        // Channels
+        [VJNYHTTPHelper getJSONRequest:[@"channel/latest/user/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
+    }
+    
     // Channel Count
     [VJNYHTTPHelper getJSONRequest:[@"channel/countByUser/" stringByAppendingString:[_userId stringValue]] WithParameters:nil AndDelegate:self];
 }

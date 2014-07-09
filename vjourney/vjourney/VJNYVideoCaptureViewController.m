@@ -153,7 +153,7 @@
         configureX = lastView.frame.origin.x + lastView.frame.size.width + spacingBetweenProgress;
     } else {
         _videoDeleteButton.enabled = YES;
-        [_videoSelectionOrDoneButton setTitle:@"Done" forState:UIControlStateNormal];
+        [_videoSelectionOrDoneButton setSelected:YES];
         
         _videoSelectionOrDoneButton.enabled = NO;
     }
@@ -295,11 +295,12 @@
     
     if (_isDeleteInConfirm == false) {
         _isDeleteInConfirm = true;
-        [_videoDeleteButton setTitle:@"Yes?" forState:UIControlStateNormal];
+        [_videoDeleteButton setSelected:YES];
         
         UIView* lastProgressView = [_redProgressArray lastObject];
         [lastProgressView setAlpha:0.5f];
     } else {
+        [_videoDeleteButton setSelected:NO];
         NSString* lastVideoPath = [_capturedVideoArray lastObject];
         [VJNYUtilities checkAndDeleteFileForPath:lastVideoPath];
         [_capturedVideoArray removeLastObject];
@@ -322,7 +323,7 @@
         if ([_capturedVideoArray count] == 0) {
             // removed all the videos
             _hasRecording = false;
-            [_videoSelectionOrDoneButton setTitle:@"Import" forState:UIControlStateNormal];
+            [_videoSelectionOrDoneButton setSelected:NO];
             
             _videoSelectionOrDoneButton.enabled = YES;
             _videoDeleteButton.enabled = NO;
