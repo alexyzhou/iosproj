@@ -20,13 +20,13 @@ static UIAlertView* _progressAlert = NULL;
 
 // For Testing
 +(void)initTestParameters {
-    VJNYPOJOUser* user = [VJNYPOJOUser sharedInstance];
-    user.name = @"userName0";
-    user.uid = [NSNumber numberWithLong:1];
-    user.token = @"bdd4bc5d3e058f8242e9ebdd1bff7f73";
-    user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"avatar/11.png"];
-    user.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"cover/user/1404738299542.jpg"];
-    user.description = @"static Description";
+//    VJNYPOJOUser* user = [VJNYPOJOUser sharedInstance];
+//    user.name = @"userName0";
+//    user.uid = [NSNumber numberWithLong:1];
+//    user.token = @"bdd4bc5d3e058f8242e9ebdd1bff7f73";
+//    user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"avatar/11.png"];
+//    user.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:@"cover/user/1404738299542.jpg"];
+//    user.description = @"static Description";
 }
 
 +(void)initBgImageForTabView:(UIView*)view {

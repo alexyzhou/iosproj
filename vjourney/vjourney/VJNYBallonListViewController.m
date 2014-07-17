@@ -131,7 +131,7 @@
         if ([self.videoMaskView pointInside:[_longPressRecognizer locationInView:self.view] withEvent:nil]) {
             self.videoMaskView.backgroundColor = [UIColor clearColor];
             VJDMVoodoo* video = [_ballonArray objectAtIndex:_dragVideoIndex];
-            [self playVideo:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:video.url]];
+            [self playVideo:video.url];
             
             _userAvatarButtonView.enabled = YES;
             _chatButtonView.enabled = YES;
@@ -141,7 +141,7 @@
             if (avatar == nil) {
                 [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[video.userId stringValue]] WithParameters:nil AndDelegate:self];
             } else {
-                [VJNYDataCache loadImageForButton:_userAvatarButtonView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:video.userId AndDelegate:self];
+                [VJNYDataCache loadImageForButton:_userAvatarButtonView WithUrl:avatar.avatarUrl AndMode:0 AndIdentifier:video.userId AndDelegate:self];
             }
             
         }
@@ -294,7 +294,7 @@
     
     VJDMVoodoo* whisper = [_ballonArray objectAtIndex:indexPath.row];
     
-    [VJNYDataCache loadImage:cell.imageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:whisper.coverUrl] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    [VJNYDataCache loadImage:cell.imageView WithUrl:whisper.coverUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     
     return cell;
 }
@@ -331,7 +331,7 @@
             if (avatar != nil) {
                 VJDMVoodoo* video = [_ballonArray objectAtIndex:_dragVideoIndex];
                 if ([video.userId isEqualToNumber:avatar.userId]) {
-                    [VJNYDataCache loadImageForButton:_userAvatarButtonView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:avatar.userId AndDelegate:self];
+                    [VJNYDataCache loadImageForButton:_userAvatarButtonView WithUrl:avatar.avatarUrl AndMode:0 AndIdentifier:avatar.userId AndDelegate:self];
                 }
             }
         }

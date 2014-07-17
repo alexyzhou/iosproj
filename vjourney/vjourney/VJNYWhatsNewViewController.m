@@ -54,12 +54,12 @@ static VJNYWhatsNewViewController* _instance = NULL;
         [VJNYPOJOUser sharedInstance].uid = user.uid;
         [VJNYPOJOUser sharedInstance].name = user.name;
         [VJNYPOJOUser sharedInstance].username = user.username;
-        [VJNYPOJOUser sharedInstance].avatarUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:user.avatars_url];
+        [VJNYPOJOUser sharedInstance].avatarUrl = user.avatars_url;
         
         [VJNYPOJOUser sharedInstance].token = user.token;
         [VJNYPOJOUser sharedInstance].gender = user.gender;
         [VJNYPOJOUser sharedInstance].age = user.age;
-        [VJNYPOJOUser sharedInstance].coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:user.cover_url];
+        [VJNYPOJOUser sharedInstance].coverUrl = user.cover_url;
         
         [VJNYPOJOUser sharedInstance].description = user.user_description;
     }

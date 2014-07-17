@@ -443,7 +443,7 @@
         } else if ([result.action isEqualToString:@"user/Avatar/Update"]) {
             if (result.result == Success) {
                 NSString* url = [result.response objectForKey:@"url"];
-                [VJNYPOJOUser sharedInstance].avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:url];
+                [VJNYPOJOUser sharedInstance].avatarUrl = url;
                 VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
                 user.avatars_url = url;
                 [[VJDMModel sharedInstance] saveChanges];
@@ -451,7 +451,7 @@
         } else if ([result.action isEqualToString:@"user/Cover/Update"]) {
             if (result.result == Success) {
                 NSString* url = [result.response objectForKey:@"url"];
-                [VJNYPOJOUser sharedInstance].coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:url];
+                [VJNYPOJOUser sharedInstance].coverUrl = url;
                 VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
                 user.cover_url = url;
                 [[VJDMModel sharedInstance] saveChanges];
@@ -688,6 +688,8 @@
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
     [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+    
+    [dic setObject:[[NSNumber numberWithUnsignedInteger:coverData.length] stringValue] forKey:@"length"];
     
     
     NSError *error = nil;

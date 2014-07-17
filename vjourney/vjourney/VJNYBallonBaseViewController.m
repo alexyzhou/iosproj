@@ -120,7 +120,7 @@
 
 #pragma mark - Video Upload Delegate
 
-- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic {
+- (void) videoReadyForUploadWithVideoData:(NSData*)videoData AndCoverData:(NSData*)coverData AndPostValue:(NSMutableDictionary*)dic AndShareOptions:(NSMutableDictionary *)options {
     
     //[VJNYUtilities showProgressAlertViewToView:self.view];
     
@@ -129,6 +129,9 @@
     // Success
     [request addData:videoData withFileName:@"test.mov" andContentType:@"video/quicktime" forKey:@"file"];
     [request addData:coverData withFileName:@"test.jpg" andContentType:@"image/jpeg" forKey:@"cover"];
+    
+    [dic setObject:[[NSNumber numberWithUnsignedInteger:videoData.length] stringValue] forKey:@"videoLength"];
+    [dic setObject:[[NSNumber numberWithUnsignedInteger:coverData.length] stringValue] forKey:@"coverLength"];
     
     NSError *error = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic

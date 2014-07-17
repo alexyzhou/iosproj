@@ -146,7 +146,7 @@
     
     VJDMUserAvatar* avatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:thread.target_id];
     if (avatar != nil) {
-        [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+        [VJNYDataCache loadImage:cell.avatarImageView WithUrl:avatar.avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     } else {
         [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[thread.target_id stringValue]] WithParameters:nil AndDelegate:self];
     }
@@ -218,7 +218,7 @@
                 VJDMThread* thread = [_threadArray objectAtIndex:path.row];
                 if ([thread.target_id isEqualToNumber:avatar.userId]) {
                     VJNYChatThreadTableViewCell* cell = (VJNYChatThreadTableViewCell*)[self.tableView cellForRowAtIndexPath:path];
-                    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:path AndDelegate:self];
+                    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:avatar.avatarUrl AndMode:0 AndIdentifier:path AndDelegate:self];
                     break;
                 }
             }

@@ -68,7 +68,7 @@ static const int maxCacheCount = 20;
 
 + (void)loadImage:(UIImageView*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate {
     
-    if (url == nil) {
+    if ([VJNYUtilities filterNSNullForObject:url] == nil) {
         cell.image = nil;
         return;
     }
@@ -83,7 +83,7 @@ static const int maxCacheCount = 20;
 }
 + (void)loadImageForButton:(UIButton*)cell WithUrl:(NSString*)url AndMode:(int)mode AndIdentifier:(id)identifier AndDelegate:(id<VJNYDataCacheDelegate>)delegate {
     
-    if (url == nil) {
+    if ([VJNYUtilities filterNSNullForObject:url] == nil) {
         [cell setImage:nil forState:UIControlStateNormal];
         return;
     }
@@ -100,7 +100,7 @@ static const int maxCacheCount = 20;
 
 -(UIImage*)loadImageInBackground:(NSString *)url {
     
-    if (url == nil || [url isEqual:@""]) {
+    if ([VJNYUtilities filterNSNullForObject:url] == nil || [url isEqual:@""]) {
         return nil;
     }
     
@@ -221,7 +221,11 @@ static const int maxCacheCount = 20;
 }
 
 - (NSString*)changeUrlToCacheName:(NSString*)url {
-    return [[[[VJNYHTTPHelper pathUrlByRemovePrefix:url] stringByReplacingOccurrencesOfString:@"/" withString:@"_"] stringByReplacingOccurrencesOfString:@"." withString:@"_"] stringByAppendingString:@".png"];
+    //return [url stringByAppendingString:@".png"];
+    
+    NSString* filteredString = [url substringToIndex:[url rangeOfString:@"?"].location-1];
+    
+    return [[[[filteredString stringByReplacingOccurrencesOfString:@"/" withString:@"_"] stringByReplacingOccurrencesOfString:@"." withString:@"_"] stringByReplacingOccurrencesOfString:@":" withString:@"_"] stringByAppendingString:@".png"];
 }
 
 - (UIImage*)readCacheForURL:(NSString*)url {

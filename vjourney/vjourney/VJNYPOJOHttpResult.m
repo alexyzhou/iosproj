@@ -44,11 +44,11 @@
             [VJNYPOJOUser sharedInstance].uid = [userDic objectForKey:@"id"];
             [VJNYPOJOUser sharedInstance].name = [userDic objectForKey:@"name"];
             [VJNYPOJOUser sharedInstance].username = [userDic objectForKey:@"userName"];
-            [VJNYPOJOUser sharedInstance].avatarUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"avatarUrl"]];
+            [VJNYPOJOUser sharedInstance].avatarUrl = [userDic objectForKey:@"avatarUrl"];
             [VJNYPOJOUser sharedInstance].token = [userDic objectForKey:@"token"];
             [VJNYPOJOUser sharedInstance].gender = [userDic objectForKey:@"gender"];
             [VJNYPOJOUser sharedInstance].age = [userDic objectForKey:@"age"];
-            [VJNYPOJOUser sharedInstance].coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"coverUrl"]];
+            [VJNYPOJOUser sharedInstance].coverUrl = [userDic objectForKey:@"coverUrl"];
             [VJNYPOJOUser sharedInstance].description = [userDic objectForKey:@"description"];
             
             VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
@@ -79,11 +79,11 @@
             user.uid = [userDic objectForKey:@"id"];
             user.name = [userDic objectForKey:@"name"];
             
-            user.avatarUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"avatarUrl"]];
+            user.avatarUrl = [userDic objectForKey:@"avatarUrl"];
             
             user.gender = [userDic objectForKey:@"gender"];
             user.age = [userDic objectForKey:@"age"];
-            user.coverUrl = [VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:[userDic objectForKey:@"coverUrl"]];
+            user.coverUrl = [userDic objectForKey:@"coverUrl"];
             user.description = [userDic objectForKey:@"description"];
             
             resultObj.response = user;
@@ -124,7 +124,7 @@
                 channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"createTime"] intValue]];
                 channel.videoCount = [objDic objectForKey:@"videoCount"];
                 channel.promotion = [objDic objectForKey:@"promotion"];
-                channel.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[objDic objectForKey:@"coverUrl"]];
+                channel.coverUrl = [objDic objectForKey:@"coverUrl"];
                 
                 [resultObj.response addObject:channel];
             }
@@ -151,17 +151,17 @@
                 
                 video.vid = [videoDic objectForKey:@"id"];
                 video.description = [videoDic objectForKey:@"description"];
-                video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"url"]];
+                video.url = [videoDic objectForKey:@"url"];
                 video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[videoDic objectForKey:@"time"] intValue]];
                 video.userId = [videoDic objectForKey:@"userId"];
                 video.like = [videoDic objectForKey:@"like"];
                 video.watched = [videoDic objectForKey:@"watched"];
                 video.channelId= [videoDic objectForKey:@"channelId"];
-                video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
+                video.coverUrl = [videoDic objectForKey:@"coverUrl"];
                 
                 user.uid = [userDic objectForKey:@"id"];
                 user.name = [userDic objectForKey:@"name"];
-                user.avatarUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"avatarUrl"]];
+                user.avatarUrl = [userDic objectForKey:@"avatarUrl"];
                 user.token = [userDic objectForKey:@"token"];
                 user.gender = [userDic objectForKey:@"gender"];
                 user.age = [userDic objectForKey:@"age"];
@@ -191,17 +191,17 @@
                 
                 video.vid = [videoDic objectForKey:@"id"];
                 video.description = [videoDic objectForKey:@"description"];
-                video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"url"]];
+                video.url = [videoDic objectForKey:@"url"];
                 video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[videoDic objectForKey:@"time"] intValue]];
                 video.userId = [videoDic objectForKey:@"userId"];
                 video.like = [videoDic objectForKey:@"like"];
                 video.watched = [videoDic objectForKey:@"watched"];
                 video.channelId= [videoDic objectForKey:@"channelId"];
-                video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
+                video.coverUrl = [videoDic objectForKey:@"coverUrl"];
                 
                 channel.cid = [userDic objectForKey:@"id"];
                 channel.name = [userDic objectForKey:@"name"];
-                channel.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[userDic objectForKey:@"coverUrl"]];
+                channel.coverUrl = [userDic objectForKey:@"coverUrl"];
                 
                 NSArray* array = [NSArray arrayWithObjects:video, channel, nil];
                 
@@ -335,13 +335,13 @@
             
             video.vid = [videoDic objectForKey:@"id"];
             video.description = [videoDic objectForKey:@"description"];
-            video.url = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"url"]];
+            video.url = [videoDic objectForKey:@"url"];
             video.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[videoDic objectForKey:@"time"] intValue]];
             video.userId = [videoDic objectForKey:@"userId"];
             video.like = [videoDic objectForKey:@"like"];
             video.watched = [videoDic objectForKey:@"watched"];
             video.channelId= [videoDic objectForKey:@"channelId"];
-            video.coverUrl = [[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:[videoDic objectForKey:@"coverUrl"]];
+            video.coverUrl = [videoDic objectForKey:@"coverUrl"];
             
             resultObj.response = video;
         }

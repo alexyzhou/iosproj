@@ -181,8 +181,10 @@
 - (IBAction)saveTopicAction:(id)sender {
     
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[VJNYHTTPHelper connectionUrlByAppendingRequest:@"channel/add"]];
-    [request addData:UIImageJPEGRepresentation(_coverImageView.image, 0.2f) withFileName:@"test.jpg" andContentType:@"image/jpeg" forKey:@"cover"];
     
+    NSData* imageData = UIImageJPEGRepresentation(_coverImageView.image, 0.2f);
+    
+    [request addData:imageData withFileName:@"test.jpg" andContentType:@"image/jpeg" forKey:@"cover"];
     // Success
     
     //[request setData:filedata forKey:@"file"];
@@ -193,6 +195,7 @@
     [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
     [dic setObject:_topicInputField.text forKey:@"name"];
     [dic setObject:_descriptionInputField.text forKey:@"description"];
+    [dic setObject:[[NSNumber numberWithUnsignedInteger:imageData.length] stringValue] forKey:@"length"];
     
     NSError *error = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic

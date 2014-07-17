@@ -86,7 +86,7 @@
     
     NSString* avatarUrl = [_userAvatarDic objectForKey:[_userIdArray objectAtIndex:indexPath.row]];
     
-    [VJNYDataCache loadImage:cell.imageView WithUrl:[VJNYHTTPHelper checkAndSetPathUrlByAppendPrefixWithValue:avatarUrl] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+    [VJNYDataCache loadImage:cell.imageView WithUrl:avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
     
     [VJNYUtilities addRoundMaskForUIView:cell.imageView];
     

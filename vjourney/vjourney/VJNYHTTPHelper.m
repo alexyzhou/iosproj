@@ -10,17 +10,18 @@
 
 @implementation VJNYHTTPHelper
 
-static NSString* _remoteIpAddr = @"192.168.1.108:8080";
+static NSString* _remoteIpAddr = @"vjourney.duapp.com";
 
 +(void)setIPAddr:(NSString*)ip {
     _remoteIpAddr = [NSString stringWithFormat:@"%@:8080",ip];
 }
 
 +(NSURL*)connectionUrlByAppendingRequest:(NSString*)request {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/vjourney-service-webapp/api/%@",_remoteIpAddr,request]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/api/%@",_remoteIpAddr,request]];
 }
+/*
 +(NSString*)pathUrlPrefix {
-    return [NSString stringWithFormat:@"http://%@/vjourney-service-webapp/",_remoteIpAddr];
+    return [NSString stringWithFormat:@"http://%@/",_remoteIpAddr];
 }
 +(NSString*)pathUrlByRemovePrefix:(NSString*)fullUrl {
     NSString* prefix = [self pathUrlPrefix];
@@ -37,7 +38,7 @@ static NSString* _remoteIpAddr = @"192.168.1.108:8080";
         return [[self pathUrlPrefix] stringByAppendingString:value];
     }
 }
-
+*/
 +(NSString*)mediaPlayCodeWithURL:(NSString*)url andWidth:(NSInteger)width andHeight:(NSInteger)height {
     
     static NSString *embedHTML = @"\

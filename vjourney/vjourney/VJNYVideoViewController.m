@@ -411,6 +411,8 @@
     
     
     [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+    [dic setObject:[[NSNumber numberWithUnsignedInteger:videoData.length] stringValue] forKey:@"videoLength"];
+    [dic setObject:[[NSNumber numberWithUnsignedInteger:coverData.length] stringValue] forKey:@"coverLength"];
     
     NSError *error = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic

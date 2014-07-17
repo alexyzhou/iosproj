@@ -143,7 +143,7 @@
     if ([notif.sender_id longValue] >= 0) {
         VJDMUserAvatar* avatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:notif.sender_id];
         if (avatar != nil) {
-            [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:indexPath AndDelegate:self];
+            [VJNYDataCache loadImage:cell.avatarImageView WithUrl:avatar.avatarUrl AndMode:0 AndIdentifier:indexPath AndDelegate:self];
         } else {
             [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[notif.sender_id stringValue]] WithParameters:nil AndDelegate:self];
         }
@@ -201,7 +201,7 @@
                 VJDMNotification* notif = [_notifArray objectAtIndex:path.row];
                 if ([notif.sender_id isEqualToNumber:avatar.userId]) {
                     VJNYSysNotifTableViewCell* cell = (VJNYSysNotifTableViewCell*)[self.sysNotifTableView cellForRowAtIndexPath:path];
-                    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:[[VJNYHTTPHelper pathUrlPrefix] stringByAppendingString:avatar.avatarUrl] AndMode:0 AndIdentifier:path AndDelegate:self];
+                    [VJNYDataCache loadImage:cell.avatarImageView WithUrl:avatar.avatarUrl AndMode:0 AndIdentifier:path AndDelegate:self];
                     break;
                 }
             }
