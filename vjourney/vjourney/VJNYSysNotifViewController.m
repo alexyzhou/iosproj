@@ -45,6 +45,7 @@
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     
     [VJNYDataCache loadImage:self.userAvatarImageView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:1 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
+    [VJNYUtilities addRoundMaskForUIView:self.userAvatarImageView];
     self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
     self.userNameLabel.font = [VJNYUtilities customFontWithSize:23];
     

@@ -222,7 +222,7 @@ static const int maxCacheCount = 20;
 
 - (NSString*)changeUrlToCacheName:(NSString*)url {
     //return [url stringByAppendingString:@".png"];
-    
+    NSLog(@"cacheName: %@",url);
     NSString* filteredString = [url substringToIndex:[url rangeOfString:@"?"].location-1];
     
     return [[[[filteredString stringByReplacingOccurrencesOfString:@"/" withString:@"_"] stringByReplacingOccurrencesOfString:@"." withString:@"_"] stringByReplacingOccurrencesOfString:@":" withString:@"_"] stringByAppendingString:@".png"];

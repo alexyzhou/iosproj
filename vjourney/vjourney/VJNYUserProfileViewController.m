@@ -430,6 +430,21 @@
             }];
             if (result.result == Success) {
                 
+                VJDMUser* user = (VJDMUser*)[VJDMModel sharedInstance].getCurrentUser;
+                if (user != nil) {
+                    
+                    NSString* url = result.response[@"url"];
+                    
+                    if ([result.action isEqualToString:@"user/Avatar/Update"]) {
+                        user.avatars_url = url;
+                    } else if ([result.action isEqualToString:@"user/Cover/Update"]) {
+                        user.cover_url = url;
+                    }
+                    
+                    [[VJDMModel sharedInstance] saveChanges];
+                }
+                
+                
             } else {
                 [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Upload Failed!, Reason:%d",result.result]];
             }
