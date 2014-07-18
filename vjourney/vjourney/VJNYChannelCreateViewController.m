@@ -118,6 +118,11 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
+    if (_topicNameReady == false) {
+        return false;
+    }
+    
     [self.topicInputField resignFirstResponder];
     return YES;
 }
@@ -125,18 +130,16 @@
 - (void)topicNameChangedAction:(id)sender {
     
     long remainingCount = VJNYTOPIC_NAME_MAXLENGTH - _topicInputField.text.length;
-    if (remainingCount == 0) {
+    if (remainingCount < 0) {
         self.topicRemainingCountLabel.textColor = [UIColor redColor];
-    } else if (remainingCount > 0) {
-        self.topicRemainingCountLabel.textColor = [UIColor lightGrayColor];
     } else {
-        self.topicInputField.text = [self.topicInputField.text substringToIndex:self.topicInputField.text.length-1];
-        remainingCount++;
+        self.topicRemainingCountLabel.textColor = [UIColor whiteColor];
     }
     
-    self.topicRemainingCountLabel.text = [NSString stringWithFormat:@"%lu", remainingCount];
-    _topicNameReady = remainingCount > 0;
+    self.topicRemainingCountLabel.text = [NSString stringWithFormat:@"(%ld)", remainingCount];
+    _topicNameReady = remainingCount >= 0;
     [self checkAndSetSaveButton];
+    
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
@@ -146,33 +149,50 @@
 - (void)topicDescriptionChangedAction:(id)sender {
     
     long remainingCount = VJNYTOPIC_DESCRIPTION_MAXLENGTH - _descriptionInputField.text.length;
-    if (remainingCount == 0) {
+    if (remainingCount < 0) {
         self.descriptionRemainingCountLabel.textColor = [UIColor redColor];
-    } else if (remainingCount > 0) {
-        self.descriptionRemainingCountLabel.textColor = [UIColor lightGrayColor];
-    } else {
-        self.descriptionInputField.text = [self.descriptionInputField.text substringToIndex:self.descriptionInputField.text.length-1];
-        remainingCount++;
+    } else  {
+        self.descriptionRemainingCountLabel.textColor = [UIColor whiteColor];
     }
     
-    self.descriptionRemainingCountLabel.text = [NSString stringWithFormat:@"%lu", remainingCount];
-    _topicDescriptionReady = remainingCount > 0;
+    self.descriptionRemainingCountLabel.text = [NSString stringWithFormat:@"(%ld)", remainingCount];
+    _topicDescriptionReady = remainingCount >= 0;
     [self checkAndSetSaveButton];
 }
 
+/*
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+ 
     long remainingCount = VJNYTOPIC_DESCRIPTION_MAXLENGTH - _descriptionInputField.text.length;
     long conReplateRange = (long)text.length - (long)range.length < remainingCount ? text.length : remainingCount;
     
     self.descriptionInputField.text = [self.descriptionInputField.text stringByReplacingCharactersInRange:range withString:[text substringToIndex:conReplateRange]];
+ 
     
-    [self topicDescriptionChangedAction:nil];
-    return NO;
+    long remainingCount = VJNYTOPIC_DESCRIPTION_MAXLENGTH - _descriptionInputField.text.length;
+    remainingCount += (long)text.length - (long)range.length;
+    if (remainingCount <= 0) {
+        self.descriptionRemainingCountLabel.textColor = [UIColor redColor];
+    } else if (remainingCount > 0) {
+        self.descriptionRemainingCountLabel.textColor = [UIColor whiteColor];
+    } else {
+        
+    }
+    
+    self.descriptionRemainingCountLabel.text = [NSString stringWithFormat:@"(%ld)", remainingCount];
+    _topicDescriptionReady = remainingCount >= 0;
+    [self checkAndSetSaveButton];
+    
+    return YES;
 }
-
+*/
 #pragma mark - Button Action Handler
 
 - (IBAction)finishEditingDescriptionAction:(id)sender {
+    
+    if (_topicDescriptionReady == false) {
+        return;
+    }
     
     [self.descriptionInputField resignFirstResponder];
     
@@ -227,7 +247,7 @@
                                                destructiveButtonTitle:nil
                                                     otherButtonTitles:@"Take a Picture", @"Choose from Camera", nil];
     actionSheet.tag = 100;
-    [actionSheet showInView:self.view];
+    [actionSheet showInView:self.navigationController.view];
     
 }
 
