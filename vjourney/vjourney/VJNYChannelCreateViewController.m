@@ -7,6 +7,7 @@
 //
 
 #import "VJNYChannelCreateViewController.h"
+#import "VPImageCropperViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOUser.h"
@@ -16,7 +17,7 @@
 #define VJNYTOPIC_NAME_MAXLENGTH 10
 #define VJNYTOPIC_DESCRIPTION_MAXLENGTH 100
 
-@interface VJNYChannelCreateViewController () <UIImagePickerControllerDelegate,UINavigationControllerDelegate> {
+@interface VJNYChannelCreateViewController () <UIImagePickerControllerDelegate,UINavigationControllerDelegate,VPImageCropperDelegate> {
     BOOL _isEditingTopicName;
     
     UIView* _uploadBannerView;
@@ -292,15 +293,45 @@
 #pragma mark - UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [picker dismissViewControllerAnimated:YES completion:^() {
+        
         UIImage *portraitImg = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-        self.coverImageView.image = portraitImg;
-        _coverReady = true;
-        [self checkAndSetSaveButton];
+        
+        portraitImg = [VJNYUtilities imageByScalingToMaxSize:portraitImg];
+        
+        CGFloat height_To_Crop = self.view.frame.size.height * 0.6f;
+        
+        // 裁剪
+        VPImageCropperViewController *imgEditorVC = [[VPImageCropperViewController alloc] initWithImage:portraitImg fullFrame:self.view.frame cropFrame:CGRectMake(0, self.view.frame.size.height/2.0f - height_To_Crop/2.0f, self.view.frame.size.width, height_To_Crop) limitScaleRatio:2.0 orientation:portraitImg.imageOrientation];
+        imgEditorVC.delegate = self;
+        [self presentViewController:imgEditorVC animated:YES completion:^{
+            // TO DO
+        }];
+        
+        
     }];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [picker dismissViewControllerAnimated:YES completion:^(){
+    }];
+}
+
+#pragma mark VPImageCropperDelegate
+- (void)imageCropper:(VPImageCropperViewController *)cropperViewController didFinished:(UIImage *)editedImage {
+    
+    UIImage *portraitImg = editedImage;
+    self.coverImageView.image = portraitImg;
+    _coverReady = true;
+    [self checkAndSetSaveButton];
+    
+    [cropperViewController dismissViewControllerAnimated:YES completion:^{
+        // TO DO
+        
+    }];
+}
+
+- (void)imageCropperDidCancel:(VPImageCropperViewController *)cropperViewController {
+    [cropperViewController dismissViewControllerAnimated:YES completion:^{
     }];
 }
 

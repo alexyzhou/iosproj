@@ -165,9 +165,10 @@
         _videoPlayer.controlStyle = MPMovieControlStyleNone;
         _videoPlayer.repeatMode = MPMovieRepeatModeOne;
         [_videoPlayer setScalingMode:MPMovieScalingModeAspectFill];
-        //[self.videoPlayerView addSubview:_videoPlayer.view];
-        [self.videoPlayerView insertSubview:_videoPlayer.view atIndex:0];
-        //[self.videoPlayerView bringSubviewToFront:_videoPlayButton];
+        [self.videoPlayerView addSubview:_videoPlayer.view];
+        //[self.videoPlayerView insertSubview:_videoPlayer.view atIndex:0];
+        //[self.videoPlayerView insertSubview:_videoPlayer.view belowSubview:_videoPlayButton];
+        [self.videoPlayerView bringSubviewToFront:_videoPlayButton];
     }
     
     if (![[_videoPlayer.contentURL absoluteString] isEqual:url]) {
@@ -191,16 +192,36 @@
     //_videoPlayer = nil;
 }*/
 
--(void)initWithChannelID:(NSNumber*)channelID andName:(NSString*)name andIsFollow:(int)follow {
-    _channelID = channelID;
-    _channelName = name;
+#pragma mark - View Main
+
+-(void)initWithChannel:(VJNYPOJOChannel *)channel andIsFollow:(int)follow {
+    _channel = channel;
     _isFollow = follow;
+}
+
+- (void)updateUITextViewForCenter:(UITextView*)object {
+    
+    UITextView *mTrasView = object;
+    
+    CGRect textRect = [object.text boundingRectWithSize:CGSizeMake(137.0f, CGFLOAT_MAX)
+                                                                options:NSStringDrawingUsesLineFragmentOrigin
+                                                             attributes:@{NSFontAttributeName:object.font}
+                                                                context:nil];
+    
+    CGFloat topCorrect = (250.0f - textRect.size.height);
+    
+    topCorrect = (topCorrect < 0.0 ? 0.0 : topCorrect);
+    
+    mTrasView.contentOffset = (CGPoint){.x =0, .y = -topCorrect/2};
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [VJNYUtilities addRoundMaskForUIView:_creatorAvatarImageView];
+    [VJNYDataCache loadImage:_channelCoverImageView WithUrl:_channel.coverUrl AndMode:4 AndIdentifier:[NSIndexPath indexPathForRow:0 inSection:0] AndDelegate:self];
+    
     _videoUserAvatarButton.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:0.5];
     [VJNYUtilities addRoundMaskForUIView:_videoUserAvatarButton];
     [_videoUserAvatarButton setEnabled:NO];
@@ -209,7 +230,7 @@
     
     _uploadBannerView = nil;
     
-    self.title = _channelName;
+    self.title = _channel.name;
     _isDragging = false;
     _dragVideoIndex = -1;
     [_likeButton setEnabled:NO];
@@ -231,7 +252,7 @@
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"HH:mm,yyyy-MM-dd"];
     
-    [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
+    [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channel.cid intValue]] WithParameters:nil AndDelegate:self];
     
     if (_isFollow == -1) {
         // we need to contact the server
@@ -239,7 +260,7 @@
         
         NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
         [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
-        [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+        [dic setObject:[_channel.cid stringValue] forKey:@"channelId"];
         [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
         
         [VJNYHTTPHelper sendJSONRequest:@"channel/isFollow" WithParameters:dic AndDelegate:self];
@@ -248,11 +269,28 @@
         [self switchToUploadButtonForRightButton];
         //self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(clickToUploadAction:)];
     }
+    
+    
+    // Fetch Data
+    // User Info
+    [VJNYHTTPHelper getJSONRequest:[@"user/info/" stringByAppendingString:[_channel.creatorUserId stringValue]] WithParameters:nil AndDelegate:self];
+    // Video Count
+    [VJNYHTTPHelper getJSONRequest:[@"video/countByUser/" stringByAppendingString:[_channel.creatorUserId stringValue]] WithParameters:nil AndDelegate:self];
+    
+    _channelDescriptionLabel.text = _channel.description;
+    _channelDescriptionLabel.alpha = 0.0f;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     //self.navigationController.navigationBar.translucent = NO;
+}
+-(void)viewDidAppear:(BOOL)animated {
+    [self updateUITextViewForCenter:_channelDescriptionLabel];
+    [UIView animateWithDuration:0.1f animations:^{
+        _channelDescriptionLabel.alpha = 1.0f;
+    }];
+    
 }
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -379,6 +417,10 @@
             // we are still in the same video
             [_videoUserAvatarButton setBackgroundImage:data forState:UIControlStateNormal];
         }
+    } else if (mode == 3) {
+        _creatorAvatarImageView.image = data;
+    } else if (mode == 4) {
+        _channelCoverImageView.image = data;
     }
 }
 
@@ -410,7 +452,7 @@
     //[request setPostValue:@"test.mov" forKey:@"fileName"];
     
     
-    [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+    [dic setObject:[_channel.cid stringValue] forKey:@"channelId"];
     [dic setObject:[[NSNumber numberWithUnsignedInteger:videoData.length] stringValue] forKey:@"videoLength"];
     [dic setObject:[[NSNumber numberWithUnsignedInteger:coverData.length] stringValue] forKey:@"coverLength"];
     
@@ -504,7 +546,7 @@
 #pragma mark - TODO
                 [_videoData removeAllObjects];
                 [_userData removeAllObjects];
-                [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channelID intValue]] WithParameters:nil AndDelegate:self];
+                [VJNYHTTPHelper getJSONRequest:[NSString stringWithFormat:@"video/latest/channel/%zd",[_channel.cid intValue]] WithParameters:nil AndDelegate:self];
             } else {
                 [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Upload Failed!, Reason:%d",result.result]];
             }
@@ -523,6 +565,41 @@
                     [_likeButton setSelected:[likedResult boolValue]];
                 }
             }
+        });
+    } else if ([result.action isEqualToString:@"user/Info"]) {
+        
+         dispatch_async(dispatch_get_main_queue(), ^{
+             
+             if (result.result == Success) {
+                 VJNYPOJOUser* user = result.response;
+                 _creatorNameLabel.text = user.name;
+                 _creatorDescriptionLabel.text = user.description;
+                 [VJNYDataCache loadImage:_creatorAvatarImageView WithUrl:user.avatarUrl AndMode:3 AndIdentifier:[NSIndexPath indexPathForRow:0 inSection:0] AndDelegate:self];
+             }
+             
+         });
+        
+    } else if ([result.action isEqualToString:@"video/CountByUser"]) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (result.result == Success) {
+                NSNumber* _storyCount = [result.response objectForKey:@"count"];
+                NSNumber* _totalLike = [result.response objectForKey:@"like_count"];
+                
+                if (_storyCount != nil) {
+                    _creatorVideoCountLabel.text = [_storyCount stringValue];
+                } else {
+                    _creatorVideoCountLabel.text = @"0";
+                }
+                if (_totalLike != nil) {
+                    _creatorLikeCountLabel.text = [_totalLike stringValue];
+                } else {
+                    _creatorLikeCountLabel.text = @"0";
+                }
+                
+            }
+            
         });
     }
     
@@ -545,7 +622,7 @@
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
     [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
-    [dic setObject:[_channelID stringValue] forKey:@"channelId"];
+    [dic setObject:[_channel.cid stringValue] forKey:@"channelId"];
     
     [VJNYHTTPHelper sendJSONRequest:@"channel/follow" WithParameters:dic AndDelegate:self];
 }

@@ -73,6 +73,8 @@
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 + (UIImage *)scaleImage:(UIImage*)image toResolution:(int)resolution;
++ (UIImage *)imageByScalingAndCroppingForSourceImage:(UIImage *)sourceImage targetSize:(CGSize)targetSize;
++ (UIImage *)imageByScalingToMaxSize:(UIImage *)sourceImage;
 
 +(NSString*)segueShowVideoPageByChannel;
 +(NSString*)segueLoginShowMainPage;

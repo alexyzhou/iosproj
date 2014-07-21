@@ -9,13 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "VJNYDataCache.h"
 #import "VJNYHTTPHelper.h"
+#import "VJNYPOJOChannel.h"
 #import "VJNYPOJOHttpResult.h"
 #import "VJNYHTTPResultCode.h"
 #import "VJNYVideoCaptureViewController.h"
 
 @interface VJNYVideoViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,VJNYVideoUploadDelegate,ASIProgressDelegate> {
-    NSNumber* _channelID;
-    NSString* _channelName;
+    VJNYPOJOChannel* _channel;
     int _isFollow;
 }
 @property (weak, nonatomic) IBOutlet UICollectionView *videoCollectionView;
@@ -27,6 +27,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 @property (weak, nonatomic) IBOutlet UIButton *chatButton;
 @property (weak, nonatomic) IBOutlet UIButton *seeLikedButton;
+@property (weak, nonatomic) IBOutlet UIImageView *creatorAvatarImageView;
+@property (weak, nonatomic) IBOutlet UILabel *creatorNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *creatorDescriptionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *creatorVideoCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *creatorLikeCountLabel;
+@property (weak, nonatomic) IBOutlet UITextView *channelDescriptionLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *channelCoverImageView;
 
 - (IBAction)tapToPlayOrPauseVideoAction:(UITapGestureRecognizer *)sender;
 
@@ -39,6 +46,7 @@
 - (IBAction)clickToSeeUserProfileAction:(id)sender;
 
 
--(void)initWithChannelID:(NSNumber*)channelID andName:(NSString*)name andIsFollow:(int)follow;
+//-(void)initWithChannelID:(NSNumber*)channelID andName:(NSString*)name andIsFollow:(int)follow;
+-(void)initWithChannel:(VJNYPOJOChannel*)channel andIsFollow:(int)follow;
 
 @end

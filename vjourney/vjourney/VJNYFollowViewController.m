@@ -81,7 +81,7 @@
             channel = [_channelData objectAtIndex:indexPath.row];
         }
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
-        [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:1];
+        [videoViewController initWithChannel:channel andIsFollow:1];
     }
 }
 

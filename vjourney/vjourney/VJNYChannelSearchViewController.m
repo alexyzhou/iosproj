@@ -71,8 +71,8 @@
     if ([segue.identifier isEqualToString:[VJNYUtilities segueShowVideoPageByChannel]]) {
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
         NSIndexPath* indexPath = [self.tableView indexPathForSelectedRow];
-        VJNYPOJOChannel* channel = [_channelData objectAtIndex:indexPath.row-1];
-        [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:-1];
+        VJNYPOJOChannel* channel = [_channelData objectAtIndex:indexPath.row];
+        [videoViewController initWithChannel:channel andIsFollow:-1];
     }
 }
 

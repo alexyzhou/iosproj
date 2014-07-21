@@ -112,7 +112,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
         NSIndexPath* indexPath = [self.channelView indexPathForSelectedRow];
         VJNYPOJOChannel* channel = [_channelData objectAtIndex:indexPath.row-1];
-        [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:-1];
+        [videoViewController initWithChannel:channel andIsFollow:-1];
     }
 }
 
@@ -344,7 +344,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     VJNYPOJOChannel* channel = (VJNYPOJOChannel*)[_promoChannelData objectAtIndex:index];
     
     VJNYVideoViewController *videoViewController = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardVideoListPage]];
-    [videoViewController initWithChannelID:channel.cid andName:channel.name andIsFollow:-1];
+    [videoViewController initWithChannel:channel andIsFollow:-1];
     
     [self.navigationController pushViewController:videoViewController animated:YES];
     

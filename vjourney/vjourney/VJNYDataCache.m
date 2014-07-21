@@ -55,12 +55,7 @@ static const int maxCacheCount = 20;
     if ([_dataCache objectForKey:url] != nil) {
         return [_dataCache objectForKey:url];
     } else {
-        UIImage* readFromFile = [[VJNYDataCache instance] readCacheForURL:url];
-        if (readFromFile != nil) {
-            NSLog(@"Cache Hit!");
-            [_dataCache setObject:readFromFile forKey:url];
-        }
-        return readFromFile;
+        return nil;
     }
 }
 
@@ -127,11 +122,17 @@ static const int maxCacheCount = 20;
 }
 
 -(void)loadImage:(NSString*)url {
-
-    UIImage* imageData = [self loadImageInBackground:url];
+    
+    UIImage* readFromFile = [[VJNYDataCache instance] readCacheForURL:url];
+    if (readFromFile != nil) {
+        NSLog(@"Cache Hit!");
+        [_dataCache setObject:readFromFile forKey:url];
+    } else {
+        readFromFile = [self loadImageInBackground:url];
+    }
     
     // Image retrieved, call main thread method to update image, passing it the downloaded UIImage
-    [self performSelectorOnMainThread:@selector(respondToDelegate:) withObject:[NSArray arrayWithObjects:imageData, url, nil] waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(respondToDelegate:) withObject:[NSArray arrayWithObjects:readFromFile, url, nil] waitUntilDone:YES];
 }
 
 -(void)requestDataByURL:(NSString*)url WithDelegate:(id<VJNYDataCacheDelegate>)delegate AndIdentifier:(id)identifier AndMode:(int)mode {
@@ -165,7 +166,10 @@ static const int maxCacheCount = 20;
         return;
     }
     
-    [self writeCacheForURL:url WithImage:data];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [self writeCacheForURL:url WithImage:data];
+    });
+    
     
     NSMutableArray *delegateArr = [_dataDelegateQueue objectForKey:url];
     NSMutableArray *identifierArr = [_dataIdentifierQueue objectForKey:url];
@@ -242,7 +246,7 @@ static const int maxCacheCount = 20;
 
 - (void)writeCacheForURL:(NSString*)url WithImage:(UIImage*)imageToSave {
     
-    NSData * binaryImageData = UIImagePNGRepresentation(imageToSave);
+    NSData * binaryImageData = UIImageJPEGRepresentation(imageToSave, 0.5f);//UIImagePNGRepresentation(imageToSave);
     NSString* pathToWrite = [[VJNYUtilities dataCacheFolderPath] stringByAppendingString:[self changeUrlToCacheName:url]];
     [binaryImageData writeToFile:pathToWrite atomically:YES];
     
