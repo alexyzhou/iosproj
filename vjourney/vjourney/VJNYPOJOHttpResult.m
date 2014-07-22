@@ -44,7 +44,7 @@
             [VJNYPOJOUser sharedInstance].uid = [userDic objectForKey:@"id"];
             [VJNYPOJOUser sharedInstance].name = [userDic objectForKey:@"name"];
             [VJNYPOJOUser sharedInstance].username = [userDic objectForKey:@"userName"];
-            [VJNYPOJOUser sharedInstance].avatarUrl = [userDic objectForKey:@"avatarUrl"];
+            [VJNYPOJOUser sharedInstance].avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"avatarUrl"]];
             [VJNYPOJOUser sharedInstance].token = [userDic objectForKey:@"token"];
             [VJNYPOJOUser sharedInstance].gender = [userDic objectForKey:@"gender"];
             [VJNYPOJOUser sharedInstance].age = [userDic objectForKey:@"age"];
@@ -79,7 +79,7 @@
             user.uid = [userDic objectForKey:@"id"];
             user.name = [userDic objectForKey:@"name"];
             
-            user.avatarUrl = [userDic objectForKey:@"avatarUrl"];
+            user.avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"avatarUrl"]];
             
             user.gender = [userDic objectForKey:@"gender"];
             user.age = [userDic objectForKey:@"age"];
@@ -98,12 +98,12 @@
                 userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUserAvatar"];
                 userAvatar.userId = [userDic objectForKey:@"id"];
             }
-            userAvatar.avatarUrl = [userDic objectForKey:@"avatarUrl"];
+            userAvatar.avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"avatarUrl"]];
             
             [[VJDMModel sharedInstance] saveChanges];
             resultObj.response = userAvatar;
         }
-    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/LatestByUser"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"] || [resultObj.action isEqualToString:@"channel/Latest/Query/Name"]) {
+    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"] || [resultObj.action isEqualToString:@"channel/Latest/Query/Name"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             
@@ -128,6 +128,42 @@
                 
                 [resultObj.response addObject:channel];
             }
+        }
+    } else if ([resultObj.action isEqualToString:@"channel/LatestByUser"]) {
+        if (result==Success) {
+            NSString* userJson = [dict objectForKey:@"response"];
+            
+            NSArray * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            resultObj.response = [[NSMutableArray alloc] init];
+            NSMutableArray* channelArray = [NSMutableArray array];
+            NSMutableDictionary* unReadDic = [NSMutableDictionary dictionary];
+            
+            for (NSString* objStr in userDic) {
+                VJNYPOJOChannel* channel = [[VJNYPOJOChannel alloc] init];
+                //NSLog(@"%@",objStr);
+                
+                NSDictionary * originDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[[originDic objectForKey:@"channel"] dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                
+                channel.cid = [objDic objectForKey:@"id"];
+                channel.name = [objDic objectForKey:@"name"];
+                channel.description = [objDic objectForKey:@"description"];
+                channel.creatorUserId = [objDic objectForKey:@"creatorUserId"];
+                channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"createTime"] intValue]];
+                channel.videoCount = [objDic objectForKey:@"videoCount"];
+                channel.promotion = [objDic objectForKey:@"promotion"];
+                channel.coverUrl = [objDic objectForKey:@"coverUrl"];
+                
+                [channelArray addObject:channel];
+                [unReadDic setObject:[originDic objectForKey:@"unread"] forKey:channel.cid];
+                
+                //[resultObj.response addObject:channel];
+            }
+            
+            [resultObj.response addObject:channelArray];
+            [resultObj.response addObject:unReadDic];
         }
     } else if ([resultObj.action isEqualToString:@"videoAndUser/Latest"]) {
         if (result==Success) {
@@ -161,7 +197,7 @@
                 
                 user.uid = [userDic objectForKey:@"id"];
                 user.name = [userDic objectForKey:@"name"];
-                user.avatarUrl = [userDic objectForKey:@"avatarUrl"];
+                user.avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"avatarUrl"]];
                 user.token = [userDic objectForKey:@"token"];
                 user.gender = [userDic objectForKey:@"gender"];
                 user.age = [userDic objectForKey:@"age"];
@@ -268,7 +304,7 @@
                         userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUserAvatar"];
                         userAvatar.userId = thread.target_id;
                     }
-                    userAvatar.avatarUrl = userDic[@"avatarUrl"];
+                    userAvatar.avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:userDic[@"avatarUrl"]];
             
                     thread.last_message = message.content;
                     thread.last_time = message.time;
@@ -318,7 +354,7 @@
                     userAvatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUserAvatar"];
                     userAvatar.userId = notif.sender_id;
                 }
-                userAvatar.avatarUrl = userDic[@"avatarUrl"];
+                userAvatar.avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:userDic[@"avatarUrl"]];
                 
             }
             [[VJDMModel sharedInstance] saveChanges];

@@ -11,6 +11,7 @@
 @interface VJNYFollowViewController ()
 {
     NSMutableArray *_channelData;
+    NSMutableDictionary* _channelUnreadDic;
     NSArray *_searchResult;
     
     MJRefreshFooterView *_footer;
@@ -41,6 +42,7 @@
     
     // 1.初始化数据
     _channelData = [NSMutableArray array];
+    _channelUnreadDic = [NSMutableDictionary dictionary];
     
     self.searchDisplayController.searchResultsTableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_main.jpg"]];
     
@@ -116,10 +118,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    VJNYChannelTableViewCell *cell = [self.channelView dequeueReusableCellWithIdentifier:[VJNYUtilities channelCellIdentifier]];
+    VJNYFollowChannelTableViewCell *cell = [self.channelView dequeueReusableCellWithIdentifier:[VJNYUtilities channelCellIdentifier]];
     //
     if (cell == nil) {
-        cell = [[VJNYChannelTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[VJNYUtilities channelCellIdentifier]];
+        cell = [[VJNYFollowChannelTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[VJNYUtilities channelCellIdentifier]];
     }
     
     VJNYPOJOChannel *channel = nil;
@@ -145,6 +147,15 @@
         cell.image.image = imageData;
     }
     cell.title.text = channel.name;
+    cell.unReadLabel.text = @"";
+    
+    if (![[_channelUnreadDic objectForKey:channel.cid] isKindOfClass:[NSNull class]]) {
+        NSNumber* unReadNumber = [_channelUnreadDic objectForKey:channel.cid];
+        if (unReadNumber != nil && [unReadNumber longValue] > 0) {
+            cell.unReadLabel.text = [unReadNumber stringValue];
+        }
+    }
+    
     return cell;
 }
 
@@ -188,7 +199,7 @@
         // This indeed is an indexPath no longer visible
         // Do something to this non-visible cell...
     } else {
-        VJNYChannelTableViewCell* cell = (VJNYChannelTableViewCell*)[self.channelView cellForRowAtIndexPath:path];
+        VJNYFollowChannelTableViewCell* cell = (VJNYFollowChannelTableViewCell*)[self.channelView cellForRowAtIndexPath:path];
         cell.image.image = data;
     }
 }
@@ -248,7 +259,27 @@
     VJNYPOJOHttpResult* result = [VJNYPOJOHttpResult resultFromResponseString:responseString];
     if ([result.action isEqualToString:@"channel/LatestByUser"]) {
         if (result.result == Success) {
-            _channelData = result.response;
+            _channelData = result.response[0];
+            _channelUnreadDic = result.response[1];
+            
+            [_channelData sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                NSNumber* score1 = [NSNumber numberWithLong:-1l];
+                NSNumber* score2 = [NSNumber numberWithLong:-1l];
+                if (![[_channelUnreadDic objectForKey:((VJNYPOJOChannel*)obj1).cid] isKindOfClass:[NSNull class]]) {
+                    NSNumber* unRead1 = [_channelUnreadDic objectForKey:((VJNYPOJOChannel*)obj1).cid];
+                    if (unRead1 != nil) {
+                        score1 = unRead1;
+                    }
+                }
+                if (![[_channelUnreadDic objectForKey:((VJNYPOJOChannel*)obj2).cid] isKindOfClass:[NSNull class]]) {
+                    NSNumber* unRead2 = [_channelUnreadDic objectForKey:((VJNYPOJOChannel*)obj2).cid];
+                    if (unRead2 != nil) {
+                        score2 = unRead2;
+                    }
+                }
+                return [score1 compare:score2];
+            }];
+            
             [_channelView reloadData];
         }
     }

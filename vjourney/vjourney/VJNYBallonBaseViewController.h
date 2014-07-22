@@ -21,7 +21,4 @@
 - (IBAction)ballonStorageAction:(id)sender;
 - (IBAction)uploadBallonAction:(id)sender;
 
-@property(nonatomic, strong) id<VJNYInboxSlideDelegate> slideDelegate;
-- (IBAction)showSliderAction:(id)sender;
-
 @end

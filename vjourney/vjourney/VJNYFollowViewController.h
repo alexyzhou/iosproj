@@ -13,7 +13,7 @@
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOHttpResult.h"
 #import "VJNYHTTPResultCode.h"
-#import "VJNYChannelTableViewCell.h"
+#import "VJNYFollowChannelTableViewCell.h"
 #import "VJNYDataCache.h"
 
 @interface VJNYFollowViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,MJRefreshBaseViewDelegate, ASIHTTPRequestDelegate,VJNYDataCacheDelegate>

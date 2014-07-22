@@ -450,7 +450,7 @@
             }
         } else if ([result.action isEqualToString:@"channel/LatestByUser"]) {
             if (result.result == Success) {
-                _channelData = result.response;
+                _channelData = result.response[0];
                 if (_isVideoListMode == false) {
                     [self.tableView reloadData];
                 }
@@ -672,11 +672,14 @@
     [cropperViewController dismissViewControllerAnimated:YES completion:^{
         // TO DO
         [self uploadImage:UIImageJPEGRepresentation(editedImage,1.0f)];
+        
+        [self.tabBarController.tabBar setHidden:NO];
     }];
 }
 
 - (void)imageCropperDidCancel:(VPImageCropperViewController *)cropperViewController {
     [cropperViewController dismissViewControllerAnimated:YES completion:^{
+        [self.tabBarController.tabBar setHidden:NO];
     }];
 }
 

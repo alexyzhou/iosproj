@@ -10,6 +10,7 @@
 #import "VJNYDataCache.h"
 #import "VJNYDataCache.h"
 #import "ASIHTTPRequest.h"
+#import "VJNYInboxViewController.h"
 
 @interface VJNYBallonListViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,UIGestureRecognizerDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate>
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
@@ -29,6 +30,7 @@
 - (IBAction)tapToChatAction:(id)sender;
 - (IBAction)tapToSendbackVoodooAction:(id)sender;
 
-
+@property(nonatomic, strong) id<VJNYInboxSlideDelegate> slideDelegate;
+- (IBAction)showSliderAction:(id)sender;
 
 @end

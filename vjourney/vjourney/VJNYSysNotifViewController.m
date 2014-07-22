@@ -7,6 +7,7 @@
 //
 
 #import "VJNYSysNotifViewController.h"
+#import "VJNYBallonBaseViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOHttpResult.h"
@@ -40,6 +41,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];
+    
     _notifArray = [[[VJDMModel sharedInstance] getNotifList] mutableCopy];
     [self initHeightArrayForNotification];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -56,18 +60,20 @@
     UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToDismissSliderAction:)];
     [self.view addGestureRecognizer:tapGesture];
     tapGesture.delegate = self;
+    
+    _voodooButton.transform = CGAffineTransformMakeRotation(M_PI/6);
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     // Network Stuff
     NSMutableDictionary* dic = [NSMutableDictionary dictionary];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
     dic[@"userId"]=[[VJNYPOJOUser sharedInstance].uid stringValue];
     [VJNYHTTPHelper sendJSONRequest:@"notif/sysNotif/get" WithParameters:dic AndDelegate:self];
     
-    self.navigationItem.titleView = _activityIndicator;
-    [_activityIndicator startAnimating];
+    //self.navigationItem.titleView = _activityIndicator;
+    //[_activityIndicator startAnimating];
     
     [self.navigationController.navigationBar setHidden:YES];
 }
@@ -274,4 +280,10 @@
     }
 }
 
+- (IBAction)showVoodooAction:(id)sender {
+    
+    VJNYBallonBaseViewController* vooDooController = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardBallonBasePage]];
+    [self.navigationController pushViewController:vooDooController animated:YES];
+    
+}
 @end

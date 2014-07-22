@@ -59,6 +59,16 @@
     [VJNYUtilities addShadowForUIView:_cardContainerView];
     
     _ballonArray = [[[VJDMModel sharedInstance] getVoodooList] mutableCopy];
+    
+    if (self.navigationController.viewControllers[0]==self) {
+        UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panToShowSliderAction:)];
+        [self.videoMaskView addGestureRecognizer:panGesture];
+        [self.videoMaskView setUserInteractionEnabled:YES];
+        
+        UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToDismissSliderAction:)];
+        [self.videoMaskView addGestureRecognizer:tapGesture];
+    }
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -66,6 +76,16 @@
     if (_videoPlayer.playbackState == MPMoviePlaybackStatePlaying) {
         [self myMovieFinishedCallback:nil];
     }
+    [self.navigationController.navigationBar setHidden:NO];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (self.navigationController.viewControllers[0] == self) {
+        [self.navigationController.navigationBar setHidden:YES];
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -344,6 +364,36 @@
     NSError *error = [request error];
     NSLog(@"%@",error.localizedDescription);
     [VJNYUtilities showAlertWithNoTitle:error.localizedDescription];
+}
+
+#pragma mark - Custom Methods
+
+- (IBAction)showSliderAction:(id)sender {
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction)]) {
+        [_slideDelegate subViewDidTriggerSliderAction];
+    }
+}
+
+- (IBAction)panToShowSliderAction:(UIPanGestureRecognizer *)sender {
+    
+    UIPanGestureRecognizer* gesture = sender;
+    CGPoint translation = [gesture translationInView:self.view];
+    [gesture setTranslation:CGPointZero inView:self.view];
+    
+    //NSLog(@"PanGesture:x-%f,y-%f",translation.x,translation.y);
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:)]) {
+        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state];
+    }
+    
+}
+
+- (IBAction)tapToDismissSliderAction:(UITapGestureRecognizer *)sender {
+    
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider)]) {
+        [_slideDelegate subViewDidTapOutsideSlider];
+    }
+    
 }
 
 @end

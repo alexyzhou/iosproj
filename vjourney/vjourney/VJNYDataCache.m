@@ -125,7 +125,7 @@ static const int maxCacheCount = 20;
     
     UIImage* readFromFile = [[VJNYDataCache instance] readCacheForURL:url];
     if (readFromFile != nil) {
-        NSLog(@"Cache Hit!");
+        //NSLog(@"Cache Hit!");
         [_dataCache setObject:readFromFile forKey:url];
     } else {
         readFromFile = [self loadImageInBackground:url];
@@ -226,8 +226,11 @@ static const int maxCacheCount = 20;
 
 - (NSString*)changeUrlToCacheName:(NSString*)url {
     //return [url stringByAppendingString:@".png"];
-    NSLog(@"cacheName: %@",url);
-    NSString* filteredString = [url substringToIndex:[url rangeOfString:@"?"].location-1];
+    //NSLog(@"cacheName: %@",url);
+    NSString* filteredString = url;
+    if ([url rangeOfString:@"?"].location != NSNotFound) {
+        filteredString = [url substringToIndex:[url rangeOfString:@"?"].location-1];
+    }
     
     return [[[[filteredString stringByReplacingOccurrencesOfString:@"/" withString:@"_"] stringByReplacingOccurrencesOfString:@"." withString:@"_"] stringByReplacingOccurrencesOfString:@":" withString:@"_"] stringByAppendingString:@".png"];
 }

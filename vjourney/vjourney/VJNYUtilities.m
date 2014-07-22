@@ -422,6 +422,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)storyboardBallonBasePage {
     return @"sBallonBasePage";
 }
++(NSString*)storyboardBallonListPage {
+    return @"sBallonListPage";
+}
 +(NSString*)storyboardUserProfilePage {
     return @"sUserProfilePage";
 }

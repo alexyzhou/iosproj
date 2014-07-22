@@ -9,6 +9,7 @@
 #import "VJNYInboxViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYBallonBaseViewController.h"
+#import "VJNYBallonListViewController.h"
 #import "VJNYChatListViewController.h"
 #import "VJNYSysNotifViewController.h"
 #import "VJNYSettingViewController.h"
@@ -73,11 +74,14 @@
     
     // Default Page
     
-    VJNYSysNotifViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardSysNotifPage]];
-    controller.slideDelegate = self;
+    UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardSysNotifPage]];
+    controller.delegate = self;
+    VJNYSysNotifViewController* vooDooController = controller.viewControllers[0];
+    vooDooController.slideDelegate = self;
     [self addChildViewController:controller];
     [self.view insertSubview:controller.view belowSubview:self.sliderView];
     [_subViewControllers setObject:controller forKey:@"1"];
+
     
     [self setUIForSelectedView:_messageSelectionView WithIconView:_messageIconView AndLabel:_messageLabelView];
 }
@@ -129,6 +133,17 @@
             [_subViewControllers setObject:controller forKey:numberKey];
         } else if (number == 4) {
             // Voodoo
+            
+            UINavigationController* controller = [[UINavigationController alloc] initWithRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardBallonListPage]]];
+            controller.delegate = self;
+            VJNYBallonListViewController* vooDooController = controller.viewControllers[0];
+            vooDooController.slideDelegate = self;
+            [self addChildViewController:controller];
+            [self.view insertSubview:controller.view belowSubview:self.sliderView];
+            [_subViewControllers setObject:controller forKey:numberKey];
+            
+            
+            /*
             UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardBallonBasePage]];
             controller.delegate = self;
             VJNYBallonBaseViewController* vooDooController = controller.viewControllers[0];
@@ -136,6 +151,7 @@
             [self addChildViewController:controller];
             [self.view insertSubview:controller.view belowSubview:self.sliderView];
             [_subViewControllers setObject:controller forKey:numberKey];
+             */
         }
     }
     UIViewController* viewControllerToShow = _subViewControllers[numberKey];

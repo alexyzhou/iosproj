@@ -24,8 +24,6 @@
 
 @implementation VJNYBallonBaseViewController
 
-@synthesize slideDelegate=_slideDelegate;
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -43,13 +41,13 @@
     _uploadIndicator = nil;
     _uploadBannerView = nil;
     _ballonAnimationReady = false;
-    
+    /*
     UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panToShowSliderAction:)];
     [self.view addGestureRecognizer:panGesture];
     
     UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToDismissSliderAction:)];
     [self.view addGestureRecognizer:tapGesture];
-    
+    */
     [VJNYUtilities addShadowForUIView:self.ballonAnimationImageView WithOffset:CGSizeMake(2.0f, 2.0f) AndRadius:3.0f];
     
     self.addVoodooButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -84,13 +82,13 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController.navigationBar setHidden:YES];
+    //[self.navigationController.navigationBar setHidden:YES];
     //[self.ballonAnimationImageView startAnimating];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [self.navigationController.navigationBar setHidden:NO];
+    //[self.navigationController.navigationBar setHidden:NO];
     //[self.ballonAnimationImageView stopAnimating];
     
 }
@@ -292,15 +290,16 @@
     [self performSegueWithIdentifier:[VJNYUtilities segueVideoCapturePage] sender:self];
     
 }
+/*
 - (IBAction)showSliderAction:(id)sender {
     
     if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction)]) {
         [_slideDelegate subViewDidTriggerSliderAction];
     }
 }
-
+*/
 #pragma mark - Gesture Delegate
-
+/*
 - (void)panToShowSliderAction:(UIPanGestureRecognizer *)sender {
     
     UIPanGestureRecognizer* gesture = sender;
@@ -322,6 +321,6 @@
     }
     
 }
-
+*/
 
 @end

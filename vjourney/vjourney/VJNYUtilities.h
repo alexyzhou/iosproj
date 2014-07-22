@@ -90,6 +90,7 @@
 +(NSString*)seguePrivacySettingPage;
 
 +(NSString*)storyboardBallonBasePage;
++(NSString*)storyboardBallonListPage;
 +(NSString*)storyboardUserProfilePage;
 +(NSString*)storyboardUserProfileDetailPage;
 +(NSString*)storyboardChatListPage;

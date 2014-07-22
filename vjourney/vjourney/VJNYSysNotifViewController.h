@@ -20,5 +20,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *sysNotifTableView;
 
 @property (strong, nonatomic) id<VJNYInboxSlideDelegate> slideDelegate;
+@property (weak, nonatomic) IBOutlet UIButton *voodooButton;
+- (IBAction)showVoodooAction:(id)sender;
 
 @end
