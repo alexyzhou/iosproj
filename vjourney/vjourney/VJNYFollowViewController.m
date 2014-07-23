@@ -84,6 +84,16 @@
         }
         VJNYVideoViewController *videoViewController = segue.destinationViewController;
         [videoViewController initWithChannel:channel andIsFollow:1];
+        
+        NSMutableDictionary* dic = [NSMutableDictionary dictionary];
+        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+        [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
+        [dic setObject:[channel.cid stringValue] forKey:@"channelId"];
+        [dic setObject:@"0" forKey:@"unread"];
+        
+        [VJNYHTTPHelper sendJSONRequest:@"channel/update/unread" WithParameters:dic AndDelegate:self];
+        
+        [_channelUnreadDic setObject:[NSNumber numberWithLong:0l] forKey:channel.cid];
     }
 }
 
