@@ -7,8 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VJNYBallonListViewController.h"
 
 @interface VJNYVideoThumbnailViewCell : UICollectionViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+- (IBAction)deleteVideoAction:(id)sender;
+
+@property (strong, nonatomic) id<VJNYBallonOperationDelegate> delegate;
 
 @end

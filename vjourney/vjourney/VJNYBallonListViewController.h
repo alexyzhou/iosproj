@@ -12,7 +12,13 @@
 #import "ASIHTTPRequest.h"
 #import "VJNYInboxViewController.h"
 
-@interface VJNYBallonListViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,UIGestureRecognizerDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate>
+@protocol VJNYBallonOperationDelegate <NSObject>
+
+- (void)tapToDeleteBallonWithTableViewCell:(UICollectionViewCell*)cell;
+
+@end
+
+@interface VJNYBallonListViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,VJNYDataCacheDelegate,UIGestureRecognizerDelegate,VJNYDataCacheDelegate,ASIHTTPRequestDelegate,VJNYBallonOperationDelegate>
 @property (weak, nonatomic) IBOutlet UIView *videoPlayerContainerView;
 @property (weak, nonatomic) IBOutlet UIView *videoMaskView;
 @property (weak, nonatomic) IBOutlet UICollectionView *cardContainerView;

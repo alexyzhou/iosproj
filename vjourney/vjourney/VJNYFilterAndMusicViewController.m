@@ -81,6 +81,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     AVPlayerLayer* videoPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_videoPlayer];
     
     videoPlayerLayer.frame = self.videoPlayerContainerView.layer.bounds;
+    videoPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.videoPlayerContainerView.layer addSublayer:videoPlayerLayer];
     
     //_videoPlayer = [[MPMoviePlayerController alloc] init];

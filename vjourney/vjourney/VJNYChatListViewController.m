@@ -233,8 +233,8 @@
 }
 
 - (IBAction)showSliderAction:(id)sender {
-    if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction)]) {
-        [_slideDelegate subViewDidTriggerSliderAction];
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction:)]) {
+        [_slideDelegate subViewDidTriggerSliderAction:self.view];
     }
 }
 
@@ -281,16 +281,16 @@
     
     //NSLog(@"PanGesture:x-%f,y-%f",translation.x,translation.y);
     
-    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:)]) {
-        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state];
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:AndView:)]) {
+        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state AndView:self.view];
     }
     
 }
 
 - (void)tapToDismissSliderAction:(UITapGestureRecognizer *)sender {
     
-    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider)]) {
-        [_slideDelegate subViewDidTapOutsideSlider];
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider:)]) {
+        [_slideDelegate subViewDidTapOutsideSlider:self.view];
     }
     
 }

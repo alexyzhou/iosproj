@@ -10,6 +10,8 @@
 
 @implementation VJNYVideoThumbnailViewCell
 
+@synthesize delegate=_delegate;
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -28,4 +30,13 @@
 }
 */
 
+- (IBAction)deleteVideoAction:(id)sender {
+    
+    if (_delegate != nil) {
+        if ([_delegate respondsToSelector:@selector(tapToDeleteBallonWithTableViewCell:)]) {
+            [_delegate tapToDeleteBallonWithTableViewCell:self];
+        }
+    }
+    
+}
 @end

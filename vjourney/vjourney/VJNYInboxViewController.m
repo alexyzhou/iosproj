@@ -295,7 +295,7 @@
 
 #pragma mark - Slider Delegate
 
--(void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state {
+-(void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state AndView:(UIView *)view {
     
     if (_sliderHide == NO) {
         return;
@@ -322,8 +322,9 @@
         
         if (self.sliderView.center.x < -self.sliderView.bounds.size.width/4) {
             [self dismissSliderViewAction:nil];
+            //view.userInteractionEnabled = YES;
         } else {
-            [self subViewDidTriggerSliderAction];
+            [self subViewDidTriggerSliderAction:view];
         }
         
     }
@@ -360,23 +361,29 @@
         if (self.sliderView.center.x < self.sliderView.bounds.size.width/4) {
             [self dismissSliderViewAction:nil];
         } else {
-            [self subViewDidTriggerSliderAction];
+            [self subViewDidTriggerSliderAction:nil];
         }
         
     }
     
 }
 
-- (void)subViewDidTriggerSliderAction {
+- (void)subViewDidTriggerSliderAction:(UIView*)view {
     _sliderHide = false;
+    if (view!=nil) {
+        //view.userInteractionEnabled = NO;
+    }
     [UIView animateWithDuration:0.3f animations:^{
         [self showSliderView];
     }];
 }
 
-- (void)subViewDidTapOutsideSlider {
+- (void)subViewDidTapOutsideSlider:(UIView *)view {
     if (!_sliderHide) {
         [self dismissSliderViewAction:nil];
+        if (view != nil) {
+            //view.userInteractionEnabled = YES;
+        }
     }
     
 }

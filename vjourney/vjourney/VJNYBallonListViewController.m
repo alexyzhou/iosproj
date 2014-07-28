@@ -8,6 +8,8 @@
 
 #import "VJNYBallonListViewController.h"
 #import "VJNYVideoThumbnailViewCell.h"
+#import "VJNYUserProfileViewController.h"
+#import "VJNYChatViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYHTTPHelper.h"
 #import "VJDMVoodoo.h"
@@ -158,6 +160,7 @@
             _sendBackButtonView.enabled = YES;
             
             VJDMUserAvatar* avatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:video.userId];
+            
             if (avatar == nil) {
                 [VJNYHTTPHelper getJSONRequest:[@"user/avatarUrl/" stringByAppendingString:[video.userId stringValue]] WithParameters:nil AndDelegate:self];
             } else {
@@ -230,12 +233,67 @@
 }
 
 - (IBAction)tapToViewUserInfoAction:(id)sender {
+    
+    if (_dragVideoIndex != -1) {
+        VJDMVoodoo* video = [_ballonArray objectAtIndex:_dragVideoIndex];
+        
+        UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardUserProfilePage]];
+        
+        VJNYUserProfileViewController* profileController = [controller.viewControllers  objectAtIndex:0];
+        profileController.userId = video.userId;
+        profileController.pushed = YES;
+        
+        [self presentViewController:controller animated:YES completion:nil];
+        
+    }
+    
 }
 
 - (IBAction)tapToChatAction:(id)sender {
+    
+    if (_dragVideoIndex != -1) {
+        
+        VJNYChatViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardChatDetailPage]];
+        
+        VJDMVoodoo* video = [_ballonArray objectAtIndex:_dragVideoIndex];
+        
+        controller.target_avatar = [self.userAvatarButtonView imageForState:UIControlStateNormal];
+        controller.target_id = video.userId;
+        controller.target_name = video.userName;
+        
+        [self.navigationController pushViewController:controller animated:YES];
+    }
+    
 }
 
 - (IBAction)tapToSendbackVoodooAction:(id)sender {
+    
+    if (_dragVideoIndex != -1) {
+        
+        VJDMVoodoo* video = [_ballonArray objectAtIndex:_dragVideoIndex];
+        
+        NSMutableDictionary* dic = [NSMutableDictionary dictionary];
+        [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
+        [dic setObject:[video.vid stringValue] forKey:@"whisperId"];
+        [VJNYHTTPHelper sendJSONRequest:@"whisper/return" WithParameters:dic AndDelegate:self];
+        
+        [[VJDMModel sharedInstance] removeManagedObject:video];
+        [[VJDMModel sharedInstance] saveChanges];
+        
+        [_ballonArray removeObjectAtIndex:_dragVideoIndex];
+        [_cardContainerView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:_dragVideoIndex inSection:0]]];
+        
+        [_videoPlayer stop];
+        _videoPlayer.contentURL = nil;
+        [self myMovieFinishedCallback:nil];
+        
+        _userAvatarButtonView.enabled = NO;
+        _chatButtonView.enabled = NO;
+        _sendBackButtonView.enabled = NO;
+        
+        _dragVideoIndex = -1;
+    }
+    
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
@@ -311,6 +369,7 @@
 
 - (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     VJNYVideoThumbnailViewCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:[VJNYUtilities ballonCardCellIdentifier] forIndexPath:indexPath];
+    cell.delegate = self;
     
     VJDMVoodoo* whisper = [_ballonArray objectAtIndex:indexPath.row];
     
@@ -369,8 +428,8 @@
 #pragma mark - Custom Methods
 
 - (IBAction)showSliderAction:(id)sender {
-    if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction)]) {
-        [_slideDelegate subViewDidTriggerSliderAction];
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTriggerSliderAction:)]) {
+        [_slideDelegate subViewDidTriggerSliderAction:self.view];
     }
 }
 
@@ -382,18 +441,41 @@
     
     //NSLog(@"PanGesture:x-%f,y-%f",translation.x,translation.y);
     
-    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:)]) {
-        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state];
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidDragSliderAction:AndGestureState:AndView:)]) {
+        [_slideDelegate subViewDidDragSliderAction:translation AndGestureState:gesture.state AndView:self.view];
     }
     
 }
 
 - (IBAction)tapToDismissSliderAction:(UITapGestureRecognizer *)sender {
     
-    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider)]) {
-        [_slideDelegate subViewDidTapOutsideSlider];
+    if ([_slideDelegate respondsToSelector:@selector(subViewDidTapOutsideSlider:)]) {
+        [_slideDelegate subViewDidTapOutsideSlider:self.view];
     }
     
+}
+
+- (void)tapToDeleteBallonWithTableViewCell:(UICollectionViewCell *)cell {
+    
+    NSIndexPath* path = [_cardContainerView indexPathForCell:cell];
+    
+    VJDMVoodoo* video = [_ballonArray objectAtIndex:path.row];
+    
+    [[VJDMModel sharedInstance] removeManagedObject:video];
+    [[VJDMModel sharedInstance] saveChanges];
+    
+    [_ballonArray removeObjectAtIndex:path.row];
+    [_cardContainerView deleteItemsAtIndexPaths:@[path]];
+    
+    [_videoPlayer stop];
+    _videoPlayer.contentURL = nil;
+    [self myMovieFinishedCallback:nil];
+    
+    _userAvatarButtonView.enabled = NO;
+    _chatButtonView.enabled = NO;
+    _sendBackButtonView.enabled = NO;
+    
+    _dragVideoIndex = -1;
 }
 
 @end

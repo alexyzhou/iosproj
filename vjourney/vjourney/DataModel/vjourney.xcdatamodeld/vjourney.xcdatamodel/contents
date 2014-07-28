@@ -38,14 +38,15 @@
         <attribute name="time" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="vid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
         <element name="VJDMMessage" positionX="-63" positionY="-18" width="128" height="103"/>
         <element name="VJDMNotification" positionX="-63" positionY="36" width="128" height="103"/>
         <element name="VJDMThread" positionX="-63" positionY="18" width="128" height="103"/>
-        <element name="VJDMUserAvatar" positionX="-54" positionY="63" width="128" height="75"/>
-        <element name="VJDMVoodoo" positionX="-63" positionY="45" width="128" height="118"/>
         <element name="VJDMUser" positionX="-54" positionY="54" width="128" height="180"/>
+        <element name="VJDMUserAvatar" positionX="-54" positionY="63" width="128" height="75"/>
+        <element name="VJDMVoodoo" positionX="-63" positionY="45" width="128" height="135"/>
     </elements>
 </model>

@@ -17,5 +17,6 @@
 @property (nonatomic, retain) NSString * coverUrl;
 @property (nonatomic, retain) NSDate * time;
 @property (nonatomic, retain) NSNumber * userId;
+@property (nonatomic, retain) NSString * userName;
 
 @end

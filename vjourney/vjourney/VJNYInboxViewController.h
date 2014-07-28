@@ -14,9 +14,9 @@
 
 @protocol VJNYInboxSlideDelegate <NSObject>
 @required
--(void)subViewDidTriggerSliderAction;
--(void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state;
--(void)subViewDidTapOutsideSlider;
+-(void)subViewDidTriggerSliderAction:(UIView*)view;
+-(void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state AndView:(UIView*)view;
+-(void)subViewDidTapOutsideSlider:(UIView*)view;
 -(BOOL)isSliderOff;
 @end
 
@@ -49,9 +49,9 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *sliderScrollView;
 
 - (IBAction)dismissSliderViewAction:(id)sender;
-- (void)subViewDidTriggerSliderAction;
-- (void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state;
-- (void)subViewDidTapOutsideSlider;
+- (void)subViewDidTriggerSliderAction:(UIView *)view;
+- (void)subViewDidDragSliderAction:(CGPoint)translation AndGestureState:(UIGestureRecognizerState)state AndView:(UIView *)view;
+- (void)subViewDidTapOutsideSlider:(UIView *)view;
 - (BOOL)isSliderOff;
 
 - (IBAction)tapToChangePageAction:(UITapGestureRecognizer *)sender;

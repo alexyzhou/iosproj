@@ -129,6 +129,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     VJNYFollowChannelTableViewCell *cell = [self.channelView dequeueReusableCellWithIdentifier:[VJNYUtilities channelCellIdentifier]];
+    
     //
     if (cell == nil) {
         cell = [[VJNYFollowChannelTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[VJNYUtilities channelCellIdentifier]];
@@ -184,6 +185,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         //add code here for when you hit delete
         
+        
         NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
         [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];
         [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"userId"];
@@ -196,6 +198,7 @@
         
         [_channelData removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
     }
 }
 

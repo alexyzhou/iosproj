@@ -16,5 +16,6 @@
 @dynamic coverUrl;
 @dynamic time;
 @dynamic userId;
+@dynamic userName;
 
 @end

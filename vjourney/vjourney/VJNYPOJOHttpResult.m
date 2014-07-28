@@ -393,17 +393,24 @@
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             
-            NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[userJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
+            NSString* userStr = [objDic objectForKey:@"user"];
+            NSDictionary * userDic = [NSJSONSerialization JSONObjectWithData:[userStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            NSString* whisperStr = [objDic objectForKey:@"voodoo"];
+            NSDictionary * whisperDic = [NSJSONSerialization JSONObjectWithData:[whisperStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+            
             
             //VJNYPOJOWhisper* whisper = [[VJNYPOJOWhisper alloc] init];
             
             VJDMVoodoo* whisper = (VJDMVoodoo*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMVoodoo"];
             
-            whisper.vid = [userDic objectForKey:@"id"];
-            whisper.url = [userDic objectForKey:@"url"];
-            whisper.coverUrl = [userDic objectForKey:@"coverUrl"];
-            whisper.userId = [userDic objectForKey:@"userId"];
-            whisper.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[userDic objectForKey:@"time"] intValue]];
+            whisper.vid = [whisperDic objectForKey:@"id"];
+            whisper.url = [whisperDic objectForKey:@"url"];
+            whisper.coverUrl = [whisperDic objectForKey:@"coverUrl"];
+            whisper.userId = [whisperDic objectForKey:@"userId"];
+            whisper.time = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[whisperDic objectForKey:@"time"] intValue]];
+            whisper.userName = [userDic objectForKey:@"name"];
             
             [[VJDMModel sharedInstance] saveChanges];
             
