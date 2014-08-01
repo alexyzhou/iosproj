@@ -3386,11 +3386,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YwX-2e-8dw" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="1" minimumPressDuration="0.080000000000000002" id="Edm-lS-dG2">
-                    <connections>
-                        <action selector="pressToSelectFilterAction:" destination="Smf-jz-NC8" id="70j-E1-mmI"/>
-                    </connections>
-                </pongPressGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="1" minimumPressDuration="0.080000000000000002" id="Edm-lS-dG2"/>
                 <tapGestureRecognizer id="5tA-jU-Dft">
                     <connections>
                         <action selector="tapToPlayOrPauseAction:" destination="Smf-jz-NC8" id="sar-tY-t6R"/>

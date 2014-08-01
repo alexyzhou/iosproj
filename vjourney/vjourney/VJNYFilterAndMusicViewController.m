@@ -218,6 +218,17 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     return cell;
 }
 
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    _dragVideoIndex = indexPath.row;
+    if (_filterMode == VJNYFilterModeFilter) {
+        [self applyFilter:(int)_dragVideoIndex];
+    } else {
+        [self selectMusic:(int)_dragVideoIndex];
+    }
+    
+}
+
 #pragma mark - Video Player Helper
 
 -(void)stopMoviePlayer {

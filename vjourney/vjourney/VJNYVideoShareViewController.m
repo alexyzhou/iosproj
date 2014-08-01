@@ -90,6 +90,8 @@
     if (rootController.captureMode == WhisperMode) {
         [_textContainerView setHidden:YES];
         [_shareCardCollectionView setHidden:YES];
+        [_weiboShareContainerView setHidden:YES];
+        [_facebookShareContainerView setHidden:YES];
     }
 }
 
