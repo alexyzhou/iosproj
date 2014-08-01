@@ -115,17 +115,21 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     _musicArray = [NSMutableArray array];
     
     // Prepare Filter
-    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"crossprocess" AndCoverPath:@"logo" AndFileName:@"crossprocess"]];
-    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"02" AndCoverPath:@"logo" AndFileName:@"02"]];
-    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"17" AndCoverPath:@"logo" AndFileName:@"17"]];
-    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"aqua" AndCoverPath:@"logo" AndFileName:@"aqua"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"无滤镜" AndCoverPath:@"" AndFileName:@""]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"画布" AndCoverPath:@"cover_filter_canvas.jpg" AndFileName:@"crossprocess"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"枫" AndCoverPath:@"cover_filter_old.jpg" AndFileName:@"02"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"空谷" AndCoverPath:@"cover_filter_green.jpg" AndFileName:@"17"]];
+    [_filterArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"琉璃" AndCoverPath:@"cover_filter_glass.jpg" AndFileName:@"aqua"]];
     
     // Prepare Music
-    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"original" AndCoverPath:@"logo" AndFileName:@""]];
-    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"rock" AndCoverPath:@"logo" AndFileName:@"bgm_rock_sample"]];
-    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"orchestra" AndCoverPath:@"logo" AndFileName:@"bgm_orchestra_sample"]];
-    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"piano" AndCoverPath:@"logo" AndFileName:@"bgm_piano_sample"]];
-    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"village" AndCoverPath:@"logo" AndFileName:@"bgm_village_sample"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"origin" AndCoverPath:@"" AndFileName:@""]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"Spinnin'" AndCoverPath:@"Spinnin'.jpg" AndFileName:@"Spinnin'"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"Check out the Gestures" AndCoverPath:@"Check out the Gestures.jpg" AndFileName:@"Check out the Gestures"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"Art now" AndCoverPath:@"Art now.jpg" AndFileName:@"Art now"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"Wanted dead or alive" AndCoverPath:@"Wanted dead or alive.jpg" AndFileName:@"Wanted dead or alive"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"Glittering Beast" AndCoverPath:@"Glittering Beast.jpg" AndFileName:@"Glittering Beast"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"Been lost in a dream" AndCoverPath:@"Been lost in a dream.jpg" AndFileName:@"Been lost in a dream"]];
+    [_musicArray addObject:[[VJNYPOJOFilterOrMusic alloc] initWithTitle:@"If only you know" AndCoverPath:@"If only you know.jpg" AndFileName:@"If only you know"]];
     
     // Set up Collection View
     _filterCardCollectionView.layer.shadowOffset = CGSizeMake(1.0f, -4.0f);
@@ -201,7 +205,14 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     }
     
     //cell.backgroundImage.image = filter.cover;
-    cell.backgroundImage.backgroundColor = [UIColor redColor];
+    
+    if (filter.coverImage != nil) {
+        cell.backgroundImage.image = filter.coverImage;
+    } else {
+        cell.backgroundImage.image = nil;
+        cell.backgroundImage.backgroundColor = [UIColor blackColor];
+    }
+    
     cell.titleLabel.text = filter.title;
     
     return cell;
@@ -278,6 +289,17 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     
     VJNYPOJOFilterOrMusic* filter = [_filterArray objectAtIndex:filterIndex];
     
+    if ([filter.fileName isEqualToString:@""]) {
+        [_videoPlayer replaceCurrentItemWithPlayerItem:[[AVPlayerItem alloc] initWithURL:_inputPath]];
+        
+        [self startMoviePlayer];
+        _hasFilter = false;
+        [VJNYUtilities dismissProgressAlertViewFromView:self.view];
+        return;
+    }
+    
+    [self setBarButtonEnabled:NO];
+    
     NSURL *sampleURL = _inputPath;
     
     _movieFile = [[GPUImageMovie alloc] initWithURL:sampleURL];
@@ -328,10 +350,18 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
             [weakSelf startMoviePlayer];
             weakSelf->_hasFilter = true;
             [VJNYUtilities dismissProgressAlertViewFromView:weakSelfView];
+            
+            [weakSelf setBarButtonEnabled:YES];
+            
             //[timer invalidate];
             //self.progressLabel.text = @"100%";
         });
     }];
+}
+
+- (void)setBarButtonEnabled:(BOOL)enabled {
+    [self.navigationItem setHidesBackButton:!enabled animated:YES];
+    self.navigationItem.rightBarButtonItem.enabled = enabled;
 }
 
 - (void)retrievingProgress {
@@ -384,7 +414,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     } else {
         VJNYPOJOFilterOrMusic* filter = [_musicArray objectAtIndex:musicIndex];
         
-        NSURL* soundUrl = [[NSBundle mainBundle] URLForResource:filter.fileName withExtension:@"m4a"];
+        NSURL* soundUrl = [[NSBundle mainBundle] URLForResource:filter.fileName withExtension:@"mp3"];
         _musicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:soundUrl error:nil];
         //audioPlayer.delegate = self;
         //audioPlayer.volume = 1.0;
@@ -541,7 +571,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
             _dragIndicatorImageView = imageView;
             [self.view addSubview:_dragIndicatorImageView];
             _dragIndicatorImageView.alpha = 0.0f;
-            [UIView animateWithDuration:0.2 animations:^(void){
+            [UIView animateWithDuration:0.1f animations:^(void){
                 _dragIndicatorImageView.alpha = 1.0f;
             }];
         }

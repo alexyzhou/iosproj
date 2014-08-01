@@ -120,9 +120,20 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.navigationController.navigationBar setHidden:NO];
+    /*
     if (_isVideoListMode) {
         VJNYProfileHeadTableViewCell* cell = (VJNYProfileHeadTableViewCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
         [cell stopPlayVideo];
+    }
+     */
+    if (_isVideoListMode) {
+        
+        for (NSIndexPath* path in _tableView.indexPathsForVisibleRows) {
+            if (path.row > 0) {
+                VJNYProfileVideoTableViewCell* cell = (VJNYProfileVideoTableViewCell*)[_tableView cellForRowAtIndexPath:path];
+                [cell stopPlayVideo];
+            }
+        }
     }
 }
 
@@ -414,6 +425,10 @@
                     }
                 }
                 [self.tableView reloadData];
+            } else if (result.result == FailedWithPrivacyError) {
+                [_videoData removeAllObjects];
+                [_channelInfoForVideo removeAllObjects];
+                [VJNYUtilities showAlertWithNoTitle:@"Video hidden by privacy settings"];
             }
         } else if ([result.action isEqualToString:@"channel/CountByUser"]) {
             if (result.result == Success) {
@@ -454,6 +469,9 @@
                 if (_isVideoListMode == false) {
                     [self.tableView reloadData];
                 }
+            } else if (result.result == FailedWithPrivacyError) {
+                [_channelData removeAllObjects];
+                [VJNYUtilities showAlertWithNoTitle:@"Channel hidden by privacy settings"];
             }
         } else if ([result.action isEqualToString:@"user/Avatar/Update"]) {
             if (result.result == Success) {

@@ -14,6 +14,8 @@
 @property(strong,nonatomic) NSString* coverPath;
 @property(strong,nonatomic) NSString* fileName;
 
+@property(strong,nonatomic) UIImage* coverImage;
+
 - (id)initWithTitle:(NSString *)title AndCoverPath:(NSString *)coverPath AndFileName:(NSString*)fileName;
 
 @end

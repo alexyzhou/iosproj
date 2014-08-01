@@ -376,6 +376,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)settingCellWithSwitchIdentifier {
     return @"settingSwitchCell";
 }
++(NSString*)seggestCreateChannelCellIdentifier {
+    return @"suggCreateChannelCell";
+}
 
 
 #pragma mark - Segue
@@ -415,6 +418,9 @@ static UIAlertView* _progressAlert = NULL;
 }
 +(NSString*)seguePrivacySettingPage {
     return @"seguePrivacySettingPage";
+}
++(NSString*)segueChannelCreatePage {
+    return @"segueChannelCreatePage";
 }
 
 #pragma mark - Storyboard IDs

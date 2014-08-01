@@ -24,4 +24,8 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveTopicBarButton;
 - (IBAction)tapToSetCoverAction:(id)sender;
 
+
+#pragma mark - Custom Variables
+@property (strong, nonatomic) NSString* preferredTitle;
+
 @end

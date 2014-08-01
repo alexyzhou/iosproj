@@ -32,6 +32,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self setTitle:@"I'm In"];
+    
     // Do any additional setup after loading the view.
     [VJNYUtilities initBgImageForTabView:self.view];
     [VJNYUtilities initBgImageForNaviBarWithTabView:self.navigationController];

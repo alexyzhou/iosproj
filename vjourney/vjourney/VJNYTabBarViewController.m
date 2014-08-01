@@ -30,6 +30,7 @@
     [self.viewControllers enumerateObjectsUsingBlock:^(UIViewController *vc, NSUInteger idx, BOOL *stop) {
         vc.title = nil;
         vc.tabBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
+        vc.tabBarItem.titlePositionAdjustment = UIOffsetMake(0, 50);
         
         switch (idx) {
             case 0:

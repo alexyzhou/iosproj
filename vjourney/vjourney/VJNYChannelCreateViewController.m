@@ -31,6 +31,8 @@
 
 @implementation VJNYChannelCreateViewController
 
+@synthesize preferredTitle=_preferredTitle;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -59,6 +61,11 @@
         forControlEvents:UIControlEventEditingChanged];
     
     _isEditingTopicName = false;
+    
+    if (_preferredTitle != nil) {
+        _topicInputField.text = _preferredTitle;
+        [self topicNameChangedAction:nil];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -359,7 +366,7 @@
                 _uploadBannerView = nil;
             }];
             if (result.result == Success) {
-                [VJNYUtilities showAlertWithNoTitle:@"Succeed!"];
+                [VJNYUtilities showAlertWithNoTitle:@"话题创建申请提交成功，请耐心等待审核!"];
                 [self.navigationController popViewControllerAnimated:YES];
             } else {
                 [VJNYUtilities showAlertWithNoTitle:[NSString stringWithFormat:@"Upload Failed!, Reason:%d",result.result]];

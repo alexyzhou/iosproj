@@ -12,6 +12,7 @@
 
 @synthesize title=_title;
 @synthesize coverPath=_coverPath;
+@synthesize coverImage=_coverImage;
 @synthesize fileName=_fileName;
 
 - (id)initWithTitle:(NSString *)title AndCoverPath:(NSString *)coverPath AndFileName:(NSString*)fileName
@@ -22,6 +23,7 @@
         //_cover = [UIImage imageWithData:[NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:coverPath withExtension:@"png"]]];
         _title = title;
         _coverPath = coverPath;
+        _coverImage = [UIImage imageNamed:coverPath];
         _fileName = fileName;
     }
     return self;

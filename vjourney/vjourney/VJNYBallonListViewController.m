@@ -128,7 +128,7 @@
             _dragIndicatorImageView = imageView;
             [self.view addSubview:_dragIndicatorImageView];
             _dragIndicatorImageView.alpha = 0.0f;
-            [UIView animateWithDuration:0.2 animations:^(void){
+            [UIView animateWithDuration:0.1f animations:^(void){
                 _dragIndicatorImageView.alpha = 1.0f;
             }];
         }

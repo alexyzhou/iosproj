@@ -70,6 +70,7 @@
 +(NSString*)settingLogoutCellIdentifier;
 +(NSString*)settingCellWithLabelIdentifier;
 +(NSString*)settingCellWithSwitchIdentifier;
++(NSString*)seggestCreateChannelCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 + (UIImage *)scaleImage:(UIImage*)image toResolution:(int)resolution;
@@ -88,6 +89,7 @@
 +(NSString*)segueLikedListPage;
 +(NSString*)segueChannelSearchPage;
 +(NSString*)seguePrivacySettingPage;
++(NSString*)segueChannelCreatePage;
 
 +(NSString*)storyboardBallonBasePage;
 +(NSString*)storyboardBallonListPage;
