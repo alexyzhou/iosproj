@@ -302,7 +302,10 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     
     if ([filter.fileName isEqualToString:@""]) {
         [_videoPlayer replaceCurrentItemWithPlayerItem:[[AVPlayerItem alloc] initWithURL:_inputPath]];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(myMovieFinishedCallback:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:[_videoPlayer currentItem]];
         [self startMoviePlayer];
         _hasFilter = false;
         [VJNYUtilities dismissProgressAlertViewFromView:self.view];
@@ -316,7 +319,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
     _movieFile = [[GPUImageMovie alloc] initWithURL:sampleURL];
     _movieFile.runBenchmark = NO;
     _movieFile.playAtActualSpeed = NO;
-    _filter = [[GPUImageToneCurveFilter alloc] initWithACV:filter.title];
+    _filter = [[GPUImageToneCurveFilter alloc] initWithACV:filter.fileName];
     //    filter = [[GPUImageUnsharpMaskFilter alloc] init];
     [_filter setInputRotation:_movieRotation atIndex:0];
     
@@ -357,6 +360,10 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
         [weakSelf->_movieWriter finishRecording];
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf->_videoPlayer replaceCurrentItemWithPlayerItem:[[AVPlayerItem alloc] initWithURL:[NSURL fileURLWithPath:[VJNYUtilities videoFilterTempPath]]]];
+            [[NSNotificationCenter defaultCenter] addObserver:weakSelf
+                                                     selector:@selector(myMovieFinishedCallback:)
+                                                         name:AVPlayerItemDidPlayToEndTimeNotification
+                                                       object:[weakSelf->_videoPlayer currentItem]];
             //weakSelf->_videoPlayer.contentURL = ];
             [weakSelf startMoviePlayer];
             weakSelf->_hasFilter = true;
@@ -373,6 +380,7 @@ typedef NS_ENUM(NSInteger, VJNYFilterMode) {
 - (void)setBarButtonEnabled:(BOOL)enabled {
     [self.navigationItem setHidesBackButton:!enabled animated:YES];
     self.navigationItem.rightBarButtonItem.enabled = enabled;
+    self.filterCardCollectionView.userInteractionEnabled = enabled;
 }
 
 - (void)retrievingProgress {
