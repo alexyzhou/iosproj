@@ -54,6 +54,7 @@
 
 +(NSString*)channelCellIdentifier;
 +(NSString*)channelPromoCellIdentifier;
++(NSString*)channelPromoCoverCellIdentifier;
 +(NSString*)channelSearchCellIdentifier;
 +(NSString*)videoCellIdentifier;
 +(NSString*)videoThumbnailCellIdentifier;

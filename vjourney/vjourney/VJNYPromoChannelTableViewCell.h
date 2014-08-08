@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface VJNYPromoChannelTableViewCell : UITableViewCell
+@interface VJNYPromoChannelTableViewCell : UITableViewCell<UICollectionViewDataSource,UICollectionViewDelegate>
 @property (weak, nonatomic) IBOutlet UIView *view;
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (weak, nonatomic) IBOutlet UIPageControl *pageControl;
+
+@property (strong, nonatomic) NSMutableArray* channelArray;
 
 @end

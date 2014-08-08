@@ -328,6 +328,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)channelPromoCellIdentifier {
     return @"promoChannelCell";
 }
++(NSString*)channelPromoCoverCellIdentifier {
+    return @"promoChannelCoverCell";
+}
 +(NSString*)videoCellIdentifier {
     return @"videoCell";
 }

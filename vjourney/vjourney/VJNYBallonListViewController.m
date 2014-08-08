@@ -51,6 +51,10 @@
     self.chatButtonView.enabled = NO;
     self.sendBackButtonView.enabled = NO;
     
+    self.userAvatarButtonView.hidden = YES;
+    self.chatButtonView.hidden= YES;
+    self.sendBackButtonView.hidden = YES;
+    
     // Set up variables
     _ballonArray = [NSMutableArray array];
     _isDragging = false;
@@ -158,6 +162,10 @@
             _userAvatarButtonView.enabled = YES;
             _chatButtonView.enabled = YES;
             _sendBackButtonView.enabled = YES;
+            
+            self.userAvatarButtonView.hidden = NO;
+            self.chatButtonView.hidden= NO;
+            self.sendBackButtonView.hidden = NO;
             
             VJDMUserAvatar* avatar = (VJDMUserAvatar*)[[VJDMModel sharedInstance] getUserAvatarByUserID:video.userId];
             

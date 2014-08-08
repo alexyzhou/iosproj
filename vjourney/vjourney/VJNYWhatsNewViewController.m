@@ -79,6 +79,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
     
     // 1.初始化数据
     _channelData = [NSMutableArray array];
+    _promoChannelData = nil;
     
     // 2.集成刷新控件
     MJRefreshFooterView *footer = [MJRefreshFooterView footer];
@@ -140,7 +141,14 @@ static VJNYWhatsNewViewController* _instance = NULL;
             cell = [[VJNYPromoChannelTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[VJNYUtilities channelPromoCellIdentifier]];
         }
         
-        if (coverflow == nil) {
+        if (_promoChannelData == nil) {
+            [VJNYHTTPHelper getJSONRequest:@"channel/promotion" WithParameters:nil AndDelegate:self];
+        } else if (cell.channelArray != _promoChannelData) {
+            cell.channelArray = _promoChannelData;
+            [cell.collectionView reloadData];
+        }
+        
+        /*if (coverflow == nil) {
             coverflow = [[TKCoverflowView alloc] initWithFrame:CGRectMake(0, 0, self.channelView.frame.size.width, 220)];
             coverflow.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             coverflow.coverflowDelegate = self;
@@ -150,7 +158,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
             [VJNYHTTPHelper getJSONRequest:@"channel/promotion" WithParameters:nil AndDelegate:self];
             //coverflow.backgroundColor = [UIColor redColor];
             [cell.view addSubview:coverflow];
-        }
+        }*/
         
         return cell;
         
@@ -288,9 +296,15 @@ static VJNYWhatsNewViewController* _instance = NULL;
     } else if ([result.action isEqualToString:@"channel/Promo"]) {
         if (result.result == Success) {
             _promoChannelData = result.response;
-            [coverflow setNumberOfCovers:(int)[_promoChannelData count]];
-            [coverflow bringCoverAtIndexToFront:(int)[_promoChannelData count]/2 animated:NO];
-            [self performSelector:@selector(flipCoverFlowView) withObject:nil afterDelay:5];
+            VJNYPromoChannelTableViewCell* headCell = (VJNYPromoChannelTableViewCell*)[_channelView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            headCell.channelArray = _promoChannelData;
+            [headCell.collectionView reloadData];
+            
+            [self performSelector:@selector(autoScrollPromoCoverCollectionView) withObject:nil afterDelay:5];
+            
+            //[coverflow setNumberOfCovers:(int)[_promoChannelData count]];
+            //[coverflow bringCoverAtIndexToFront:(int)[_promoChannelData count]/2 animated:NO];
+            //[self performSelector:@selector(flipCoverFlowView) withObject:nil afterDelay:5];
         }
     }
     
@@ -360,6 +374,27 @@ static VJNYWhatsNewViewController* _instance = NULL;
 	[UIView commitAnimations];
     
     [self performSelector:@selector(flipCoverFlowView) withObject:nil afterDelay:5];
+}
+
+- (void) autoScrollPromoCoverCollectionView {
+    
+    if ([[_channelView indexPathsForVisibleRows] containsObject:[NSIndexPath indexPathForRow:0 inSection:0]]) {
+        VJNYPromoChannelTableViewCell* cell = (VJNYPromoChannelTableViewCell*)[_channelView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        long nextRow = (cell.pageControl.currentPage + 1) % cell.pageControl.numberOfPages;
+        [cell.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:nextRow inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+        cell.pageControl.currentPage = nextRow;
+    }
+    
+    [self performSelector:@selector(autoScrollPromoCoverCollectionView) withObject:nil afterDelay:5];
+}
+
+- (void)promoCoverWasTapped:(int)index {
+    VJNYPOJOChannel* channel = (VJNYPOJOChannel*)[_promoChannelData objectAtIndex:index];
+    
+    VJNYVideoViewController *videoViewController = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardVideoListPage]];
+    [videoViewController initWithChannel:channel andIsFollow:-1];
+    
+    [self.navigationController pushViewController:videoViewController animated:YES];
 }
 
 #pragma mark - Button Event Handler

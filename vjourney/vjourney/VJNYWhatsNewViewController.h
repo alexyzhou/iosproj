@@ -28,5 +28,6 @@
 - (IBAction)segmentedFilterClickAction:(id)sender;
 
 +(VJNYWhatsNewViewController*)instance;
+- (void)promoCoverWasTapped:(int)index;
 
 @end

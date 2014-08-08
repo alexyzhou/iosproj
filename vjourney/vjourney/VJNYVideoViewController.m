@@ -125,6 +125,13 @@
             [_chatButton setEnabled:YES];
             [_seeLikedButton setEnabled:YES];
             
+            if (_videoUserAvatarButton.hidden == YES) {
+                [_videoUserAvatarButton setHidden:NO];
+                [_chatButton setHidden:NO];
+                [_seeLikedButton setHidden:NO];
+                [_likeButton setHidden:NO];
+            }
+            
             // Http Request
             NSMutableDictionary* dic = [self genUserVideoRequestDic];
             [dic setObject:[[NSNumber numberWithBool:YES] stringValue] forKey:@"watch"];
@@ -227,6 +234,11 @@
     [_videoUserAvatarButton setEnabled:NO];
     [_chatButton setEnabled:NO];
     [_seeLikedButton setEnabled:NO];
+    
+    [_videoUserAvatarButton setHidden:YES];
+    [_chatButton setHidden:YES];
+    [_seeLikedButton setHidden:YES];
+    [_likeButton setHidden:YES];
     
     _uploadBannerView = nil;
     

@@ -145,19 +145,34 @@
                 
                 NSDictionary * originDic = [NSJSONSerialization JSONObjectWithData:[objStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
                 
-                NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[[originDic objectForKey:@"channel"] dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                if ([originDic objectForKey:@"channel"] && [originDic objectForKey:@"unread"]) {
+                    NSDictionary * objDic = [NSJSONSerialization JSONObjectWithData:[[originDic objectForKey:@"channel"] dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&err];
+                    
+                    channel.cid = [objDic objectForKey:@"id"];
+                    channel.name = [objDic objectForKey:@"name"];
+                    channel.description = [objDic objectForKey:@"description"];
+                    channel.creatorUserId = [objDic objectForKey:@"creatorUserId"];
+                    channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"createTime"] intValue]];
+                    channel.videoCount = [objDic objectForKey:@"videoCount"];
+                    channel.promotion = [objDic objectForKey:@"promotion"];
+                    channel.coverUrl = [objDic objectForKey:@"coverUrl"];
+                    
+                    [channelArray addObject:channel];
+                    [unReadDic setObject:[originDic objectForKey:@"unread"] forKey:channel.cid];
+                } else {
+                    channel.cid = [originDic objectForKey:@"id"];
+                    channel.name = [originDic objectForKey:@"name"];
+                    channel.description = [originDic objectForKey:@"description"];
+                    channel.creatorUserId = [originDic objectForKey:@"creatorUserId"];
+                    channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[originDic objectForKey:@"createTime"] intValue]];
+                    channel.videoCount = [originDic objectForKey:@"videoCount"];
+                    channel.promotion = [originDic objectForKey:@"promotion"];
+                    channel.coverUrl = [originDic objectForKey:@"coverUrl"];
+                    
+                    [channelArray addObject:channel];
+                }
                 
-                channel.cid = [objDic objectForKey:@"id"];
-                channel.name = [objDic objectForKey:@"name"];
-                channel.description = [objDic objectForKey:@"description"];
-                channel.creatorUserId = [objDic objectForKey:@"creatorUserId"];
-                channel.createTime = [NSDate dateWithTimeIntervalSince1970:[(NSNumber*)[objDic objectForKey:@"createTime"] intValue]];
-                channel.videoCount = [objDic objectForKey:@"videoCount"];
-                channel.promotion = [objDic objectForKey:@"promotion"];
-                channel.coverUrl = [objDic objectForKey:@"coverUrl"];
                 
-                [channelArray addObject:channel];
-                [unReadDic setObject:[originDic objectForKey:@"unread"] forKey:channel.cid];
                 
                 //[resultObj.response addObject:channel];
             }
@@ -423,6 +438,9 @@
         
         resultObj.response = userDic;
     }
+    
+    NSLog(@"Action-%@-FINISHED!",resultObj.action);
+    
     return resultObj;
 }
 
