@@ -48,7 +48,8 @@ static VJNYWhatsNewViewController* _instance = NULL;
     
     VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
     if (user == nil) {
-        VJNYWelcomeViewController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardWelcomePage]];
+        
+        UINavigationController* controller = [self.storyboard instantiateViewControllerWithIdentifier:[VJNYUtilities storyboardWelcomePage]];
         [self presentViewController:controller animated:NO completion:nil];
     } else {
         [VJNYPOJOUser sharedInstance].uid = user.uid;
@@ -300,7 +301,7 @@ static VJNYWhatsNewViewController* _instance = NULL;
             headCell.channelArray = _promoChannelData;
             [headCell.collectionView reloadData];
             
-            [self performSelector:@selector(autoScrollPromoCoverCollectionView) withObject:nil afterDelay:5];
+            //[self performSelector:@selector(autoScrollPromoCoverCollectionView) withObject:nil afterDelay:5];
             
             //[coverflow setNumberOfCovers:(int)[_promoChannelData count]];
             //[coverflow bringCoverAtIndexToFront:(int)[_promoChannelData count]/2 animated:NO];
