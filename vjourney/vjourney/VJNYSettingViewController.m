@@ -263,9 +263,9 @@
         {
             //Logout
             if (indexPath.row == 0) {
-                /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to Log out?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"YES", nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to Log out?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"YES", nil];
                 alert.tag = 300;
-                [alert show];*/
+                [alert show];
             }
         }
         break;
