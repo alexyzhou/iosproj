@@ -64,8 +64,16 @@
     _voodooButton.transform = CGAffineTransformMakeRotation(M_PI/6);
 }
 
+- (void)updateUserName {
+    self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
+    [VJNYDataCache loadImage:self.userAvatarImageView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:1 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
+    
     // Network Stuff
     NSMutableDictionary* dic = [NSMutableDictionary dictionary];
     [[VJNYPOJOUser sharedInstance] insertIdentityToDirectory:dic];

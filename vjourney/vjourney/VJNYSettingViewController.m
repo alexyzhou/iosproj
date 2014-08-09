@@ -101,7 +101,7 @@
             return 1;
             break;
         case 1:
-            return 1;
+            return 2;
             break;
         case 2:
             return 2;
@@ -135,6 +135,9 @@
             ;
             if (indexPath.row == 0) {
                 cell.titleView.text = @"Language Settings";
+            } else if (indexPath.row == 1) {
+                cell.titleView.text = @"Account Settings";
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             cell.detailView.text = nil;
             break;
@@ -206,7 +209,10 @@
         break;
         case 1:
         {
-            
+            if (indexPath.row == 1) {
+                //Privacy
+                [self performSegueWithIdentifier:[VJNYUtilities segueAccountSettingPage] sender:nil];
+            }
         }
         //Languages Settings
         break;
@@ -216,7 +222,7 @@
             NSString* platformName;
             NSString* actionName;
             
-            _socialMode = indexPath.row;
+            _socialMode = (int)indexPath.row;
             
             platformName = cell.titleView.text;
             if ([cell.detailView.text isEqual:@"connected"]) {

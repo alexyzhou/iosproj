@@ -23,4 +23,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *voodooButton;
 - (IBAction)showVoodooAction:(id)sender;
 
+- (void)updateUserName;
+
 @end

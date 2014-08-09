@@ -91,6 +91,7 @@
 +(NSString*)segueChannelSearchPage;
 +(NSString*)seguePrivacySettingPage;
 +(NSString*)segueChannelCreatePage;
++(NSString*)segueAccountSettingPage;
 
 +(NSString*)storyboardBallonBasePage;
 +(NSString*)storyboardBallonListPage;

@@ -102,6 +102,13 @@
 
 - (void)showSliderView {
     self.sliderView.center = CGPointMake(self.sliderView.frame.size.width/2, self.sliderView.center.y);
+    
+    self.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
+    self.userDescriptionLabel.text = [VJNYPOJOUser sharedInstance].description;
+    
+    [VJNYDataCache loadImage:self.userAvatarView WithUrl:[VJNYPOJOUser sharedInstance].avatarUrl AndMode:0 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
+    [VJNYDataCache loadImage:self.userCoverView WithUrl:[VJNYPOJOUser sharedInstance].coverUrl AndMode:1 AndIdentifier:[[NSObject alloc] init] AndDelegate:self];
+    
     //self.sliderView.transform = CGAffineTransformIdentity;
 
     NSLog(@"After Show[sliderView]: %f,%f",self.sliderView.frame.size.height,self.sliderView.frame.origin.y);
@@ -155,6 +162,13 @@
         }
     }
     UIViewController* viewControllerToShow = _subViewControllers[numberKey];
+    
+    if (number == 1) {
+        //SysNotif
+        VJNYSysNotifViewController* controller = ((UINavigationController*)viewControllerToShow).viewControllers[0];
+        [controller updateUserName];
+    }
+    
     [self.view bringSubviewToFront:viewControllerToShow.view];
     [self.view bringSubviewToFront:self.sliderView];
 }

@@ -140,6 +140,15 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setHidden:YES];
+    
+    if ([_userId isEqualToNumber:[VJNYPOJOUser sharedInstance].uid]) {
+        
+        VJNYProfileHeadTableViewCell* cell = (VJNYProfileHeadTableViewCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        
+        cell.userNameLabel.text = [VJNYPOJOUser sharedInstance].name;
+        cell.userDescriptionLabel.text = [VJNYPOJOUser sharedInstance].description;
+        
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -452,8 +461,10 @@
                     
                     if ([result.action isEqualToString:@"user/Avatar/Update"]) {
                         user.avatars_url = url;
+                        [VJNYPOJOUser sharedInstance].avatarUrl = url;
                     } else if ([result.action isEqualToString:@"user/Cover/Update"]) {
                         user.cover_url = url;
+                        [VJNYPOJOUser sharedInstance].coverUrl = url;
                     }
                     
                     [[VJDMModel sharedInstance] saveChanges];

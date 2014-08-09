@@ -1,19 +1,21 @@
 //
-//  VJNYRegisterViewController.m
+//  VJNYSettingAccountViewController.m
 //  vjourney
 //
-//  Created by alex on 14-5-16.
+//  Created by alex on 14-8-9.
 //  Copyright (c) 2014年 HKPolyUSD. All rights reserved.
 //
 
-#import "VJNYRegisterViewController.h"
+#import "VJNYSettingAccountViewController.h"
 #import "VJNYUtilities.h"
 #import "VJNYHTTPHelper.h"
 #import "VJNYPOJOHttpResult.h"
 
-@interface VJNYRegisterViewController () {
+#import "VJDMModel.h"
+#import "VJDMUser.h"
+
+@interface VJNYSettingAccountViewController () {
     BOOL _usernameReady;
-    BOOL _passwordReady;
     BOOL _nameReady;
     BOOL _ageReady;
     BOOL _descriptionReady;
@@ -23,7 +25,7 @@
 
 @end
 
-@implementation VJNYRegisterViewController
+@implementation VJNYSettingAccountViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -39,12 +41,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self setTitle:@"Register"];
-    _usernameReady = false;
-    _passwordReady = false;
-    _nameReady = false;
-    _ageReady = false;
-    _descriptionReady = false;
+    [self setTitle:@"Update Account"];
+    
+    _usernameInput.text = [VJNYPOJOUser sharedInstance].username;
+    _nameInput.text = [VJNYPOJOUser sharedInstance].name;
+    _ageInput.text = [[VJNYPOJOUser sharedInstance].age stringValue];
+    _descriptionInput.text = [VJNYPOJOUser sharedInstance].description;
+    _genderSegmentedControl.selectedSegmentIndex = [[VJNYPOJOUser sharedInstance].gender isEqualToString:@"M"] ? 0 : 1;
+    
+    _usernameReady = true;
+    _nameReady = true;
+    _ageReady = true;
+    _descriptionReady = true;
     [self checkAndSetSaveButton];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -52,20 +60,20 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
     [_usernameInput addTarget:self
-                         action:@selector(textFieldChangeAction:)
-               forControlEvents:UIControlEventEditingChanged];
+                       action:@selector(textFieldChangeAction:)
+             forControlEvents:UIControlEventEditingChanged];
     
     [_passwordInput addTarget:self
                        action:@selector(textFieldChangeAction:)
              forControlEvents:UIControlEventEditingChanged];
     
     [_nameInput addTarget:self
-                       action:@selector(textFieldChangeAction:)
-             forControlEvents:UIControlEventEditingChanged];
+                   action:@selector(textFieldChangeAction:)
+         forControlEvents:UIControlEventEditingChanged];
     
     [_ageInput addTarget:self
-                       action:@selector(textFieldChangeAction:)
-             forControlEvents:UIControlEventEditingChanged];
+                  action:@selector(textFieldChangeAction:)
+        forControlEvents:UIControlEventEditingChanged];
 }
 
 - (void)didReceiveMemoryWarning
@@ -75,19 +83,19 @@
 }
 
 - (void)checkAndSetSaveButton {
-    [self.navigationItem.rightBarButtonItem setEnabled:_usernameReady&&_passwordReady&&_nameReady&&_ageReady&&_descriptionReady];
+    [self.navigationItem.rightBarButtonItem setEnabled:_usernameReady&&_nameReady&&_ageReady&&_descriptionReady];
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+ {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 #pragma mark - 键盘处理
 #pragma mark 键盘即将显示
@@ -169,7 +177,7 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)tf {
-
+    
     if (self.usernameInput == tf) {
         
         if (_usernameReady == false) {
@@ -177,13 +185,6 @@
         }
         
         [self.usernameInput resignFirstResponder];
-    } else if (self.passwordInput == tf) {
-        
-        if (_passwordReady == false) {
-            return false;
-        }
-        
-        [self.passwordInput resignFirstResponder];
     } else if (self.nameInput == tf) {
         
         if (_nameReady == false) {
@@ -232,16 +233,6 @@
         
         self.usernameCount.text = [NSString stringWithFormat:@"(%ld)", remainingCount];
         _usernameReady = remainingCount >= 0 && remainingCount < 20;
-    } else if (textField == self.passwordInput) {
-        long remainingCount = 20 - _passwordInput.text.length;
-        if (remainingCount < 0) {
-            self.passwordCount.textColor = [UIColor redColor];
-        } else {
-            self.passwordCount.textColor = [UIColor whiteColor];
-        }
-        
-        self.passwordCount.text = [NSString stringWithFormat:@"(%ld)", remainingCount];
-        _passwordReady = remainingCount >= 0 && remainingCount < 20;
     } else if (textField == self.nameInput) {
         long remainingCount = 10 - _nameInput.text.length;
         if (remainingCount < 0) {
@@ -287,14 +278,14 @@
     [VJNYUtilities showProgressAlertViewToView:self.navigationController.view];
     
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    [dic setObject:[[VJNYPOJOUser sharedInstance].uid stringValue] forKey:@"id"];
     [dic setObject:self.usernameInput.text forKey:@"username"];
-    [dic setObject:self.passwordInput.text forKey:@"password"];
     [dic setObject:self.nameInput.text forKey:@"name"];
     [dic setObject:self.genderSegmentedControl.selectedSegmentIndex == 0 ? @"M" : @"F" forKey:@"gender"];
     [dic setObject:self.ageInput.text forKey:@"age"];
     [dic setObject:self.descriptionInput.text forKey:@"description"];
     
-    [VJNYHTTPHelper sendJSONRequest:@"user/register" WithParameters:dic AndDelegate:self];
+    [VJNYHTTPHelper sendJSONRequest:@"user/update" WithParameters:dic AndDelegate:self];
     
 }
 - (IBAction)finishDescriptionInputAction:(id)sender {
@@ -312,17 +303,36 @@
     // 当以文本形式读取返回内容时用这个方法
     NSString *responseString = [request responseString];
     VJNYPOJOHttpResult* result = [VJNYPOJOHttpResult resultFromResponseString:responseString];
-    if ([result.action isEqualToString:@"user/Register"]) {
+    if ([result.action isEqualToString:@"user/Update"]) {
         if (result.result == Success) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [VJNYUtilities dismissProgressAlertViewFromView:self.navigationController.view];
-                [VJNYUtilities showAlertWithNoTitle:@"Succeed! Now Please Login"];
+                [VJNYUtilities showAlertWithNoTitle:@"Succeed!"];
+                
+                [VJNYPOJOUser sharedInstance].username = _usernameInput.text;
+                [VJNYPOJOUser sharedInstance].name = _nameInput.text;
+                [VJNYPOJOUser sharedInstance].age = [NSNumber numberWithInt:[_ageInput.text intValue]];
+                [VJNYPOJOUser sharedInstance].gender = self.genderSegmentedControl.selectedSegmentIndex == 0 ? @"M" : @"F";
+                [VJNYPOJOUser sharedInstance].description = _descriptionInput.text;
+                
+                VJDMUser* user = (VJDMUser*)[[VJDMModel sharedInstance] getCurrentUser];
+                if (user == nil) {
+                    user = (VJDMUser*)[[VJDMModel sharedInstance] getNewEntity:@"VJDMUser"];
+                }
+                user.name = [VJNYPOJOUser sharedInstance].name;
+                user.username = [VJNYPOJOUser sharedInstance].username;
+                user.gender = (NSString*)[VJNYUtilities filterNSNullForObject:[VJNYPOJOUser sharedInstance].gender];
+                user.age = (NSNumber*)[VJNYUtilities filterNSNullForObject:[VJNYPOJOUser sharedInstance].age];
+                user.user_description = [VJNYPOJOUser sharedInstance].description;
+                
+                [[VJDMModel sharedInstance] saveChanges];
+                
                 [self.navigationController popViewControllerAnimated:YES];
             });
-        
+            
         } else {
-            [VJNYUtilities showAlertWithNoTitle:@"Register Failed!"];
+            [VJNYUtilities showAlertWithNoTitle:@"Update Failed!"];
         }
     }
 }

@@ -43,7 +43,7 @@
             
             [VJNYPOJOUser sharedInstance].uid = [userDic objectForKey:@"id"];
             [VJNYPOJOUser sharedInstance].name = [userDic objectForKey:@"name"];
-            [VJNYPOJOUser sharedInstance].username = [userDic objectForKey:@"userName"];
+            [VJNYPOJOUser sharedInstance].username = [userDic objectForKey:@"username"];
             [VJNYPOJOUser sharedInstance].avatarUrl = (NSString*)[VJNYUtilities filterNSNullForObject:[userDic objectForKey:@"avatarUrl"]];
             [VJNYPOJOUser sharedInstance].token = [userDic objectForKey:@"token"];
             [VJNYPOJOUser sharedInstance].gender = [userDic objectForKey:@"gender"];
