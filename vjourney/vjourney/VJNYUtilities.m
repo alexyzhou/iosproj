@@ -382,6 +382,9 @@ static UIAlertView* _progressAlert = NULL;
 +(NSString*)seggestCreateChannelCellIdentifier {
     return @"suggCreateChannelCell";
 }
++(NSString*)adminChannelReviewCellIdentifier {
+    return @"adminChannelReviewCell";
+}
 
 
 #pragma mark - Segue

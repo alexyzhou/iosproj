@@ -72,6 +72,7 @@
 +(NSString*)settingCellWithLabelIdentifier;
 +(NSString*)settingCellWithSwitchIdentifier;
 +(NSString*)seggestCreateChannelCellIdentifier;
++(NSString*)adminChannelReviewCellIdentifier;
 +(UIInterfaceOrientation)orientationByPreferredTransform:(CGAffineTransform)tranform;
 +(UIImage*)uiImageByCGImage:(CGImageRef)ref WithOrientation:(UIInterfaceOrientation)orientation AndScale:(CGFloat)scale;
 + (UIImage *)scaleImage:(UIImage*)image toResolution:(int)resolution;

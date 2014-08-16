@@ -14,7 +14,7 @@
 #import "VJNYPOJOHttpResult.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
-#define VJNYTOPIC_NAME_MAXLENGTH 10
+#define VJNYTOPIC_NAME_MAXLENGTH 20
 #define VJNYTOPIC_DESCRIPTION_MAXLENGTH 100
 
 @interface VJNYChannelCreateViewController () <UIImagePickerControllerDelegate,UINavigationControllerDelegate,VPImageCropperDelegate> {

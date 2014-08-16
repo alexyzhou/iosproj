@@ -103,7 +103,7 @@
             [[VJDMModel sharedInstance] saveChanges];
             resultObj.response = userAvatar;
         }
-    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Hot"] || [resultObj.action isEqualToString:@"channel/Latest/Query/Name"]) {
+    } else if ([resultObj.action isEqualToString:@"channel/Latest"] || [resultObj.action isEqualToString:@"channel/Promo"] || [resultObj.action isEqualToString:@"channel/Review"]|| [resultObj.action isEqualToString:@"channel/Hot"] || [resultObj.action isEqualToString:@"channel/Latest/Query/Name"]) {
         if (result==Success) {
             NSString* userJson = [dict objectForKey:@"response"];
             

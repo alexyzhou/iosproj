@@ -4123,7 +4123,7 @@
                                     <action selector="finishEditingDescriptionAction:" destination="391-a1-230" eventType="touchUpInside" id="pLt-le-2XO"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="(10)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ljY-py-OlF">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="(20)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ljY-py-OlF">
                                 <rect key="frame" x="113" y="273" width="94" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="italicSystem" pointSize="13"/>
@@ -4178,6 +4178,132 @@
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4580" y="-836"/>
+        </scene>
+        <!--Channel Review View Controller - Review-->
+        <scene sceneID="Tim-Cq-IU5">
+            <objects>
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="4Ju-Ya-Zm8" customClass="VJNYChannelReviewViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Oic-O5-Xuf"/>
+                        <viewControllerLayoutGuide type="bottom" id="C5T-ks-scl"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7wC-jr-TJl">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="oQI-2s-XhI">
+                                <rect key="frame" x="0.0" y="65" width="320" height="503"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="J1q-Qc-sQh">
+                                    <size key="itemSize" width="320" height="503"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="adminChannelReviewCell" id="1iB-HV-bfW" customClass="VJNYChannelReviewCell">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="503"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="503"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Gu-L1-xGJ">
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="240"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="320" id="Gbh-Mf-q3g"/>
+                                                        <constraint firstAttribute="height" constant="240" id="uPj-JN-JM9"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0qD-hg-5ni">
+                                                    <rect key="frame" x="20" y="248" width="66" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Description:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hc4-NQ-ZBB">
+                                                    <rect key="frame" x="20" y="277" width="106" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bbd-gu-033">
+                                                    <rect key="frame" x="94" y="248" width="226" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="20" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="uhN-US-Bng">
+                                                    <rect key="frame" x="20" y="306" width="280" height="72"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l5R-Vt-TJT">
+                                                    <rect key="frame" x="94" y="386" width="73" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" title="Accept">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="acceptAction:" destination="1iB-HV-bfW" eventType="touchUpInside" id="a8s-GK-8ju"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hwo-wS-fXq">
+                                                    <rect key="frame" x="184" y="386" width="46" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" title="Reject">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="rejectAction:" destination="1iB-HV-bfW" eventType="touchUpInside" id="KA9-q5-zxW"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="8Gu-L1-xGJ" firstAttribute="top" secondItem="1iB-HV-bfW" secondAttribute="top" id="2v9-Ph-WH2"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="coverImageView" destination="8Gu-L1-xGJ" id="L2B-KV-TRC"/>
+                                            <outlet property="descriptionLabel" destination="uhN-US-Bng" id="Q4G-9z-CfJ"/>
+                                            <outlet property="nameLabel" destination="Bbd-gu-033" id="XdU-sG-UUq"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="4Ju-Ya-Zm8" id="bU9-xc-nQv"/>
+                                    <outlet property="delegate" destination="4Ju-Ya-Zm8" id="ogh-L8-HDo"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="oQI-2s-XhI" secondAttribute="trailing" id="2Sx-mQ-e9j"/>
+                            <constraint firstItem="C5T-ks-scl" firstAttribute="top" secondItem="oQI-2s-XhI" secondAttribute="bottom" id="CWS-M8-bgn"/>
+                            <constraint firstItem="oQI-2s-XhI" firstAttribute="leading" secondItem="7wC-jr-TJl" secondAttribute="leading" id="rdu-Tm-yJ2"/>
+                            <constraint firstItem="oQI-2s-XhI" firstAttribute="top" secondItem="7wC-jr-TJl" secondAttribute="top" constant="65" id="wL6-Ql-2Nc"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Review" id="n92-C8-ldb">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="lRh-cK-rXw">
+                            <connections>
+                                <action selector="refreshAction:" destination="4Ju-Ya-Zm8" id="CmS-0O-DB7"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="collectionView" destination="oQI-2s-XhI" id="g2h-Jv-F2L"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qns-aA-DR3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5781" y="-1398"/>
         </scene>
         <!--Liked List View Controller-->
         <scene sceneID="MYW-SM-H5E">
@@ -4926,6 +5052,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QyW-hi-Yri" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4312" y="3416"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="cAd-5I-DPZ">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="TMu-Kw-AKo" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hoo-4n-LvX">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="4Ju-Ya-Zm8" kind="relationship" relationship="rootViewController" id="I58-Rt-vOo"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nef-wX-xqp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5255" y="-1398"/>
         </scene>
     </scenes>
     <resources>

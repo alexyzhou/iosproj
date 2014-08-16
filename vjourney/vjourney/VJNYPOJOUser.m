@@ -34,5 +34,9 @@ static VJNYPOJOUser* _instance;
     [dic setObject:_token forKey:@"token"];
 }
 
++(void)insertAdminToDirectory:(NSMutableDictionary*)dic {
+    [dic setObject:@"3b39aee0b1fd6336612a495c0572736f" forKey:@"token"];
+}
+
 @end
 

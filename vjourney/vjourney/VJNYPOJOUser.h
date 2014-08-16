@@ -23,4 +23,6 @@
 +(VJNYPOJOUser*)sharedInstance;
 
 -(void)insertIdentityToDirectory:(NSMutableDictionary*)dic;
+
++(void)insertAdminToDirectory:(NSMutableDictionary*)dic;
 @end
